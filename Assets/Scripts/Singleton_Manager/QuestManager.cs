@@ -9,14 +9,14 @@ public class QuestManager : SingleTonGeneric<QuestManager>
 
     private void OnEnable() 
     {
-        EventBus.Subscribe(TimeManager.OnDayStarted, OnDayStartQuest); //1.
+        EventBus.Subscribe<GameDate>(TimeManager.OnDayStarted, OnDayStartQuest); //하루 시작 이벤트 구독
     }
     private void OnDisable()
     {
-        EventBus.UnSubscribe(TimeManager.OnDayStarted, OnDayStartQuest); //1.
+        EventBus.UnSubscribe<GameDate>(TimeManager.OnDayStarted, OnDayStartQuest); //하루 시작 이벤트 구독
     }
 
-    private void OnDayStartQuest()
+    private void OnDayStartQuest(GameDate date)
     {
         Debug.Log("QuestManager: 하루 시작에 대한 처리 - 퀘스트 할당 부여");
     }

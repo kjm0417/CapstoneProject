@@ -4,7 +4,7 @@ public class SingleTonGeneric<T> : MonoBehaviour where T : Component // ex) publ
 {
     private static T instance;
 
-    public static T Instacne
+    public static T Instance
     {
         get
         {

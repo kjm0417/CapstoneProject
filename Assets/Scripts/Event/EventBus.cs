@@ -2,46 +2,63 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class EventBus 
+public static class EventBus
 {
-    private static Dictionary<string, Action> eventDictionary = new Dictionary<string, Action>();
+    private static Dictionary<string, Delegate> eventDelegateDictionary = new Dictionary<string, Delegate>();
+    private static Dictionary<string, Action> eventActionDictionary = new Dictionary<string, Action>();
 
-    public static void Subscribe(string eventName,Action listener)
+    // 파라미터 없는 구독
+    public static void Subscribe(string eventName, Action listener)
     {
-        if(eventDictionary.ContainsKey(eventName))
-        {
-            eventDictionary[eventName] += listener; 
-        }
+        if (eventActionDictionary.ContainsKey(eventName))
+            eventActionDictionary[eventName] += listener;
         else
-        {
-            eventDictionary[eventName] = listener;
-        }
+            eventActionDictionary[eventName] = listener;
     }
 
     public static void UnSubscribe(string eventName, Action listener)
     {
-        if (eventDictionary.ContainsKey(eventName))
+        if (eventActionDictionary.ContainsKey(eventName))
         {
-            eventDictionary[eventName] -= listener;
-
-            if (eventDictionary[eventName] == null)
-            {
-                eventDictionary.Remove(eventName);
-            }
+            eventActionDictionary[eventName] -=  listener;
+            if (eventActionDictionary[eventName] == null)
+                eventActionDictionary.Remove(eventName);
         }
     }
 
     public static void Publish(string eventName)
     {
-
-        if (eventDictionary.ContainsKey(eventName))
-        {
-            eventDictionary[eventName]?.Invoke();
-        }
+        if (eventActionDictionary.ContainsKey(eventName))
+            eventActionDictionary[eventName]?.Invoke();
         else
-        {
-            Debug.Log($"해당 {eventName}는 eventDictionary의 존재하지 않는다.");
-        }
-           
+            Debug.Log($"해당 {eventName} 이벤트는 존재하지 않는다.");
     }
+
+    // 필요시, 파라미터 있는 구독
+    public static void Subscribe<T>(string eventName, Action<T> listener)
+    {
+        if (eventDelegateDictionary.ContainsKey(eventName))
+            eventDelegateDictionary[eventName] = (Action<T>)eventDelegateDictionary[eventName] + listener;
+        else
+            eventDelegateDictionary[eventName] = listener;
+    }
+
+    public static void UnSubscribe<T>(string eventName, Action<T> listener)
+    {
+        if (eventDelegateDictionary.ContainsKey(eventName))
+        {
+            eventDelegateDictionary[eventName] = (Action<T>)eventDelegateDictionary[eventName] - listener;
+            if (eventDelegateDictionary[eventName] == null)
+                eventDelegateDictionary.Remove(eventName);
+        }
+    }
+
+    public static void Publish<T>(string eventName, T param)
+    {
+        if (eventDelegateDictionary.ContainsKey(eventName))
+            (eventDelegateDictionary[eventName] as Action<T>)?.Invoke(param);
+        else
+            Debug.Log($"해당 {eventName} 이벤트는 존재하지 않는다.");
+    }
+
 }
