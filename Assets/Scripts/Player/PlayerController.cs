@@ -25,7 +25,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector2 _lastMoveDir = Vector2.down;
 
     // --- 데이터/스탯 ---
-    private PlayerData currentData;  // PlayerManager에서 던져줌
+    // PlayerState라는 데이터를 각 플레이어에게 넘겨줘서 수치 변경용으로 사용하고 저장할 떄 PlayerManager에서 저장하고 변경할 떄 저장 후 변경
+    private PlayerData currentData;  
     private float moveSpeed;
     private int maxHP;
     private int currentHP;
@@ -136,7 +137,7 @@ public class PlayerController : MonoBehaviour
         maxHP = currentData ? Mathf.Max(1, currentData.maxHP) : 10;
         if (currentHP <= 0 || currentHP > maxHP) currentHP = maxHP;
 
-        if (currentData && currentData.animatorController)
+        if (currentData)//currentData.animatorController)
         {
             //animator.runtimeAnimatorController = currentData.animatorController;
         }
@@ -146,17 +147,3 @@ public class PlayerController : MonoBehaviour
 
 }
 
-
-/// NOTE:
-/// - PlayerData는 별도 ScriptableObject로 만들 예정.
-///   이 파일이 먼저 필요하면 아래 임시 선언을 참고.
-// 임시/예시
-[Serializable]
-public class PlayerData : ScriptableObject
-{
-    public string id;
-    public float moveSpeed = 3.5f;
-    public int maxHP = 10;
-    public RuntimeAnimatorController animatorController;
-}
-//*/
