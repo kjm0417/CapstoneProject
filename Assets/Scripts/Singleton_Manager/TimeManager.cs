@@ -14,10 +14,10 @@ public class TimeManager : SingleTonGeneric<TimeManager>
 
     void Start()
     {
-        StartDay();
+        OnStartDay();
     }
 
-    public void StartDay() //하루 일과 시작
+    private void OnStartDay() //하루 일과 시작
     {
         Debug.Log("TimeManager: 하루 일과 시작 - UI 업데이트");
         EventBus.Publish(OnDayStarted); 

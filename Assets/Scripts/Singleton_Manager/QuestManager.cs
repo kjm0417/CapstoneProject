@@ -9,16 +9,16 @@ public class QuestManager : SingleTonGeneric<QuestManager>
 
     private void OnEnable() 
     {
-        EventBus.Subscribe(TimeManager.OnDayStarted, OnDayStartHandler); //1.
+        EventBus.Subscribe(TimeManager.OnDayStarted, OnDayStartQuest); //1.
     }
     private void OnDisable()
     {
-        EventBus.UnSubscribe(TimeManager.OnDayStarted, OnDayStartHandler); //1.
+        EventBus.UnSubscribe(TimeManager.OnDayStarted, OnDayStartQuest); //1.
     }
 
-    private void OnDayStartHandler()
+    private void OnDayStartQuest()
     {
-        Debug.Log("QuestManager: 하루 시작에 대한 처리 - 미니게임 할당 부여");
+        Debug.Log("QuestManager: 하루 시작에 대한 처리 - 퀘스트 할당 부여");
     }
 
 
