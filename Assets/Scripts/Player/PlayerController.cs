@@ -64,24 +64,32 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // 쯔꾸르: 대각선 차단(큰 축만 남긴다)
+        // 1) 데드존
+        const float DEAD = 0.2f;
         Vector2 input = moveInput;
-        if (_blockDiagonal && input.sqrMagnitude > 1e-4f)
+        if (Mathf.Abs(input.x) < DEAD) input.x = 0f;
+        if (Mathf.Abs(input.y) < DEAD) input.y = 0f;
+
+        // 2) 대각선 차단 + 방향 스냅(-1/0/1)
+        if (_blockDiagonal && input.sqrMagnitude > 0f)
         {
-            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                input.y = 0f;
+            if (Mathf.Abs(input.x) >= Mathf.Abs(input.y))
+                input = new Vector2(Mathf.Sign(input.x), 0f);
             else
-                input.x = 0f;
+                input = new Vector2(0f, Mathf.Sign(input.y));
         }
 
-        _isMoving = input.sqrMagnitude > 1e-4f;
-        if (_isMoving) _lastMoveDir = input.normalized;
+        _isMoving = input.sqrMagnitude > 0f;
 
-        // TODO: 애니메이터 파라미터 연동
+        // ★ 스냅된 값을 그대로 마지막 방향으로 사용(정규화 X)
+        if (_isMoving)
+            _lastMoveDir = input;
+
+        // 3) 애니메이터 즉시 반영
         if (animator)
         {
             animator.SetBool("IsMoving", _isMoving);
-            animator.SetFloat("MoveX", _lastMoveDir.x);
+            animator.SetFloat("MoveX", _lastMoveDir.x); // -1/0/1로 깔끔
             animator.SetFloat("MoveY", _lastMoveDir.y);
         }
     }
