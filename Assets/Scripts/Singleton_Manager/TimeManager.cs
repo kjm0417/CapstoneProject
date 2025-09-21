@@ -21,6 +21,7 @@ public class GameDate
 public class TimeManager : SingleTonGeneric<TimeManager>
 {
     public static string OnDayStarted = "OnDayStartEvent"; //하루 일과 시작 될 때
+    public static string OnDayEnded = "OnDayEndedEvent"; //하루 일과 시작 될 때
 
     public GameDate currentGameDate;
 
@@ -36,7 +37,7 @@ public class TimeManager : SingleTonGeneric<TimeManager>
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.T))
+        if(Input.GetKeyDown(KeyCode.T)) //날짜 변경 테스트
         {
             UpdateDate();
         }
@@ -46,8 +47,9 @@ public class TimeManager : SingleTonGeneric<TimeManager>
     {
         currentGameDate = new GameDate(month, day, remainDay, dayOfWeek);
 
-        EventBus.Publish(OnDayStarted, currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림
-   
+        EventBus.Publish(OnDayStarted, currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
+        EventBus.Publish(OnDayStarted); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
+    
     }
 
     private void UpdateDate() //날짜 변경 메서드. 하루 지나면 호출
@@ -70,7 +72,8 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         }
 
 
-        EventBus.Publish(OnDayStarted,currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림
+        EventBus.Publish(OnDayStarted,currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
+        EventBus.Publish(OnDayStarted); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
     }
 
 }
