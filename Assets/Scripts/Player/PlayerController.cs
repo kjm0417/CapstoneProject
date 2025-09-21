@@ -24,17 +24,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool _isMoving;
     [SerializeField] private Vector2 _lastMoveDir = Vector2.down;
 
-    // --- 데이터/스탯 ---
-    private PlayerData currentData;
-    private float moveSpeed;
-    private int maxHP;
-    private int currentHP;
+    // --- 데이터/스탯 --- 위 또는 Links 아래 아무 데나 추가 ---
+    [Header("Data")]
+    [SerializeField] private PlayerData initialData;          // 인스펙터에서 바로 할당(선택)
+    [SerializeField] private bool preferInspectorData = true;  // true면 initialData 우선 적용
 
     // --- 입력 버퍼 ---
     private Vector2 moveInput; // PlayerInput UnityEvent로부터 매 프레임 갱신됨
 
     // 외부(예: UI디버깅)에서 쓰고 싶으면 사용 - 이벤트 버스 생성되면 변경예정
     public event Action<PlayerData> OnDataApplied;
+
+    private PlayerData currentData;
+    private float Speed => currentData ? Mathf.Max(0.1f, currentData.moveSpeed) : _fallbackMoveSpeed;
 
     private void Reset()
     {
@@ -44,9 +46,26 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        if (_playerRb == null) _playerRb = GetComponent<Rigidbody2D>();
+        if (_playerRb == null)
+        {
+            _playerRb = GetComponent<Rigidbody2D>();
+        }
+
+        if (animator == null)
+        {
         animator = GetComponentInChildren<Animator>();
-        ApplyData(null); // 기본값으로 초기화
+        }
+
+        // 1) 인스펙터에서 넣어준 데이터가 있으면 그걸 먼저 적용
+        if (preferInspectorData && initialData != null)
+        {
+            ApplyData(initialData);
+            return;
+        }
+
+
+        // 2) 그 외에는 기본값으로 시작하고, OnEnable의 이벤트(EventBus)로 곧 채워짐
+        ApplyData(null);
     }
 
     private void OnEnable()
@@ -74,16 +93,21 @@ public class PlayerController : MonoBehaviour
         if (_blockDiagonal && input.sqrMagnitude > 0f)
         {
             if (Mathf.Abs(input.x) >= Mathf.Abs(input.y))
+            {
                 input = new Vector2(Mathf.Sign(input.x), 0f);
+            }
             else
+            {
                 input = new Vector2(0f, Mathf.Sign(input.y));
+            }
         }
 
         _isMoving = input.sqrMagnitude > 0f;
 
-        // ★ 스냅된 값을 그대로 마지막 방향으로 사용(정규화 X)
         if (_isMoving)
+        {
             _lastMoveDir = input;
+        }
 
         // 3) 애니메이터 즉시 반영
         if (animator)
@@ -109,7 +133,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        Vector2 vel = input.normalized * moveSpeed;
+        Vector2 vel = input.normalized * Speed;
         _playerRb.MovePosition(_playerRb.position + vel * Time.fixedDeltaTime);
     }
 
@@ -117,9 +141,13 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
+        {
             moveInput = ctx.ReadValue<Vector2>();
+        }
         else if (ctx.canceled)
+        {
             moveInput = Vector2.zero;
+        }
     }
 
     // --- 데이터 적용/교체(EventBus에서 수신) ---
@@ -133,15 +161,7 @@ public class PlayerController : MonoBehaviour
     {
         currentData = data;
 
-        moveSpeed = currentData ? Mathf.Max(0.1f, currentData.moveSpeed) : _fallbackMoveSpeed;
-        maxHP = currentData ? Mathf.Max(1, currentData.maxHP) : 10;
-        if (currentHP <= 0 || currentHP > maxHP) currentHP = maxHP;
-
-        // if (currentData /* && currentData.animatorController */)
-        // {
-        //     animator.runtimeAnimatorController = currentData.animatorController;
-        // }
-
+        // PlayerData에는 animatorController가 없으므로 애니 컨트롤러 교체 로직은 생략/주석 유지
         OnDataApplied?.Invoke(currentData);
     }
 }

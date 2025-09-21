@@ -1,14 +1,27 @@
 using UnityEngine;
 
-//플레이어 기본 베이스 데이터 변경 x
 
-[CreateAssetMenu(fileName = "PlayerData", menuName = "Scriptable Objects/PlayerData")]
-public class PlayerData : ScriptableObject
+ [CreateAssetMenu(menuName = "Game/PlayerData", fileName = "PlayerData")]
+public sealed class PlayerData : ScriptableObject
 {
-    public string id;               //캐릭터 데이터 불러올 때 사용하는 id
-    public float moveSpeed = 3.5f;  //스피드
-    public int maxHP = 10;          //체력
-    public int stress = 15;         //스트레스
-    public int concentration = 75;  //집중력
-    public RuntimeAnimatorController animatorController;
+    [Header("Identity")]
+    [SerializeField] private string id;
+
+    [Header("Base Stats")]
+    [Min(1)] public int maxHP = 100;
+    [Range(0, 100)] public int stress = 0;
+    [Range(0, 100)] public int concentration = 50;
+    public float moveSpeed=3.5f;
+
+    [Header("Animation")]
+    public RuntimeAnimatorController animatorController; // AnimatorOverrideController도 할당 가능
+
+    public string Id => id;
+
+    /// <summary>
+    /// SO를 오염시키지 않도록 런타임 상태를 ‘깊은 복사’로 생성
+    public PlayerState CreateRuntimeState()
+    {
+        return new PlayerState(id, this);
+    }
 }
