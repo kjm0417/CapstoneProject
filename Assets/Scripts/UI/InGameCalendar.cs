@@ -20,8 +20,6 @@ public class InGameCalendar : MonoBehaviour //실제 UI 업데이트 및 출력
     }
     private void OnDateChanged(GameDate date)
     {
-
-
         CurrentDate.text = $"{date.Month} / {date.Day}";
         CurrentDay.text = $"D - {date.RemaineDay}";
     }

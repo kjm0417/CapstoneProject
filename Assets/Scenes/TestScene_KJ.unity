@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questDB: {fileID: 11400000, guid: bec999e223e88e5459a4a5f68e098a20, type: 2}
+  CurrentDay: 0
 --- !u!1 &314702552
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,6 +1326,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9683e85113d24544b889eb87d27e9660, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  players:
+  - {fileID: 11400000, guid: b26d8b7512564134ea32a06675daff5b, type: 2}
+  - {fileID: 11400000, guid: 07d726eded4ddb44381139ad2ab0d52b, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

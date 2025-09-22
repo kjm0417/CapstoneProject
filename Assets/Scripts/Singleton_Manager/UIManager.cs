@@ -26,8 +26,6 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
 
     private void UpdateQuestUI(List<QuestData> questDataList) //퀘스트가 시작 되면 호출
     {
-       
-
         foreach( Transform item in SubjectItemParent)
         {
             Destroy(item.gameObject);
@@ -37,7 +35,8 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
         {
             GameObject subjectItem = Instantiate(SubjectItem, SubjectItemParent);
             subjectItem.GetComponent<SubjectItem>().
-                SubjectSet(questData.period, questData.Subject,questData.StartPage,questData.EndPage);
+                SubjectSet(questData.Period, questData.Subject,questData.StartPage,questData.EndPage);
+       
         }
        
     }
