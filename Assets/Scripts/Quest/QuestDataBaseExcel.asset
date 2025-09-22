@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 221e1bda59c80f64795eeb9ba3e2e355, type: 3}
+  m_Name: QuestDataBaseExcel
+  m_EditorClassIdentifier: 
+  Juhee:
+  - period: 1
+    Subject: "\uD654\uBC95\uACFC \uC791\uBB38"
+  - period: 2
+    Subject: "\uBBF8\uC801\uBD84"
+  - period: 3
+    Subject: "\uC601\uC5B4"
+  - period: 4
+    Subject: "\uD55C\uAD6D\uC0AC"
+  - period: 5
+    Subject: "\uD654\uD5591"
+  - period: 6
+    Subject: "\uC0DD\uBA851"
+  - period: 7
+    Subject: "\uC81C 2 \uC678\uAD6D\uC5B4"
+  Chaun:
+  - period: 1
+    Subject: "\uC5B8\uC5B4\uC640 \uB9E4\uCCB4"
+  - period: 2
+    Subject: "\uD655\uB960\uACFC \uD1B5\uACC4"
+  - period: 3
+    Subject: "\uC601\uC5B4"
+  - period: 4
+    Subject: "\uD55C\uAD6D\uC0AC"
+  - period: 5
+    Subject: "\uC0DD\uD65C\uACFC\uC724\uB9AC"
+  - period: 6
+    Subject: "\uC724\uB9AC\uC640 \uC0AC\uC0C1"
+  - period: 7
+    Subject: "\uC81C2\uC678\uAD6D\uC5B4"
+  Minzoo:
+  - period: 1
+    Subject: "\uD654\uBC95\uACFC \uC791\uBB38"
+  - period: 2
+    Subject: "\uD655\uB960\uACFC \uD1B5\uACC4"
+  - period: 3
+    Subject: "\uC601\uC5B4"
+  - period: 4
+    Subject: "\uD55C\uAD6D\uC0AC"
+  - period: 5
+    Subject: "\uC0DD\uD65C\uACFC\uC724\uB9AC"
+  - period: 6
+    Subject: "\uC0AC\uD68C\uC640 \uBB38\uD654"
+  - period: 7
+    Subject: "\uC81C2\uC678\uAD6D\uC5B4"
