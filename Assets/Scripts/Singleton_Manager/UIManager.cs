@@ -1,8 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
 {
-  
+    [SerializeField]
+    GameObject SubjectItem;
+
+    [SerializeField]
+    Transform SubjectItemParent;
+
     protected override void Awake()
     {
         base.Awake();
@@ -10,16 +16,29 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
 
     private void OnEnable()
     {
-        EventBus.Subscribe<QuestDataBaseExcel>(QuestManager.OnQuestStarted, UpdateQuestUI);
+        EventBus.Subscribe<List<QuestData>>(QuestManager.OnQuestStarted, UpdateQuestUI);
     }
 
     private void OnDisable()
     {
-        EventBus.UnSubscribe<QuestDataBaseExcel>(QuestManager.OnQuestStarted, UpdateQuestUI);
+        EventBus.UnSubscribe<List<QuestData>>(QuestManager.OnQuestStarted, UpdateQuestUI);
     }
 
-    private void UpdateQuestUI(QuestDataBaseExcel questDatabase) //퀘스트가 시작 되면 호출
+    private void UpdateQuestUI(List<QuestData> questDataList) //퀘스트가 시작 되면 호출
     {
-        Debug.Log("UIManager/ 날짜 변경으로 인한 퀘스트 UI 생성 또는 재생성");
+       
+
+        foreach( Transform item in SubjectItemParent)
+        {
+            Destroy(item.gameObject);
+        }
+
+        foreach(QuestData questData in questDataList)
+        {
+            GameObject subjectItem = Instantiate(SubjectItem, SubjectItemParent);
+            subjectItem.GetComponent<SubjectItem>().
+                SubjectSet(questData.period, questData.Subject,questData.StartPage,questData.EndPage);
+        }
+       
     }
 }

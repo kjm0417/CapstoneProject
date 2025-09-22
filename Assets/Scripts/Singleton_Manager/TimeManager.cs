@@ -20,8 +20,8 @@ public class GameDate
 }
 public class TimeManager : SingleTonGeneric<TimeManager>
 {
-    public static string OnDayStarted = "OnDayStartEvent"; //하루 일과 시작 될 때
-    public static string OnDayEnded = "OnDayEndedEvent"; //하루 일과 시작 될 때
+    public static string OnDayStarted = "OnDayStartEvent"; //하루 일상 시작 될 때
+    public static string OnDayEnded = "OnDayEndedEvent"; //하루 일상 끝날 때
 
     public GameDate currentGameDate;
 
@@ -37,9 +37,10 @@ public class TimeManager : SingleTonGeneric<TimeManager>
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.T)) //날짜 변경 테스트
+        //임시 코드
+        if (Input.GetKeyDown(KeyCode.T)) 
         {
-            UpdateDate();
+            UpdateDate(); 
         }
     }
 
@@ -47,12 +48,12 @@ public class TimeManager : SingleTonGeneric<TimeManager>
     {
         currentGameDate = new GameDate(month, day, remainDay, dayOfWeek);
 
-        EventBus.Publish(OnDayStarted, currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
-        EventBus.Publish(OnDayStarted); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
-    
+        EventBus.Publish(OnDayStarted, currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
+        //EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
+
     }
 
-    private void UpdateDate() //날짜 변경 메서드. 하루 지나면 호출
+    private void UpdateDate() //날짜 변경 메서드. 하루 일상 끝나면 호출
     {
         currentGameDate.Day++;
         currentGameDate.WeekDay++;
@@ -72,8 +73,8 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         }
 
 
-        EventBus.Publish(OnDayStarted,currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
-        EventBus.Publish(OnDayStarted); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경 용도
+        EventBus.Publish(OnDayStarted,currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
+        //EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
     }
 
 }

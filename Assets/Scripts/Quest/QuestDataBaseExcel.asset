@@ -15,45 +15,87 @@ MonoBehaviour:
   Juhee:
   - period: 1
     Subject: "\uD654\uBC95\uACFC \uC791\uBB38"
+    StartPage: 0
+    EndPage: 0
   - period: 2
     Subject: "\uBBF8\uC801\uBD84"
+    StartPage: 0
+    EndPage: 0
   - period: 3
     Subject: "\uC601\uC5B4"
+    StartPage: 0
+    EndPage: 0
   - period: 4
     Subject: "\uD55C\uAD6D\uC0AC"
+    StartPage: 0
+    EndPage: 0
   - period: 5
     Subject: "\uD654\uD5591"
+    StartPage: 0
+    EndPage: 0
   - period: 6
     Subject: "\uC0DD\uBA851"
+    StartPage: 0
+    EndPage: 0
   - period: 7
     Subject: "\uC81C 2 \uC678\uAD6D\uC5B4"
+    StartPage: 0
+    EndPage: 0
   Chaun:
   - period: 1
     Subject: "\uC5B8\uC5B4\uC640 \uB9E4\uCCB4"
+    StartPage: 0
+    EndPage: 0
   - period: 2
     Subject: "\uD655\uB960\uACFC \uD1B5\uACC4"
+    StartPage: 0
+    EndPage: 0
   - period: 3
     Subject: "\uC601\uC5B4"
+    StartPage: 0
+    EndPage: 0
   - period: 4
     Subject: "\uD55C\uAD6D\uC0AC"
+    StartPage: 0
+    EndPage: 0
   - period: 5
     Subject: "\uC0DD\uD65C\uACFC\uC724\uB9AC"
+    StartPage: 0
+    EndPage: 0
   - period: 6
     Subject: "\uC724\uB9AC\uC640 \uC0AC\uC0C1"
+    StartPage: 0
+    EndPage: 0
   - period: 7
     Subject: "\uC81C2\uC678\uAD6D\uC5B4"
+    StartPage: 0
+    EndPage: 0
   Minzoo:
   - period: 1
     Subject: "\uD654\uBC95\uACFC \uC791\uBB38"
+    StartPage: 0
+    EndPage: 0
   - period: 2
     Subject: "\uD655\uB960\uACFC \uD1B5\uACC4"
+    StartPage: 0
+    EndPage: 0
   - period: 3
     Subject: "\uC601\uC5B4"
+    StartPage: 0
+    EndPage: 0
   - period: 4
     Subject: "\uD55C\uAD6D\uC0AC"
+    StartPage: 0
+    EndPage: 0
   - period: 5
     Subject: "\uC0DD\uD65C\uACFC\uC724\uB9AC"
+    StartPage: 0
+    EndPage: 0
   - period: 6
     Subject: "\uC0AC\uD68C\uC640 \uBB38\uD654"
+    StartPage: 0
+    EndPage: 0
   - period: 7
     Subject: "\uC81C2\uC678\uAD6D\uC5B4"
+    StartPage: 0
+    EndPage: 0
