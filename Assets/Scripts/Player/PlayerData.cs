@@ -1,7 +1,6 @@
 using UnityEngine;
 
-
- [CreateAssetMenu(menuName = "Game/PlayerData", fileName = "PlayerData")]
+[CreateAssetMenu(menuName = "Game/PlayerData", fileName = "PlayerData")]
 public sealed class PlayerData : ScriptableObject
 {
     [Header("Identity")]
@@ -11,15 +10,22 @@ public sealed class PlayerData : ScriptableObject
     [Min(1)] public int maxHP = 100;
     [Range(0, 100)] public int stress = 0;
     [Range(0, 100)] public int concentration = 50;
-    public float moveSpeed=3.5f;
+    public float moveSpeed = 3.5f;
 
     [Header("Animation")]
-    public RuntimeAnimatorController animatorController; // AnimatorOverrideController도 할당 가능
+    public RuntimeAnimatorController animatorController; // AnimatorOverrideController도 가능
+
+    [Header("Visuals (Resources)")]
+    [Tooltip("Resources 폴더 기준 경로. 예: \"Characters/HeroA\"")]
+    public string resourcesAddress;
+    [Tooltip("로드한 스프라이트들 중 시작 시 적용할 기본 스프라이트 이름(옵션)")]
+    public string defaultSpriteName;
 
     public string Id => id;
 
     /// <summary>
-    /// SO를 오염시키지 않도록 런타임 상태를 ‘깊은 복사’로 생성
+    /// SO를 오염시키지 않도록 런타임 상태를 ‘깊은 복사’로 생성합니다.
+    /// </summary>
     public PlayerState CreateRuntimeState()
     {
         return new PlayerState(id, this);

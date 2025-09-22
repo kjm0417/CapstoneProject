@@ -448,7 +448,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9683e85113d24544b889eb87d27e9660, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  players: []
+  players:
+  - {fileID: 11400000, guid: b26d8b7512564134ea32a06675daff5b, type: 2}
+  - {fileID: 11400000, guid: 07d726eded4ddb44381139ad2ab0d52b, type: 2}
 --- !u!4 &1857260490
 Transform:
   m_ObjectHideFlags: 0
@@ -472,6 +474,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 51045181388801941, guid: eeb1bac33cd27364585b2c0512bed822, type: 3}
+      propertyPath: m_Size.x
+      value: 0.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 51045181388801941, guid: eeb1bac33cd27364585b2c0512bed822, type: 3}
+      propertyPath: m_Size.y
+      value: 0.71
+      objectReference: {fileID: 0}
     - target: {fileID: 702620420829601401, guid: eeb1bac33cd27364585b2c0512bed822, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
