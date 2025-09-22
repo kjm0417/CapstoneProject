@@ -23,8 +23,7 @@ public sealed class PlayerData : ScriptableObject
 
     public string Id => id;
 
-    /// <summary>
-    /// SO를 오염시키지 않도록 런타임 상태를 ‘깊은 복사’로 생성합니다.
+    /// SO를 오염시키지 않도록 런타임 상태를 깊은 복사로 생성합니다.
     /// </summary>
     public PlayerState CreateRuntimeState()
     {
