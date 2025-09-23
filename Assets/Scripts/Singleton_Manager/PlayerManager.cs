@@ -28,6 +28,8 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
     /// PlayerData 리스트로부터 런타임 상태 딕셔너리를 초기화합니다.
     /// (이 단계에서는 이벤트를 발행하지 않습니다)
     /// </summary>
+    /// 
+
     protected override void Awake()
     {
         base.Awake();

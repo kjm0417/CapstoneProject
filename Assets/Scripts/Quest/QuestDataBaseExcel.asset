@@ -13,47 +13,110 @@ MonoBehaviour:
   m_Name: QuestDataBaseExcel
   m_EditorClassIdentifier: 
   Juhee:
-  - period: 1
+  - Period: 1
     Subject: "\uD654\uBC95\uACFC \uC791\uBB38"
-  - period: 2
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 80
+  - Period: 2
     Subject: "\uBBF8\uC801\uBD84"
-  - period: 3
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 100
+  - Period: 3
     Subject: "\uC601\uC5B4"
-  - period: 4
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 70
+  - Period: 4
     Subject: "\uD55C\uAD6D\uC0AC"
-  - period: 5
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 5
     Subject: "\uD654\uD5591"
-  - period: 6
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 6
     Subject: "\uC0DD\uBA851"
-  - period: 7
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 7
     Subject: "\uC81C 2 \uC678\uAD6D\uC5B4"
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 40
   Chaun:
-  - period: 1
+  - Period: 1
     Subject: "\uC5B8\uC5B4\uC640 \uB9E4\uCCB4"
-  - period: 2
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 80
+  - Period: 2
     Subject: "\uD655\uB960\uACFC \uD1B5\uACC4"
-  - period: 3
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 100
+  - Period: 3
     Subject: "\uC601\uC5B4"
-  - period: 4
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 70
+  - Period: 4
     Subject: "\uD55C\uAD6D\uC0AC"
-  - period: 5
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 5
     Subject: "\uC0DD\uD65C\uACFC\uC724\uB9AC"
-  - period: 6
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 6
     Subject: "\uC724\uB9AC\uC640 \uC0AC\uC0C1"
-  - period: 7
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 7
     Subject: "\uC81C2\uC678\uAD6D\uC5B4"
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 40
   Minzoo:
-  - period: 1
+  - Period: 1
     Subject: "\uD654\uBC95\uACFC \uC791\uBB38"
-  - period: 2
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 80
+  - Period: 2
     Subject: "\uD655\uB960\uACFC \uD1B5\uACC4"
-  - period: 3
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 100
+  - Period: 3
     Subject: "\uC601\uC5B4"
-  - period: 4
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 70
+  - Period: 4
     Subject: "\uD55C\uAD6D\uC0AC"
-  - period: 5
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 5
     Subject: "\uC0DD\uD65C\uACFC\uC724\uB9AC"
-  - period: 6
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 6
     Subject: "\uC0AC\uD68C\uC640 \uBB38\uD654"
-  - period: 7
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 30
+  - Period: 7
     Subject: "\uC81C2\uC678\uAD6D\uC5B4"
+    StartPage: 0
+    EndPage: 0
+    StudyTime: 40
