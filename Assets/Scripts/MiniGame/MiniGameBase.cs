@@ -8,8 +8,8 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     [SerializeField] private float _duration;
 
     [Header("결과에 따른 내용")]
-    [SerializeField] private MiniGameReward[] _sucessReward;
-    [SerializeField] private MiniGameReward[] _failRewaord;
+    [SerializeField] private MiniGameReward[] _successReward;
+    [SerializeField] private MiniGameReward[] _failReward;
 
     public string Id => _id;
     public float Duration => _duration;
