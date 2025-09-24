@@ -24,7 +24,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     private float elapsedTime; // 경과 시간 추적용 변수
 
     // 수명주기 메서드 구현   
-    public void Init()
+    public virtual void Init()
     {
         RemainingTime = Duration;
         IsRunning = false;
