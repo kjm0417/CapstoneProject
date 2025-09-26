@@ -4,14 +4,20 @@ using UnityEngine;
 public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
 {
     [SerializeField]
-    GameObject SubjectItem;
+    SubjectItem SubjectItem;
 
     [SerializeField]
     Transform SubjectItemParent;
 
+    private ObjectPool<SubjectItem> itemPool;
+
+    private List<SubjectItem> activeItems = new List<SubjectItem>(); // 현재 사용 중인 아이템 캐싱
     protected override void Awake()
     {
         base.Awake();
+
+        //런타임 중 Instantiate 최소화
+        itemPool = new ObjectPool<SubjectItem>(SubjectItem, 7, SubjectItemParent);
     }
 
     private void OnEnable()
@@ -21,22 +27,23 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
 
     private void OnDisable()
     {
+       
         EventBus.UnSubscribe<List<QuestData>>(QuestManager.OnQuestStarted, UpdateQuestUI);
     }
 
     private void UpdateQuestUI(List<QuestData> questDataList) //퀘스트가 시작 되면 호출
     {
-        foreach( Transform item in SubjectItemParent)
+        foreach(SubjectItem subjectItem in activeItems)
         {
-            Destroy(item.gameObject);
+            itemPool.Return(subjectItem);
         }
+        activeItems.Clear();
 
         foreach(QuestData questData in questDataList)
         {
-            GameObject subjectItem = Instantiate(SubjectItem, SubjectItemParent);
-            subjectItem.GetComponent<SubjectItem>().
-                SubjectSet(questData.Period, questData.Subject,questData.StartPage,questData.EndPage);
-       
+            SubjectItem subjectItem = itemPool.Get();
+            subjectItem.SubjectSet(questData.Period, questData.Subject, questData.StartPage, questData.EndPage);
+            activeItems.Add(subjectItem);
         }
        
     }

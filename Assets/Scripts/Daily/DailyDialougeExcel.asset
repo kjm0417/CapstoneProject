@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d46376e47a4a8a248a4136fd7036f0f9, type: 3}
+  m_Name: DailyDialougeExcel
+  m_EditorClassIdentifier: 
+  DailySelect:
+  - StateName: WakeUp
+    PlayerDialogue: "\uC878\uB9AC\uB2E4\u2026"
+    Choice1: "\uC54C\uB78C\uC744 \uD2BC\uB2E4"
+    ResultMiniGame1: AlarmGame
+    NextState1: PrepareSchool
+    Choice2: "\uD559\uAD50 \uAC08 \uC900\uBE44\uB97C \uD55C\uB2E4"
+    NextState2: PrepareSchool
+    Choice3: "\uADF8\uB0E5 \uB354 \uC790\uACE0 \uC2F6\uB2E4 (\uAC8C\uC73C\uB984)"
+    NextState3: PrepareSchool
+  - StateName: PrepareSchool
+    PlayerDialogue: "\uBB50 \uD0C0\uACE0 \uD559\uAD50 \uAC08\uAE4C?"
+    Choice1: "\uBC84\uC2A4\uB97C \uD0C4\uB2E4"
+    ResultMiniGame1: BusGame
+    NextState1: CommuteByBus
+    Choice2: "\uC790\uB3D9\uCC28\uB97C \uD0C4\uB2E4"
+    NextState2: CommuteByCar
+    Choice3: "\uC9C0\uAC01\uD560\uAE4C\uBD10 \uBD88\uC548\uD558\uB2E4"
+    NextState3: CommuteByBus
+  - StateName: CommuteByBus
+    PlayerDialogue: "\uBC84\uC2A4\uC5D0 \uD0D4\uB2E4"
+    Choice1: "\uCC3D\uBC16\uC744 \uBCF8\uB2E4"
+    ResultMiniGame1: BusQuiz
+    NextState1: AtSchool
+    Choice2: "\uD578\uB4DC\uD3F0\uC744 \uBCF8\uB2E4"
+    NextState2: AtSchool
+    Choice3: "\uBD90\uBE44\uB294 \uBC84\uC2A4\uC5D0 \uC9DC\uC99D\uB09C\uB2E4"
+    NextState3: AtSchool
+  - StateName: CommuteByCar
+    PlayerDialogue: "\uCC28\uB85C \uC774\uB3D9 \uC911\u2026"
+    Choice1: "\uC548\uC804\uC6B4\uC804\uC744 \uD55C\uB2E4"
+    ResultMiniGame1: DrivingGame
+    NextState1: AtSchool
+    Choice2: "\uC74C\uC545\uC744 \uB4E3\uB294\uB2E4"
+    NextState2: AtSchool
+    Choice3: "\uCC28\uAC00 \uB9C9\uD600\uC11C \uB2F5\uB2F5\uD558\uB2E4"
+    NextState3: AtSchool
+  - StateName: AtSchool
+    PlayerDialogue: "\uC624\uB298\uB3C4 \uC218\uC5C5 \uC2DC\uC791!"
+    Choice1: "\uACF5\uBD80\uB97C \uD55C\uB2E4"
+    ResultMiniGame1: MathGame
+    NextState1: CommuteBackByBus
+    Choice2: "\uB3D9\uC544\uB9AC \uD65C\uB3D9"
+    NextState2: CommuteBackByWalk
+    Choice3: "\uC9D1\uC911\uC774 \uC798 \uC548\uB41C\uB2E4 (\uD53C\uACE4\uD568)"
+    NextState3: CommuteBackByBus
+  - StateName: CommuteBackByBus
+    PlayerDialogue: "\uBC84\uC2A4\uB85C \uADC0\uAC00 \uC911\u2026"
+    Choice1: "\uC9D1\uC73C\uB85C \uAC04\uB2E4"
+    ResultMiniGame1: BusPuzzle
+    NextState1: AtHome
+    Choice2: "\uC2A4\uD130\uB514\uCE74\uD398\uB85C \uAC04\uB2E4"
+    NextState2: AtStudyCafe
+    Choice3: "\uC9D1\uC5D0 \uAC00\uACE0 \uC2F6\uC5B4 (\uC9C0\uCE68)"
+    NextState3: AtHome
+  - StateName: CommuteBackByWalk
+    PlayerDialogue: "\uAC78\uC5B4\uC11C \uADC0\uAC00 \uC911\u2026"
+    Choice1: "\uC9D1\uC73C\uB85C \uAC04\uB2E4"
+    ResultMiniGame1: StepCounter
+    NextState1: AtHome
+    Choice2: "\uC2A4\uD130\uB514\uCE74\uD398\uB85C \uAC04\uB2E4"
+    NextState2: AtStudyCafe
+    Choice3: "\uBC14\uB78C \uC42C\uB2C8 \uAE30\uBD84\uC774 \uC88B\uB2E4"
+    NextState3: AtHome
+  - StateName: AtHome
+    PlayerDialogue: "\uC9D1\uC5D0 \uB3C4\uCC29\uD588\uB2E4"
+    Choice1: "\uC218\uBA74\uD55C\uB2E4"
+    ResultMiniGame1: RelaxGame
+    NextState1: Sleep
+    Choice2: "\uACF5\uBD80\uD558\uB7EC \uAC04\uB2E4"
+    NextState2: AtStudyCafe
+    Choice3: "\uADF8\uB0E5 \uB204\uC6CC\uC788\uACE0 \uC2F6\uB2E4 (\uBB34\uAE30\uB825)"
+    NextState3: Sleep
+  - StateName: AtStudyCafe
+    PlayerDialogue: "\uC2A4\uD130\uB514\uCE74\uD398\uC5D0\uC11C \uACF5\uBD80\uD55C\uB2E4"
+    Choice1: "\uC5F4\uC2EC\uD788 \uACF5\uBD80\uD55C\uB2E4"
+    ResultMiniGame1: FocusGame
+    NextState1: AtHome
+    Choice2: "\uC9D1\uC73C\uB85C \uAC04\uB2E4"
+    NextState2: AtHome
+    Choice3: "\uACF5\uBD80\uD558\uAE30 \uC2EB\uB2E4 (\uC9DC\uC99D\uB0A8)"
+    NextState3: Sleep
+  - StateName: Sleep
+    PlayerDialogue: "\uC624\uB298 \uD558\uB8E8 \uB05D"
+    Choice1: 
+    ResultMiniGame1: 
+    NextState1: 
+    Choice2: 
+    NextState2: 
+    Choice3: "\uB0B4\uC77C\uC740 \uB354 \uC798\uD558\uACE0 \uC2F6\uB2E4 (\uB2E4\uC9D0)"
+    NextState3: WakeUp
