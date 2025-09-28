@@ -2,22 +2,20 @@ using UnityEngine;
 
 public class WakeUp : IDailyRoutine
 {
-    public void Enter()
+    public string DailyName { get; set; }
+    public WakeUp() { }
+
+    public WakeUp(string DailyName)
     {
-        EventBus.Subscribe<IDailyRoutine>(DailyManager.OnDailyStarted, Excute);
+        this.DailyName = DailyName;
+    }
+    public void Enter(IDailyRoutine dailyRoutine)
+    {
+        EventBus.Publish(DailyManager.OnDailyWakeUp, dailyRoutine);
     }
 
-    public void Excute(IDailyRoutine routine)
-    {
-        EventBus.Publish(DialogueManager.OnDialougeSelected, routine);
-    }
-
-    public void MiniGame()
-    {
-
-    }
     public void Exit()
     {
-        EventBus.UnSubscribe<IDailyRoutine>(DailyManager.OnDailyStarted, Excute);
+       
     }
 }

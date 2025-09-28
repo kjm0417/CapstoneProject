@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +8,7 @@ using UnityEngine.UI;
 [System.Serializable]
 public struct Speaker //화자의 정보를 저장하는 Speaker 구조체 정의
 {
-    public SpriteRenderer spriteRender; //캐릭터 이미지
+    public Image PlayerImage; //캐릭터 이미지
     public Image imageDialog; //대화창 Image UI
     public TextMeshProUGUI textName; //화자 이름
     public TextMeshProUGUI textDialouge; //대화 텍스트
@@ -22,17 +24,19 @@ public struct DialogData //화자 이름과 대사 정보를 저장하는 DialogData 구조체 정
     public string dialogue; //대사
 }
 
-public class DialougeSystem : MonoBehaviour
+public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되는 시스템
 {
     [SerializeField]
     DailyDialougeExcel DailyDialougeDB;
-
 
     [SerializeField]
     private Speaker[] Speakers; //대화에 참여하는 캐릭터들의 UI 배열
 
     [SerializeField]
     private DialogData[] Dialogs; //현재 분기의 대사 목록 배열
+
+
+
 
     [SerializeField]
     private bool isAutoStart = true; //자동 시작여부
@@ -43,22 +47,17 @@ public class DialougeSystem : MonoBehaviour
     private float typingSpeed = 0.1f; //텍스트 타이핑 효과 재생속도
     private bool isTypingEffect = false; //텍스트 타이핑 효과를 재생중인지
 
-    private string LocalStateName = "WakeUp";
-    private void Awake()
+    private bool isChoiceDialouge = false; //스토리 진행 대사가 아닌, 다음 일상으로 가는 대사인지 아닌지 여부
+
+    private void Start()
     {
-        int index = 0;
+        Dialogs = new DialogData[3];
+    }
 
-        for(int i = 0; i < DailyDialougeDB.DailySelect.Count; ++i)
-        {
-            if (DailyDialougeDB.DailySelect[i].StateName == LocalStateName)
-            {
-                Dialogs[index].name = DailyDialougeDB.DailySelect[i].StateName;
-                Dialogs[index].dialogue = DailyDialougeDB.DailySelect[i].PlayerDialogue;
-                index++;
-            }
-        }
-
-        SetUp();
+    //선택 대사 다이얼로그 세팅
+    public void InitSelectDialouge()
+    {
+        //Dialogs 동적으로 크기 할당
     }
 
     /// <summary>
@@ -66,13 +65,13 @@ public class DialougeSystem : MonoBehaviour
     /// - 모든 대화 관련 게임 오브젝트 비활성화 및
     /// 캐릭터 이미지를 보이도록 설정
     /// </summary>
-    private void SetUp() 
+    private void SetUp()
     {
-        for(int i = 0; i< Speakers.Length; i++)
-        {
+        for (int i = 0; i< Speakers.Length; i++)
+        { 
             SetActiveObjects(Speakers[i], false); //대화 관련 게임 오브젝트 비활성화
 
-            Speakers[i].spriteRender.gameObject.SetActive(true); //캐릭터 이미지는 보이도록
+            Speakers[i].PlayerImage.gameObject.SetActive(true); //캐릭터 이미지는 보이도록
         }
     }
 
@@ -116,11 +115,13 @@ public class DialougeSystem : MonoBehaviour
             }
             else //대사가 더 이상 없을 경우 모든 오브젝트를 비활성화하고 true 반환
             {
+
                 for (int i = 0; i < Speakers.Length; i++)
-                {
+                {                  
+
                     SetActiveObjects(Speakers[i], false); //대화 관련 게임 오브젝트 비활성화
 
-                    Speakers[i].spriteRender.gameObject.SetActive(false); //캐릭터 이미지는 보이지 않게
+                    Speakers[i].PlayerImage.gameObject.SetActive(false); //캐릭터 이미지는 보이지 않게
                 }
                 return true;
             }
@@ -162,6 +163,7 @@ public class DialougeSystem : MonoBehaviour
     /// 
     private void SetActiveObjects(Speaker speaker, bool isActive)
     {
+
         speaker.imageDialog.gameObject.SetActive(isActive);
         speaker.textName.gameObject.SetActive(isActive);
         speaker.textDialouge.gameObject.SetActive(isActive);
@@ -169,9 +171,10 @@ public class DialougeSystem : MonoBehaviour
         speaker.objectArrow.SetActive(false); //화살표는 대사 종료되었을 때만 활성화하기 때문에 항상 false;
 
         //캐릭터 알파 값 변경
-        Color color = speaker.spriteRender.color;
+        Color color = speaker.PlayerImage.color;
         color.a = isActive == true ? 1 : 0.2f;
-        speaker.spriteRender.color = color;
+        speaker.PlayerImage.color = color;
+
     }
 
 

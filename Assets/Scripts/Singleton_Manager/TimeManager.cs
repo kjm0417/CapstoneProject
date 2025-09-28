@@ -49,7 +49,7 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         currentGameDate = new GameDate(month, day, remainDay, dayOfWeek);
 
         EventBus.Publish(OnDayStarted, currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
-        //EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
+        EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
 
     }
 
@@ -74,7 +74,7 @@ public class TimeManager : SingleTonGeneric<TimeManager>
 
 
         EventBus.Publish(OnDayStarted,currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
-        //EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
+        EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
     }
 
 }

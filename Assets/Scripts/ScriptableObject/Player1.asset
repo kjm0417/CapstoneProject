@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 364d7266cb4d3fe40997358c68fccc89, type: 3}
   m_Name: Player1
   m_EditorClassIdentifier: 
+  playerImage: {fileID: 21300000, guid: d58d8a1c1c8c2df4d8eaf66e3ab90211, type: 3}
   id: "\uC8FC\uC778\uACF51"
-  moveSpeed: 3.5
   maxHP: 10
   stress: 15
   concentration: 75
+  moveSpeed: 3.5
   animatorController: {fileID: 9100000, guid: e5cec5c37bd12424c846cebff5dbd282, type: 2}
+  resourcesAddress: 
+  defaultSpriteName: 
