@@ -16,7 +16,7 @@ MonoBehaviour:
   - Day: 1
     Pattern: "\uBC29"
     PlayerId: 0
-    DialogueOrder: 0
+    PlayerImagePos: 0
     DialougeType: Story
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uC77C\uC5B4\uB098\uC57C\uC9C0\u2026"
@@ -24,7 +24,7 @@ MonoBehaviour:
   - Day: 1
     Pattern: "\uBC29"
     PlayerId: 0
-    DialogueOrder: 1
+    PlayerImagePos: 0
     DialougeType: Story
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uC624\uB298 \uB2A6\uC7A0\uC774\uB124?"
@@ -32,15 +32,31 @@ MonoBehaviour:
   - Day: 1
     Pattern: "\uBC29"
     PlayerId: 0
-    DialogueOrder: 0
+    PlayerImagePos: 0
     DialougeType: Transition
     PlayerName: "\uBBFC\uC8FC"
-    PlayerDialogue: "\"\uD559\uAD50 \uAC00\uC790."
+    PlayerDialogue: "\uD559\uAD50 \uAC00\uC57C \uD560 \uC2DC\uAC04\uC774\uB2E4."
+    Choices: 
+  - Day: 1
+    Pattern: "\uBC29"
+    PlayerId: 1
+    PlayerImagePos: 2
+    DialougeType: Transition
+    PlayerName: "\uCC44\uC740"
+    PlayerDialogue: "\uB098\uB3C4 \uAC19\uC774 \uAC08\uB798"
+    Choices: 
+  - Day: 1
+    Pattern: "\uBC29"
+    PlayerId: 0
+    PlayerImagePos: 0
+    DialougeType: Transition
+    PlayerName: "\uBBFC\uC8FC"
+    PlayerDialogue: "\uBB50 \uD0C0\uACE0 \uAC00\uC9C0?"
     Choices: "\uC120\uD0DD1,\uC120\uD0DD2"
   - Day: 1
     Pattern: "\uB4F1\uAD50"
     PlayerId: 0
-    DialogueOrder: 0
+    PlayerImagePos: 0
     DialougeType: Story
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uB3C4\uCC29\uD588\uB2E4."

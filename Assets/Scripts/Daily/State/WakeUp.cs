@@ -11,7 +11,7 @@ public class WakeUp : IDailyRoutine
     }
     public void Enter(IDailyRoutine dailyRoutine)
     {
-        EventBus.Publish(DailyManager.OnDailyWakeUp, dailyRoutine);
+        EventBus.Publish(DailyRoutineManager.OnDailyWakeUp, dailyRoutine);
     }
 
     public void Exit()

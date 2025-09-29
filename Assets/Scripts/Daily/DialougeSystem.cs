@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.VirtualTexturing;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 [System.Serializable]
 public struct Speaker //화자의 정보를 저장하는 Speaker 구조체 정의
@@ -22,10 +24,14 @@ public struct DialogData //화자 이름과 대사 정보를 저장하는 DialogData 구조체 정
     public string name; //캐릭터 이름
     [TextArea(3, 5)] //3열 5행까지 
     public string dialogue; //대사
+    public string choices; //선택 대사
+    public int speakerImagePos; //플레이어 이미지 UI 위치 : 0 - 왼쪽 , 1 - 중간 , 2 - 오른쪽
+
 }
 
-public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되는 시스템
+public class DialougeSystem : SingleTonGeneric<DialougeSystem> //일상적인 대화 또는 스토리가 진행되는 시스템
 {
+
     [SerializeField]
     DailyDialougeExcel DailyDialougeDB;
 
@@ -35,29 +41,68 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
     [SerializeField]
     private DialogData[] Dialogs; //현재 분기의 대사 목록 배열
 
-
-
-
     [SerializeField]
     private bool isAutoStart = true; //자동 시작여부
     private bool isFirst = true; //최초 1회만 호출하기 위한 변수
+    [SerializeField]
     private int currentDialogIndex = -1; //현재 대사 순번
+    [SerializeField]
     private int currentSpeakerIndex = 0; //현재 말을 하는 화자(Speaker)의 speakers 배열 순번
 
+    [SerializeField]
     private float typingSpeed = 0.1f; //텍스트 타이핑 효과 재생속도
     private bool isTypingEffect = false; //텍스트 타이핑 효과를 재생중인지
 
-    private bool isChoiceDialouge = false; //스토리 진행 대사가 아닌, 다음 일상으로 가는 대사인지 아닌지 여부
+    [SerializeField] private Transform leftAnchor;
+    [SerializeField] private Transform centerAnchor;
+    [SerializeField] private Transform rightAnchor;
 
-    private void Start()
+    private void OnEnable()
     {
-        Dialogs = new DialogData[3];
+        EventBus.Subscribe<bool>(DailyRoutineManager.OnReturnButtonSelected, SetUpUI);
     }
 
-    //선택 대사 다이얼로그 세팅
-    public void InitSelectDialouge()
+    private void OnDisable()
     {
-        //Dialogs 동적으로 크기 할당
+        EventBus.UnSubscribe<bool>(DailyRoutineManager.OnReturnButtonSelected, SetUpUI);
+    }
+
+    /// <summary>
+    /// 선택 대사의 액셀 데이터들을 받아와서 해당 선택 대사에 맞는 대화를 진행할 수 있게 데이터 값을 저장
+    /// </summary>
+    public void InitSelectDialouge(DialogData[] dialogs , bool isAuto)
+    {
+        Debug.Log("구독");
+
+        Dialogs = dialogs;
+        isAutoStart = isAuto;
+
+        currentDialogIndex = -1;
+        currentSpeakerIndex = 0;
+        isFirst = true;
+        isTypingEffect = false;
+
+        //로그 테스트용
+        for(int i = 0; i < Dialogs.Length; i++)
+        {
+            Debug.Log($"대사 순번 : {Dialogs[i].speakerIndex} \n 화자 이름 :  {Dialogs[i].name}\n 대사 내용 : {Dialogs[i].dialogue}\n  선택 대사 : {Dialogs[i].choices}\n");
+        }
+
+        if(isAutoStart && Dialogs.Length > 0)
+        {
+            Debug.Log("선택 대사 진행");
+            StartCoroutine(DialogueFlow());
+        }
+    }
+
+    IEnumerator DialogueFlow()
+    {
+        // UpdateDialog가 true 반환될 때까지 반복
+        while (!UpdateDialog())
+        {
+            yield return null;
+        }
+        Debug.Log("대화 종료됨");
     }
 
     /// <summary>
@@ -65,14 +110,16 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
     /// - 모든 대화 관련 게임 오브젝트 비활성화 및
     /// 캐릭터 이미지를 보이도록 설정
     /// </summary>
-    private void SetUp()
+    private void SetUpUI(bool isActive)
     {
-        for (int i = 0; i< Speakers.Length; i++)
-        { 
+        for (int i = 0; i < Speakers.Length; i++)
+        {
             SetActiveObjects(Speakers[i], false); //대화 관련 게임 오브젝트 비활성화
 
-            Speakers[i].PlayerImage.gameObject.SetActive(true); //캐릭터 이미지는 보이도록
+            Speakers[i].PlayerImage.gameObject.SetActive(isActive); //캐릭터 이미지는 보이도록
         }
+
+        isSelectDialougeLast = false;
     }
 
     /// <summary>
@@ -82,7 +129,7 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
     {
        if(isFirst == true) //대사 분기가 시작될 때, 1회만 호출
         {
-            SetUp(); //초기화. 
+            SetUpUI(true); //초기화. 
 
             if(isAutoStart) //자동 재생(isAutoStart가 true)로 되어 있으면 
             {
@@ -91,9 +138,9 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
 
             isFirst = false;
 
-        }
+       }
 
-       if(Input.GetMouseButtonDown(0))
+       if(Input.GetMouseButtonDown(0) && !isSelectDialougeLast)
         {
             if(isTypingEffect) //텍스트 타이핑효과를 재생중일 때 , 마우스 왼 클릭 시, 효과 종료
             {
@@ -115,14 +162,8 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
             }
             else //대사가 더 이상 없을 경우 모든 오브젝트를 비활성화하고 true 반환
             {
+                SetUpUI(false);
 
-                for (int i = 0; i < Speakers.Length; i++)
-                {                  
-
-                    SetActiveObjects(Speakers[i], false); //대화 관련 게임 오브젝트 비활성화
-
-                    Speakers[i].PlayerImage.gameObject.SetActive(false); //캐릭터 이미지는 보이지 않게
-                }
                 return true;
             }
         }
@@ -134,6 +175,7 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
     /// </summary>
     private void SetNextDialogue()
     {
+
         //이전 화자 대화 관련 오브젝트 비활성화
         SetActiveObjects(Speakers[currentSpeakerIndex], false);
 
@@ -149,6 +191,8 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
         //현재 화자 이름 텍스트 설정
         Speakers[currentSpeakerIndex].textName.text = Dialogs[currentDialogIndex].name;
 
+        ApplySpeakerPosition(Speakers[currentSpeakerIndex], Dialogs[currentDialogIndex].speakerImagePos);
+
         //현재 화자의 대사 텍스트 설정
         //Speakers[currentSpeakerIndex].textDialouge.text = Dialogs[currentDialogIndex].dialogue; //주석: 이 코드는 대화 한번에 출력이므로, 타이핑 효과 내기 위함임
 
@@ -160,7 +204,6 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
     /// <summary>
     /// 화자의 대화 관련 오브젝트 활성화 및 비활성화 하는 메서드 , 화자가 대화를 하고 있나 없나에 따라 알파값 설정
     /// </summary>
-    /// 
     private void SetActiveObjects(Speaker speaker, bool isActive)
     {
 
@@ -170,16 +213,37 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
 
         speaker.objectArrow.SetActive(false); //화살표는 대사 종료되었을 때만 활성화하기 때문에 항상 false;
 
-        //캐릭터 알파 값 변경
+        //캐릭터 이미지 UI 알파 값 변경
         Color color = speaker.PlayerImage.color;
-        color.a = isActive == true ? 1 : 0.2f;
+        color.a = isActive == true ? 1 : 0f;
         speaker.PlayerImage.color = color;
 
     }
+    /// <summary>
+    /// 화자의 캐릭터 UI 위치 설정하는 메서드
+    /// </summary>
+    private void ApplySpeakerPosition(Speaker speaker, int ImagePos)
+    {
+        switch (ImagePos)
+        {
+            case 0: speaker.PlayerImage.transform.position = leftAnchor.position; break;
+            case 1: speaker.PlayerImage.transform.position = centerAnchor.position; break;
+            case 2: speaker.PlayerImage.transform.position = rightAnchor.position; break;
+        }
+    }
 
-
+    [SerializeField]
+    bool isSelectDialougeLast; //마지막 선택 대사일 때
     IEnumerator OnTypingText()
     {
+        if (currentDialogIndex == Dialogs.Length - 1)
+        {
+            isSelectDialougeLast = true;
+
+            Debug.Log("마지막 대사" + Dialogs[currentDialogIndex].choices);
+            EventBus.Publish<string>(DailyRoutineManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
+        }
+
         int index = 0;
         isTypingEffect = true;
 
@@ -199,5 +263,8 @@ public class DialougeSystem : MonoBehaviour //일상적인 대화 또는 스토리가 진행되
 
         //대사 완료시 커서 활성화
         Speakers[currentSpeakerIndex].objectArrow.SetActive(true);
+
+
+
     }
 }
