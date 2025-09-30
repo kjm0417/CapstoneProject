@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 /// <summary>
 /// Push Out 미니게임
@@ -66,6 +67,12 @@ public class PushOutMiniGame : MiniGameBase
         public float impulseStrength = 5f;
         [Tooltip("푸셔 생존 시간(초)")]
         public float lifetime = 4.5f;
+        [Tooltip("스폰 시 트리거를 재생할 애니메이터(선택)")]
+        public Animator spawnAnimator;
+        [Tooltip("스폰 애니메이터에 설정할 트리거 이름(선택)")]
+        public string spawnTriggerName = "Spawn";
+        [Tooltip("푸셔 스폰 시 호출되는 이벤트(선택)")]
+        public UnityEvent onSpawn = new UnityEvent();
 
         [HideInInspector] public bool hasSpawned;
     }
@@ -208,6 +215,24 @@ public class PushOutMiniGame : MiniGameBase
         float speed = Random.Range(lane.speedRange.x, lane.speedRange.y) * speedMultiplier;
         float lifetime = Mathf.Max(0.5f, lane.lifetime);
         instance.Configure(direction, speed, lane.impulseStrength, lifetime);
+
+        if (lane.spawnAnimator)
+        {
+            if (!string.IsNullOrEmpty(lane.spawnTriggerName))
+            {
+                lane.spawnAnimator.SetTrigger(lane.spawnTriggerName);
+            }
+            else
+            {
+                Debug.LogWarning($"[PushOutMiniGame] Lane '{lane.laneName}' 애니메이터에 사용할 트리거 이름이 비어 있습니다.");
+            }
+        }
+        else if (!string.IsNullOrEmpty(lane.spawnTriggerName))
+        {
+            Debug.LogWarning($"[PushOutMiniGame] Lane '{lane.laneName}'에 트리거 '{lane.spawnTriggerName}'가 지정되었지만 애니메이터가 비어 있습니다.");
+        }
+
+        lane.onSpawn?.Invoke();
 
         _alivePushers.Add(instance);
     }
