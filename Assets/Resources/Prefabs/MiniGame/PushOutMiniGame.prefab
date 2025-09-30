@@ -631,38 +631,38 @@ MonoBehaviour:
   - laneName: right
     spawnPoint: {fileID: 844775102809972976}
     direction: {x: 0, y: 0}
-    initialDelay: 0
-    intervalRange: {x: 0, y: 0}
+    initialDelay: 1
+    intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 0
-    lifetime: 0
+    impulseStrength: 3
+    lifetime: 1.5
     timer: 0
   - laneName: Up
     spawnPoint: {fileID: 4817511193626183395}
     direction: {x: 0, y: 0}
-    initialDelay: 0
-    intervalRange: {x: 0, y: 0}
+    initialDelay: 1.5
+    intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 0
-    lifetime: 0
+    impulseStrength: 3
+    lifetime: 1.5
     timer: 0
   - laneName: Left
     spawnPoint: {fileID: 4922142739564779850}
     direction: {x: 0, y: 0}
-    initialDelay: 0
-    intervalRange: {x: 0, y: 0}
+    initialDelay: 2
+    intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 0
-    lifetime: 0
+    impulseStrength: 3
+    lifetime: 1.5
     timer: 0
   - laneName: Right
     spawnPoint: {fileID: 8916596827171706662}
     direction: {x: 0, y: 0}
-    initialDelay: 0
-    intervalRange: {x: 0, y: 0}
+    initialDelay: 3
+    intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 0
-    lifetime: 0
+    impulseStrength: 3
+    lifetime: 1.5
     timer: 0
   intervalMultiplierByProgress:
     serializedVersion: 2
