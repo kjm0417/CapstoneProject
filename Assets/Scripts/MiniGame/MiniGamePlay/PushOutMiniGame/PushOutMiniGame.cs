@@ -44,6 +44,8 @@ public class PushOutMiniGame : MiniGameBase
 
     private readonly List<PushOutPusher> _alivePushers = new List<PushOutPusher>();
     private float _elapsed;
+    private float _globalSpawnTimer;
+    private int _currentLaneIndex = -1;
 
     [System.Serializable]
     private class PusherLane
@@ -65,7 +67,7 @@ public class PushOutMiniGame : MiniGameBase
         [Tooltip("푸셔 생존 시간(초)")]
         public float lifetime = 4.5f;
 
-        [HideInInspector] public float timer;
+        [HideInInspector] public bool hasSpawned;
     }
 
     // ================= MiniGameBase Hooks =================
@@ -92,7 +94,18 @@ public class PushOutMiniGame : MiniGameBase
         foreach (var lane in lanes)
         {
             if (lane == null) continue;
-            lane.timer = Mathf.Max(0f, lane.initialDelay);
+            lane.hasSpawned = false;
+        }
+
+        _currentLaneIndex = SelectRandomLaneIndex(-1);
+        _globalSpawnTimer = 0f;
+        if (_currentLaneIndex >= 0)
+        {
+            PusherLane initialLane = lanes[_currentLaneIndex];
+            if (initialLane != null)
+            {
+                _globalSpawnTimer = Mathf.Max(0f, initialLane.initialDelay);
+            }
         }
 
         UpdateWarningUI(0f);
@@ -114,6 +127,8 @@ public class PushOutMiniGame : MiniGameBase
         ClearPushers();
         player?.Cleanup();
         UpdateWarningUI(0f);
+        _currentLaneIndex = -1;
+        _globalSpawnTimer = 0f;
     }
 
     private void FixedUpdate()
@@ -139,17 +154,37 @@ public class PushOutMiniGame : MiniGameBase
             ? Mathf.Max(0.05f, speedMultiplierByProgress.Evaluate(progress))
             : 1f;
 
-        foreach (var lane in lanes)
+        if (_currentLaneIndex < 0 || _currentLaneIndex >= lanes.Count || lanes[_currentLaneIndex] == null)
         {
-            if (lane == null) continue;
+            _currentLaneIndex = SelectRandomLaneIndex(-1);
+            if (_currentLaneIndex < 0) return;
+        }
 
-            lane.timer -= dt;
-            if (lane.timer > 0f) continue;
+        _globalSpawnTimer -= dt;
+        if (_globalSpawnTimer > 0f) return;
 
-            SpawnPusher(lane, speedMultiplier);
+        PusherLane laneToSpawn = lanes[_currentLaneIndex];
+        if (laneToSpawn == null)
+        {
+            _currentLaneIndex = SelectRandomLaneIndex(-1);
+            return;
+        }
 
-            float baseInterval = Random.Range(lane.intervalRange.x, lane.intervalRange.y);
-            lane.timer = Mathf.Max(0.1f, baseInterval * intervalMultiplier);
+        SpawnPusher(laneToSpawn, speedMultiplier);
+        laneToSpawn.hasSpawned = true;
+
+        float baseInterval = Random.Range(laneToSpawn.intervalRange.x, laneToSpawn.intervalRange.y);
+        _globalSpawnTimer = Mathf.Max(0.1f, baseInterval * intervalMultiplier);
+
+        int previousLaneIndex = _currentLaneIndex;
+        _currentLaneIndex = SelectRandomLaneIndex(previousLaneIndex);
+        if (_currentLaneIndex >= 0)
+        {
+            PusherLane nextLane = lanes[_currentLaneIndex];
+            if (nextLane != null && !nextLane.hasSpawned)
+            {
+                _globalSpawnTimer = Mathf.Max(_globalSpawnTimer, Mathf.Max(0f, nextLane.initialDelay));
+            }
         }
     }
 
@@ -158,7 +193,6 @@ public class PushOutMiniGame : MiniGameBase
         if (!pusherPrefab)
         {
             Debug.LogWarning("[PushOutMiniGame] 푸셔 프리팹이 지정되지 않았습니다.");
-            lane.timer = Mathf.Max(lane.timer, 0.5f);
             return;
         }
 
@@ -176,6 +210,23 @@ public class PushOutMiniGame : MiniGameBase
         instance.Configure(direction, speed, lane.impulseStrength, lifetime);
 
         _alivePushers.Add(instance);
+    }
+
+    private int SelectRandomLaneIndex(int excludeIndex)
+    {
+        if (lanes == null || lanes.Count == 0) return -1;
+
+        List<int> candidates = new List<int>();
+        for (int i = 0; i < lanes.Count; i++)
+        {
+            if (lanes[i] == null) continue;
+            if (excludeIndex >= 0 && lanes.Count > 1 && i == excludeIndex) continue;
+            candidates.Add(i);
+        }
+
+        if (candidates.Count == 0) return -1;
+        int randomIndex = Random.Range(0, candidates.Count);
+        return candidates[randomIndex];
     }
 
     private void ClearPushers()
