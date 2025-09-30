@@ -42,8 +42,8 @@ public class PushOutPlayer : MonoBehaviour
 
         body.simulated = true;
         body.gravityScale = 0f;
-        body.drag = 0f;
-        body.angularDrag = 0f;
+        body.linearDamping = 0f;
+        body.angularDamping = 0f;
         body.freezeRotation = true;
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
         body.position = startPosition;
