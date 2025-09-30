@@ -32,7 +32,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -10, y: 0}
   m_SizeDelta: {x: 100, y: 127.65}
   m_Pivot: {x: 1, y: 0}
 --- !u!1 &760901828114955013
@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 1924763108452156647}
   - component: {fileID: 2175465539442460291}
   - component: {fileID: 6953855523981707338}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Pnl_floor (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -350,7 +350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 897525838662926516}
   col: {fileID: 3740209970190247242}
-  jumpVelocity: 14
+  jumpVelocity: 18
   gravityScale: 4.5
   groundMask:
     serializedVersion: 2
@@ -450,7 +450,7 @@ GameObject:
   - component: {fileID: 3631038276680814750}
   - component: {fileID: 6199947139349923499}
   - component: {fileID: 72165682640023056}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Pnl_floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -473,7 +473,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -0.00000047683716, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1280, y: 130}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &5021657011505262319

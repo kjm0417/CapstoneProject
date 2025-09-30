@@ -74,7 +74,10 @@ public class MiniGamePopupRunner : MonoBehaviour
     /// </summary>
     public void Abort(string reason = "USER_ABORT")
     {
-        if (_game != null && _game.IsRunning) _game.Abort(reason);
+        if (_game != null && _game.IsRunning)
+        {
+            _game.Abort(reason);
+        }
         else
         {
             slide?.Hide();

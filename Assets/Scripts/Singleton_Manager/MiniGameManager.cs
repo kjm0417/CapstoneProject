@@ -45,6 +45,7 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
     /// <summary>
     /// 레지스트리 맵 구성 및 EventBus 구독
     /// </summary>
+    //Todo : Awake -> Start 변경 고려, EventBus 구독 
     private void Awake()
     {
         // 테이블 -> 맵

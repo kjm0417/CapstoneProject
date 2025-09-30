@@ -1,54 +1,52 @@
 using UnityEngine;
 
 /// <summary>
-/// �̴ϰ��� ���� 2D �÷��̾� ��Ʈ�ѷ�(���� ���)
-/// - �Է� ����, �ڿ��� Ÿ��, ������(Ű ���� �� ������ ����) ����
-/// - ���� ����(���� OverlapBox + �ϰ� Raycast ����)
-/// - �ܺο��� Update/FixedUpdate�� ���� ȣ���ϴ� ����: HandleInput(), FixedTick()
-/// - �ʱ� ��ġ�� PlaceOnGround(groundCollider2D)�� ����
+/// 공룡 점프 미니게임용 2D 플레이어 컨트롤러(점프 전용)
+/// - 입력 처리, 코요테 타임, 점프 버퍼(키 입력 및 터치 지원) 구현
+/// - 바닥 체크(박스 Overlap + 아래쪽 Raycast 병행)
+/// - 매 프레임 Update/FixedUpdate에서 HandleInput(), FixedTick() 호출 필요
+/// - 초기 위치는 PlaceOnGround(groundCollider2D)로 지정
 /// </summary>
 [DisallowMultipleComponent]
 public class DinoJumpPlayer : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("�÷��̾� Rigidbody2D (Dynamic)")]
+    [Tooltip("플레이어 Rigidbody2D (Dynamic)")]
     [SerializeField] private Rigidbody2D body;
-    [Tooltip("�÷��̾� BoxCollider2D")]
+    [Tooltip("플레이어 BoxCollider2D")]
     [SerializeField] private BoxCollider2D col;
 
     [Header("Physics")]
-    [Tooltip("���� �ʱ� �ӵ� (���� +, m/s)")]
+    [Tooltip("점프 초기 속도 (위 방향 +, m/s)")]
     [SerializeField] private float jumpVelocity = 14f;
-    [Tooltip("�߷� ������")]
+    [Tooltip("중력 배율")]
     [SerializeField] private float gravityScale = 4.5f;
-    [Tooltip("���� ���̾� ����ũ")]
+    [Tooltip("바닥 레이어 마스크")]
     [SerializeField] private LayerMask groundMask = ~0;
 
     [Header("Leniency")]
-    [Tooltip("���� �Է� ����(��)")]
+    [Tooltip("점프 입력 버퍼(초)")]
     [SerializeField] private float jumpBufferTime = 0.12f;
-    [Tooltip("�ڿ��� Ÿ��(��)")]
+    [Tooltip("코요테 타임(초)")]
     [SerializeField] private float coyoteTime = 0.12f;
 
     [Header("Ground Check")]
-    [Tooltip("�ظ� �ڽ� ������ ����(�������� ����, m)")]
+    [Tooltip("바닥 박스 오버랩 높이(플레이어 아래, m)")]
     [SerializeField] private float groundOverlapHeight = 0.08f;
-    [Tooltip("�ϰ� �� ���� Raycast ����(m)")]
+    [Tooltip("아래로 쏘는 Raycast 길이(m)")]
     [SerializeField] private float groundRayLength = 0.15f;
 
     // ���� ����
     private float _lastJumpPressed = -999f;
     private float _lastGrounded = -999f;
     private bool _jumpLockedUntilRelease = false;
+    private bool _isGrounded = false;
 
-    /// <summary>���� Rigidbody2D ���� ��ȯ</summary>
     public Rigidbody2D Body => body;
-    /// <summary>���� BoxCollider2D ���� ��ȯ</summary>
     public BoxCollider2D Collider => col;
-    /// <summary>���鿡 ��Ҵ��� ����(������ ���� ����� �ƴ϶� ��� ������)</summary>
     public bool IsGrounded => IsPlayerGrounded();
 
-    /// <summary>�ʱ� ����: �ʼ� ������Ʈ ���� �� ���� �Ķ���� ����</summary>
+    /// <summary>초기화: 컴포넌트 연결 및 파라미터 설정</summary>
     public void Init()
     {
         if (!body) body = GetComponent<Rigidbody2D>();
@@ -66,11 +64,11 @@ public class DinoJumpPlayer : MonoBehaviour
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
         body.linearVelocity = Vector2.zero;
 
-        _lastGrounded = Time.time; // ���� �� �ڿ��� ���
+        _lastGrounded = Time.time; 
         _jumpLockedUntilRelease = false;
     }
 
-    /// <summary>�ܺ� �Է� ó��(���۸� + Ű ���� ������ ����)</summary>
+    /// <summary>입력 처리(키보드, 마우스, 터치)</summary>
     public void HandleInput()
     {
         bool down = Input.GetKeyDown(KeyCode.Space)
@@ -84,10 +82,10 @@ public class DinoJumpPlayer : MonoBehaviour
                  || (Input.touchCount > 0);
 
         if (down) _lastJumpPressed = Time.time;
-        if (!held) _jumpLockedUntilRelease = false; // Ű�� ������ ���� ���� ���� ���
+        if (!held) _jumpLockedUntilRelease = false; 
     }
 
-    /// <summary>���� ƽ���� ȣ��: �������� + ����/�ڿ���/�� ��Ģ���� ���� ����</summary>
+    /// <summary>물리 프레임 처리: 점프, 코요테 타임, 버퍼 적용</summary>
     public void FixedTick()
     {
         if (!body || !col) return;
@@ -96,10 +94,9 @@ public class DinoJumpPlayer : MonoBehaviour
         if (IsPlayerGrounded())
         {
             _lastGrounded = Time.time;
-            _jumpLockedUntilRelease = false; // ���� �� �� ����
+            _jumpLockedUntilRelease = false;
         }
 
-        // ���� (���� + �ڿ��� + ������)
         bool wantJump = (Time.time - _lastJumpPressed) <= jumpBufferTime;
         bool coyote = (Time.time - _lastGrounded) <= coyoteTime;
 
@@ -114,7 +111,7 @@ public class DinoJumpPlayer : MonoBehaviour
         }
     }
 
-    /// <summary>�÷��̾ ������ ���� �ݶ��̴� ��ܿ� ��Ȯ�� �ø�</summary>
+    /// <summary>플레이어를 바닥 위에 정확히 위치시킴</summary>
     public void PlaceOnGround(BoxCollider2D groundCollider2D)
     {
         if (!body || !col || !groundCollider2D) return;
@@ -123,40 +120,39 @@ public class DinoJumpPlayer : MonoBehaviour
         float halfH = col.bounds.extents.y;
 
         Vector2 p = body.position;
-        p.y = topY + halfH - 0.005f; // ��¦ �İ���� ����ȭ
+        p.y = topY + halfH - 0.005f; 
         body.position = p;
         body.linearVelocity = Vector2.zero;
         Physics2D.SyncTransforms();
     }
 
-    /// <summary>����: ���� ����</summary>
+    /// <summary>정리: Rigidbody2D 시뮬레이션 중지</summary>
     public void Cleanup()
     {
         if (body) body.simulated = false;
     }
 
-    /// <summary>���� ����(���� OverlapBox + �ϰ� Raycast ����)</summary>
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            _isGrounded = true;
+        }
+        else if(collision.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
+        {
+            // 장애물과 충돌 시 처리 (예: 게임 오버)
+            EventBus.Publish("MiniGame.Abort");
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            _isGrounded = false;
+    }
+
     private bool IsPlayerGrounded()
     {
-        if (!col) return false;
-
-        // 1) ���� OverlapBox
-        Bounds b = col.bounds;
-        Vector2 size = new Vector2(b.size.x * 0.95f, Mathf.Max(0.02f, groundOverlapHeight));
-        Vector2 center = new Vector2(b.center.x, b.min.y + size.y * 0.5f);
-
-        Collider2D[] hits = new Collider2D[2];
-        int n = Physics2D.OverlapBoxNonAlloc(center, size, 0f, hits, groundMask);
-        if (n > 0) return true;
-
-        // 2) �ϰ� �� Raycast ����
-        if (body.linearVelocity.y <= 0f)
-        {
-            Vector2 origin = new Vector2(b.center.x, b.min.y + 0.01f);
-            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundRayLength, groundMask);
-            if (hit.collider != null) return true;
-        }
-
-        return false;
+        return _isGrounded;
     }
 }

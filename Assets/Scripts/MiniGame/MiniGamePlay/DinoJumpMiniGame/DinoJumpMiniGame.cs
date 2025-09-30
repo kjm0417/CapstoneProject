@@ -129,7 +129,7 @@ public class DinoJumpMiniGame : MiniGameBase
     /// <summary>물리 틱: 장애물 이동/파괴/충돌 실패</summary>
     private void UpdateObstaclesFixed()
     {
-        float leftBound = groundCollider2D.bounds.min.x - 2f;
+        float leftBound = -1300f;
 
         for (int i = _obstacleBodies.Count - 1; i >= 0; i--)
         {
