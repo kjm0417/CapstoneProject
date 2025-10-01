@@ -57,6 +57,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     [SerializeField] private Transform centerAnchor;
     [SerializeField] private Transform rightAnchor;
 
+
     private void OnEnable()
     {
         EventBus.Subscribe<bool>(DailyRoutineManager.OnReturnButtonSelected, SetUpUI);
@@ -70,10 +71,8 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     /// <summary>
     /// ¼±ÅÃ ´ë»çÀÇ ¾×¼¿ µ¥ÀÌÅÍµéÀ» ¹Þ¾Æ¿Í¼­ ÇØ´ç ¼±ÅÃ ´ë»ç¿¡ ¸Â´Â ´ëÈ­¸¦ ÁøÇàÇÒ ¼ö ÀÖ°Ô µ¥ÀÌÅÍ °ªÀ» ÀúÀå
     /// </summary>
-    public void InitSelectDialouge(DialogData[] dialogs , bool isAuto)
+    public void InitSelectDialouge(DialogData[] dialogs , bool isAuto )
     {
-        Debug.Log("±¸µ¶");
-
         Dialogs = dialogs;
         isAutoStart = isAuto;
 
@@ -236,12 +235,12 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     bool isSelectDialougeLast; //¸¶Áö¸· ¼±ÅÃ ´ë»çÀÏ ¶§
     IEnumerator OnTypingText()
     {
-        if (currentDialogIndex == Dialogs.Length - 1)
+        if (currentDialogIndex == Dialogs.Length - 1 && !string.IsNullOrEmpty(Dialogs[currentDialogIndex].choices))
         {
             isSelectDialougeLast = true;
 
-            Debug.Log("¸¶Áö¸· ´ë»ç" + Dialogs[currentDialogIndex].choices);
-            EventBus.Publish<string>(DailyRoutineManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
+            Debug.Log("¸¶Áö¸· ´ë»ç :  " + Dialogs[currentDialogIndex].choices);
+            EventBus.Publish(DailyRoutineManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
         }
 
         int index = 0;

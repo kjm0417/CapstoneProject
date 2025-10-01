@@ -3,8 +3,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Game/PlayerData", fileName = "PlayerData")]
 public sealed class PlayerData : ScriptableObject
 {
-    public Sprite playerImage;
-
     [Header("Identity")]
     [SerializeField] private string id;
 

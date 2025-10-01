@@ -12,52 +12,71 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d46376e47a4a8a248a4136fd7036f0f9, type: 3}
   m_Name: DailyDialougeExcel
   m_EditorClassIdentifier: 
-  DailySelect:
+  Story:
   - Day: 1
-    Pattern: "\uBC29"
+    Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
-    DialougeType: Story
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uC77C\uC5B4\uB098\uC57C\uC9C0\u2026"
     Choices: 
   - Day: 1
-    Pattern: "\uBC29"
+    Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
-    DialougeType: Story
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uC624\uB298 \uB2A6\uC7A0\uC774\uB124?"
     Choices: 
   - Day: 1
-    Pattern: "\uBC29"
+    Pattern: GotoSchool
     PlayerId: 0
     PlayerImagePos: 0
-    DialougeType: Transition
+    PlayerName: "\uBBFC\uC8FC"
+    PlayerDialogue: "\uB3C4\uCC29\uD588\uB2E4."
+    Choices: 
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    Choices: 
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    Choices: 
+  Transition:
+  - Day: 1
+    Pattern: Room
+    PlayerId: 0
+    PlayerImagePos: 0
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uD559\uAD50 \uAC00\uC57C \uD560 \uC2DC\uAC04\uC774\uB2E4."
     Choices: 
   - Day: 1
-    Pattern: "\uBC29"
-    PlayerId: 1
-    PlayerImagePos: 2
-    DialougeType: Transition
-    PlayerName: "\uCC44\uC740"
-    PlayerDialogue: "\uB098\uB3C4 \uAC19\uC774 \uAC08\uB798"
-    Choices: 
-  - Day: 1
-    Pattern: "\uBC29"
+    Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
-    DialougeType: Transition
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uBB50 \uD0C0\uACE0 \uAC00\uC9C0?"
-    Choices: "\uC120\uD0DD1,\uC120\uD0DD2"
+    Choices: "\uC790\uCC28\uB97C \uD0C0\uACE0 \uAC04\uB2E4 | \uB4F1\uAD50 , \uBC84\uC2A4\uB97C
+      \uD0C0\uACE0 \uAC04\uB2E4 | \uB4F1\uAD50"
   - Day: 1
-    Pattern: "\uB4F1\uAD50"
+    Pattern: GotoSchool
     PlayerId: 0
     PlayerImagePos: 0
-    DialougeType: Story
     PlayerName: "\uBBFC\uC8FC"
-    PlayerDialogue: "\uB3C4\uCC29\uD588\uB2E4."
+    PlayerDialogue: "\uD559\uAD50\uC5D0 \uB3C4\uCC29\uD588\uB2E4."
     Choices: 
+  - Day: 1
+    Pattern: GotoSchool
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: "\uBBFC\uC8FC"
+    PlayerDialogue: "\uC55E\uC5D0 \uC8FC\uD76C\uAC00 \uC788\uB2E4. \uC5B4\uB5BB\uAC8C
+      \uD560\uAE4C?"
+    Choices: "\uC8FC\uD76C\uC5D0\uAC8C \uB9D0\uC744 \uAC74\uB2E4 | \uD559\uAD50,
+      \uBB34\uC2DC\uD558\uACE0 \uC9C0\uB098\uCE5C\uB2E4 | \uD559\uAD50"

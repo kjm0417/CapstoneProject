@@ -118,15 +118,15 @@ public class QuestManager : SingleTonGeneric<QuestManager>
     {
         switch(playerName)
         {
-            case "주인공1":
+            case "주희":
                 OnQuestStartUI(questDB.Juhee);
                 break;
-            case "주인공2":
+            case "채은":
                 OnQuestStartUI(questDB.Chaun);
                 break;
-            //case "Minzoo":
-            //    OnQuestStartUI(questDB.Minzoo);
-            //    break;
+            case "민주":
+                OnQuestStartUI(questDB.Minzoo);
+                break;
         }
         Debug.Log($"QuestManager / 현재 캐릭터 이름 :{playerName} / 퀘스트 이벤트 발행 ");
 
