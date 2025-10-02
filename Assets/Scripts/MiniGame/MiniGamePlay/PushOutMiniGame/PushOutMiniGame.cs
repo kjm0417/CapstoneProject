@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 /// <summary>
 /// Push Out 미니게임
@@ -64,7 +65,7 @@ public class PushOutMiniGame : MiniGameBase
         [Tooltip("푸셔 이동 속도 범위")]
         public Vector2 speedRange = new Vector2(3f, 4.5f);
         [Tooltip("플레이어에게 가해질 임펄스 힘")]
-        public float impulseStrength = 5f;
+        public float impulseStrength = 3f;
         [Tooltip("푸셔 생존 시간(초)")]
         public float lifetime = 4.5f;
         [Tooltip("스폰 시 트리거를 재생할 애니메이터(선택)")]
@@ -125,6 +126,7 @@ public class PushOutMiniGame : MiniGameBase
         UpdateWarningUI(deltaTime);
         CheckFailCondition();
         PruneDestroyedPushers();
+
     }
 
     protected override bool CheckClearOnTimeout() => true;

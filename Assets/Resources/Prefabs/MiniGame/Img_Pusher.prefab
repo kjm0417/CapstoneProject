@@ -153,6 +153,9 @@ MonoBehaviour:
   body: {fileID: 7014846173990892171}
   hitCollider: {fileID: 2863477172572472388}
   defaultSpeed: 3
+  driveForce: 3
+  maxVelocity: 5
+  counterImpulseMultiplier: 0.35
 --- !u!50 &7014846173990892171
 Rigidbody2D:
   serializedVersion: 5

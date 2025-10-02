@@ -506,8 +506,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00000047683716, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_AnchoredPosition: {x: 8.71, y: 20.33}
+  m_SizeDelta: {x: 453.53, y: 459.34}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8003242472489175846
 CanvasRenderer:
@@ -560,7 +560,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
-  m_EffectDistance: {x: 1, y: -1}
+  m_EffectDistance: {x: 3, y: -3}
   m_UseGraphicAlpha: 0
 --- !u!1 &9190949095946556049
 GameObject:
@@ -621,8 +621,8 @@ MonoBehaviour:
   _failReward: []
   gameRoot: {fileID: 5451756397415818315}
   arenaCenter: {fileID: 4314889377141112400}
-  failRadius: 4
-  warningRadius: 2.8
+  failRadius: 2
+  warningRadius: 1
   warningFill: {fileID: 8077665212424767175}
   player: {fileID: 2635228296403254783}
   pusherPrefab: {fileID: 929676267954636575, guid: 7313ddafe33a0a34fb9866ff53cd58d7, type: 3}
@@ -634,36 +634,56 @@ MonoBehaviour:
     initialDelay: 1
     intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 3
-    lifetime: 1.5
-    timer: 0
+    impulseStrength: 1
+    lifetime: 2
+    spawnAnimator: {fileID: 0}
+    spawnTriggerName: Spawn
+    onSpawn:
+      m_PersistentCalls:
+        m_Calls: []
+    hasSpawned: 0
   - laneName: Up
     spawnPoint: {fileID: 4817511193626183395}
     direction: {x: 0, y: 0}
     initialDelay: 1.5
     intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 3
-    lifetime: 1.5
-    timer: 0
+    impulseStrength: 1
+    lifetime: 2
+    spawnAnimator: {fileID: 0}
+    spawnTriggerName: Spawn
+    onSpawn:
+      m_PersistentCalls:
+        m_Calls: []
+    hasSpawned: 0
   - laneName: Left
     spawnPoint: {fileID: 4922142739564779850}
     direction: {x: 0, y: 0}
     initialDelay: 2
     intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 3
-    lifetime: 1.5
-    timer: 0
+    impulseStrength: 1
+    lifetime: 2
+    spawnAnimator: {fileID: 0}
+    spawnTriggerName: Spawn
+    onSpawn:
+      m_PersistentCalls:
+        m_Calls: []
+    hasSpawned: 0
   - laneName: Right
     spawnPoint: {fileID: 8916596827171706662}
     direction: {x: 0, y: 0}
     initialDelay: 3
     intervalRange: {x: 3, y: 4}
     speedRange: {x: 0, y: 0}
-    impulseStrength: 3
-    lifetime: 1.5
-    timer: 0
+    impulseStrength: 1
+    lifetime: 2
+    spawnAnimator: {fileID: 0}
+    spawnTriggerName: Spawn
+    onSpawn:
+      m_PersistentCalls:
+        m_Calls: []
+    hasSpawned: 0
   intervalMultiplierByProgress:
     serializedVersion: 2
     m_Curve:

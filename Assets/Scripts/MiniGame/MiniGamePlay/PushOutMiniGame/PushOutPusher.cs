@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Push Out 미니게임에서 플레이어를 밀어내는 푸셔
-/// - 지정된 방향으로 이동하며 플레이어와 접촉 시 임펄스를 가한다
+/// - 지정된 방향으로 이동하며 플레이어와 충돌 시 임펄스를 가한다
 /// </summary>
 [DisallowMultipleComponent]
 public class PushOutPusher : MonoBehaviour
@@ -10,12 +10,20 @@ public class PushOutPusher : MonoBehaviour
     [Header("References")]
     [Tooltip("푸셔 Rigidbody2D (Kinematic 또는 Dynamic)")]
     [SerializeField] private Rigidbody2D body;
-    [Tooltip("플레이어와 접촉 판정용 Collider2D (Trigger 권장)")]
+    [Tooltip("플레이어와의 충돌을 감지할 Collider2D (Trigger 권장)")]
     [SerializeField] private Collider2D hitCollider;
 
     [Header("Movement")]
     [Tooltip("이동 속도(초기값)")]
     [SerializeField] private float defaultSpeed = 3f;
+
+    [Header("Physics")]
+    [Tooltip("목표 속도를 유지하기 위한 가속력")]
+    [SerializeField] private float driveForce = 6f;
+    [Tooltip("푸셔가 유지할 최대 속도")]
+    [SerializeField] private float maxVelocity = 6f;
+    [Tooltip("플레이어에게 임펄스를 줄 때 반대 방향으로 받을 비율")]
+    [SerializeField] private float counterImpulseMultiplier = 0.35f;
 
     private Vector2 _direction = Vector2.left;
     private float _speed;
@@ -35,6 +43,11 @@ public class PushOutPusher : MonoBehaviour
 
         if (body)
         {
+            if (body.bodyType != RigidbodyType2D.Dynamic)
+            {
+                body.bodyType = RigidbodyType2D.Dynamic;
+            }
+
             body.simulated = true;
             body.gravityScale = 0f;
             body.linearDamping = 0f;
@@ -56,7 +69,19 @@ public class PushOutPusher : MonoBehaviour
             return;
         }
 
-        body.linearVelocity = _direction * _speed;
+        Vector2 desiredVelocity = _direction * _speed;
+        Vector2 currentVelocity = body.linearVelocity;
+        Vector2 velocityDelta = desiredVelocity - currentVelocity;
+
+        if (driveForce > 0f)
+        {
+            body.AddForce(velocityDelta * driveForce, ForceMode2D.Force);
+        }
+
+        if (maxVelocity > 0f)
+        {
+            body.linearVelocity = Vector2.ClampMagnitude(body.linearVelocity, maxVelocity);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -67,10 +92,7 @@ public class PushOutPusher : MonoBehaviour
             player = other.attachedRigidbody.GetComponent<PushOutPlayer>();
         }
 
-        if (player != null)
-        {
-            player.ApplyImpulse(_direction * _impulse);
-        }
+        ApplyPushToPlayer(player);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -81,9 +103,18 @@ public class PushOutPusher : MonoBehaviour
             player = collision.rigidbody.GetComponent<PushOutPlayer>();
         }
 
-        if (player != null)
-        {
-            player.ApplyImpulse(_direction * _impulse);
-        }
+        ApplyPushToPlayer(player);
+    }
+
+    private void ApplyPushToPlayer(PushOutPlayer player)
+    {
+        if (player == null) return;
+
+        player.ApplyImpulse(_direction * _impulse);
+
+        if (!body || counterImpulseMultiplier <= 0f) return;
+        if (body.bodyType != RigidbodyType2D.Dynamic) return;
+
+        body.AddForce(-_direction * _impulse * counterImpulseMultiplier, ForceMode2D.Impulse);
     }
 }

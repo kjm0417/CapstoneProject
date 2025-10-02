@@ -105,6 +105,8 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
             Complete(true);
         }
 
+
+
     }
 
     /// <summary>
