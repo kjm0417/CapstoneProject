@@ -13,5 +13,14 @@ public class DailyDialougeData
     public string PlayerDialogue; //화자 대사 내용 
 
 
-    public string Choices; //선택 대사 내용
+    //public string Choices; //선택 대사 내용
+
+    public string ChoiceId;
+    public string MasterId;
+    public string ChoiceIndex;
+    public string ChoiceText;
+    public string EffectId;
+
+    public string NextPattern;
+
 }

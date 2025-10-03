@@ -19,58 +19,74 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uC77C\uC5B4\uB098\uC57C\uC9C0\u2026"
-    Choices: 
+    ChoiceId: 
+    MasterId: 
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
   - Day: 1
     Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uC624\uB298 \uB2A6\uC7A0\uC774\uB124?"
-    Choices: 
+    ChoiceId: 
+    MasterId: 
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
   - Day: 1
     Pattern: GotoSchool
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uB3C4\uCC29\uD588\uB2E4."
-    Choices: 
+    ChoiceId: 
+    MasterId: 
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
   - Day: 0
     Pattern: 
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    Choices: 
+    ChoiceId: 
+    MasterId: 
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
   - Day: 0
     Pattern: 
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    Choices: 
+    ChoiceId: 
+    MasterId: 
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
+  StoryEffect: []
   Transition:
   - Day: 1
     Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: "\uBBFC\uC8FC"
-    PlayerDialogue: "\uD559\uAD50 \uAC00\uC57C \uD560 \uC2DC\uAC04\uC774\uB2E4."
-    Choices: 
-  - Day: 1
-    Pattern: Room
-    PlayerId: 0
-    PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uBB50 \uD0C0\uACE0 \uAC00\uC9C0?"
-    Choices: "\uC790\uCC28\uB97C \uD0C0\uACE0 \uAC04\uB2E4 | \uB4F1\uAD50 , \uBC84\uC2A4\uB97C
-      \uD0C0\uACE0 \uAC04\uB2E4 | \uB4F1\uAD50"
-  - Day: 1
-    Pattern: GotoSchool
-    PlayerId: 0
-    PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
-    PlayerDialogue: "\uD559\uAD50\uC5D0 \uB3C4\uCC29\uD588\uB2E4."
-    Choices: 
+    ChoiceId: 
+    MasterId: 1_Room_0_0
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
   - Day: 1
     Pattern: GotoSchool
     PlayerId: 0
@@ -78,5 +94,154 @@ MonoBehaviour:
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uC55E\uC5D0 \uC8FC\uD76C\uAC00 \uC788\uB2E4. \uC5B4\uB5BB\uAC8C
       \uD560\uAE4C?"
-    Choices: "\uC8FC\uD76C\uC5D0\uAC8C \uB9D0\uC744 \uAC74\uB2E4 | \uD559\uAD50,
-      \uBB34\uC2DC\uD558\uACE0 \uC9C0\uB098\uCE5C\uB2E4 | \uD559\uAD50"
+    ChoiceId: 
+    MasterId: 1_Goto_0_0
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
+  - Day: 1
+    Pattern: ArriveSchool_Morning
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: "\uBBFC\uC8FC"
+    PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC624\uC804 \uC2DC\uAC04)"
+    ChoiceId: 
+    MasterId: 1_Arrive_0_0
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
+  - Day: 1
+    Pattern: ArriveSchool_Lanch
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: "\uBBFC\uC8FC"
+    PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC810\uC2EC \uC2DC\uAC04)"
+    ChoiceId: 
+    MasterId: 1_Arrive_0_1
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
+  - Day: 1
+    Pattern: ArriveSchool_Afternoon
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: "\uBBFC\uC8FC"
+    PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC624\uD6C4 \uC2DC\uAC04)"
+    ChoiceId: 
+    MasterId: 1_Arrive_0_2
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
+  TransitionEffect:
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Room_0_0_0
+    MasterId: 1_Room_0_0
+    ChoiceIndex: 0
+    ChoiceText: "\uC790\uCC28\uB97C \uD0C0\uACE0 \uAC04\uB2E4"
+    EffectId: car
+    NextPattern: GotoSchool
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Room_0_0_1
+    MasterId: 1_Room_0_0
+    ChoiceIndex: 1
+    ChoiceText: "\uBC84\uC2A4\uB97C \uD0C0\uACE0 \uAC04\uB2E4"
+    EffectId: bus
+    NextPattern: GotoSchool
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Goto_0_0_0
+    MasterId: 1_Goto_0_0
+    ChoiceIndex: 0
+    ChoiceText: "\uC8FC\uD76C\uC5D0\uAC8C \uB9D0\uC744 \uAC74\uB2E4"
+    EffectId: joheeMal
+    NextPattern: ArriveSchool_Morning
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Goto_0_0_1
+    MasterId: 1_Goto_0_0
+    ChoiceIndex: 1
+    ChoiceText: "\uBB34\uC2DC\uD558\uACE0 \uAC04\uB2E4"
+    EffectId: goingSchool
+    NextPattern: ArriveSchool_Morning
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Arrive_0_0_0
+    MasterId: 1_Arrive_0_0
+    ChoiceIndex: 0
+    ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC624\uC804)"
+    EffectId: Study_JumpMiniGame
+    NextPattern: 
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Arrive_0_0_1
+    MasterId: 1_Arrive_0_0
+    ChoiceIndex: 1
+    ChoiceText: "\uC270\uB2E4 (\uC624\uC804)"
+    EffectId: Rest
+    NextPattern: 
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Arrive_0_1_0
+    MasterId: 1_Arrive_0_1
+    ChoiceIndex: 0
+    ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC810\uC2EC \uC2DC\uAC04)"
+    EffectId: Study_ListenEnglish
+    NextPattern: 
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Arrive_0_2_0
+    MasterId: 1_Arrive_0_2
+    ChoiceIndex: 0
+    ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC624\uD6C4)"
+    EffectId: StartStudy_JumpMiniGame
+    NextPattern: 
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Arrive_0_2_1
+    MasterId: 1_Arrive_0_2
+    ChoiceIndex: 1
+    ChoiceText: "\uC270\uB2E4 (\uC624\uD6C4)"
+    EffectId: Rest
+    NextPattern: 

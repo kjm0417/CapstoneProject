@@ -227,6 +227,54 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1 &36189959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 36189960}
+  - component: {fileID: 36189961}
+  m_Layer: 0
+  m_Name: MiniGameBase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &36189960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36189959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &36189961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36189959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1baeee3fbde41a4ba3c91f492d1c1ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: JumpMiniGame
+  _duration: 90
+  _sucessReward: []
+  _failRewaord: []
 --- !u!1 &55943733
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,6 +446,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272114951}
   m_CullTransparentMesh: 1
+--- !u!1 &278098560
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 278098561}
+  - component: {fileID: 278098562}
+  m_Layer: 0
+  m_Name: EffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &278098561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278098560}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &278098562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278098560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 939445b5f8c2c8a4a807c0cf6ab18685, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &314702552
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,9 +1017,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Test \uC785\uB825 \uD0A4\n \nT : \uB0A0\uC9DC \uBCC0\uACBD \n1 : \uBC29 
-    - \uC120\uD0DD \uB300\uC0AC\n2 : \uB4F1\uAD50 - \uC120\uD0DD \uB300\uC0AC\n3
-    : \uD559\uAD50 - \uC120\uD0DD \uB300\uC0AC\n4. \uC57C\uC790 - \uC120\uD0DD \uB300\uC0AC"
+  m_text: "Test \uC785\uB825 \uD0A4 \n- \uC774\uBCA4\uD2B8\uC5D0 \uB530\uB978 \uC120\uD0DD\n\uB300\uC0AC\uAC00
+    \uBCF4\uC5EC\uC9C0\uAC8C\uB054 \n\uD638\uCD9C \uD574\uC57C \uD568\n- \uC774\uBCA4\uD2B8
+    \uC870\uAC74 \uBBF8\uC815\n\uC774\uBBC0\uB85C,Test\uC785\uB825 \uD0A4\n\uC0AC\uC6A9
+    \n \nT : \uB0A0\uC9DC \uBCC0\uACBD \n1 : \uBC29  - \uC120\uD0DD \uB300\uC0AC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4c758521b2af02c41a749dbaf6014af6, type: 2}
   m_sharedMaterial: {fileID: -2649954668807253809, guid: 4c758521b2af02c41a749dbaf6014af6, type: 2}
@@ -1214,7 +1307,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e3f43ccdb02bb7a4b9be7233060a9bf2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1351,7 +1444,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d58d8a1c1c8c2df4d8eaf66e3ab90211, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1426,7 +1519,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b4f154b7e0743534ca5fb466e588679d, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3944,3 +4037,5 @@ SceneRoots:
   - {fileID: 863436391}
   - {fileID: 202065609}
   - {fileID: 648379951}
+  - {fileID: 278098561}
+  - {fileID: 36189960}

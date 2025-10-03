@@ -8,6 +8,13 @@ using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
 
 [System.Serializable]
+public class ChoiceData
+{
+    public string Text;     //¹öÆ°¿¡ º¸¿©ÁÙ ÅØ½ºÆ®
+    public string EffectId; //¹öÆ°¿¡ ¸Â´Â ¿¬Ãâ ID
+    public string NextPattern; //´ÙÀ½ ÀÏ»ó ÆÐÅÏ ÀúÀå
+}
+[System.Serializable]
 public struct Speaker //È­ÀÚÀÇ Á¤º¸¸¦ ÀúÀåÇÏ´Â Speaker ±¸Á¶Ã¼ Á¤ÀÇ
 {
     public Image PlayerImage; //Ä³¸¯ÅÍ ÀÌ¹ÌÁö
@@ -24,7 +31,8 @@ public struct DialogData //È­ÀÚ ÀÌ¸§°ú ´ë»ç Á¤º¸¸¦ ÀúÀåÇÏ´Â DialogData ±¸Á¶Ã¼ Á¤
     public string name; //Ä³¸¯ÅÍ ÀÌ¸§
     [TextArea(3, 5)] //3¿­ 5Çà±îÁö 
     public string dialogue; //´ë»ç
-    public string choices; //¼±ÅÃ ´ë»ç
+                            // public string choices; //¼±ÅÃ ´ë»ç
+    public List<ChoiceData> choices; // ÀÚ½Ä Å×ÀÌºí¿¡¼­ °¡Á®¿Â ¼±ÅÃÁöµé
     public int speakerImagePos; //ÇÃ·¹ÀÌ¾î ÀÌ¹ÌÁö UI À§Ä¡ : 0 - ¿ÞÂÊ , 1 - Áß°£ , 2 - ¿À¸¥ÂÊ
 
 }
@@ -56,6 +64,13 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     [SerializeField] private Transform leftAnchor;
     [SerializeField] private Transform centerAnchor;
     [SerializeField] private Transform rightAnchor;
+
+    private WaitForSeconds typingYield; //Ãß°¡
+
+    private void Awake()
+    {
+        RefreshTypingYield(); //Ãß°¡
+    }
 
 
     private void OnEnable()
@@ -195,11 +210,13 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
         //ÇöÀç È­ÀÚÀÇ ´ë»ç ÅØ½ºÆ® ¼³Á¤
         //Speakers[currentSpeakerIndex].textDialouge.text = Dialogs[currentDialogIndex].dialogue; //ÁÖ¼®: ÀÌ ÄÚµå´Â ´ëÈ­ ÇÑ¹ø¿¡ Ãâ·ÂÀÌ¹Ç·Î, Å¸ÀÌÇÎ È¿°ú ³»±â À§ÇÔÀÓ
 
+        RefreshTypingYield(); //Ãß°¡
+
         StartCoroutine(OnTypingText());
 
 
     }
-
+                                                                
     /// <summary>
     /// È­ÀÚÀÇ ´ëÈ­ °ü·Ã ¿ÀºêÁ§Æ® È°¼ºÈ­ ¹× ºñÈ°¼ºÈ­ ÇÏ´Â ¸Þ¼­µå , È­ÀÚ°¡ ´ëÈ­¸¦ ÇÏ°í ÀÖ³ª ¾ø³ª¿¡ µû¶ó ¾ËÆÄ°ª ¼³Á¤
     /// </summary>
@@ -235,12 +252,20 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     bool isSelectDialougeLast; //¸¶Áö¸· ¼±ÅÃ ´ë»çÀÏ ¶§
     IEnumerator OnTypingText()
     {
-        if (currentDialogIndex == Dialogs.Length - 1 && !string.IsNullOrEmpty(Dialogs[currentDialogIndex].choices))
+        if (currentDialogIndex == Dialogs.Length - 1)
         {
-            isSelectDialougeLast = true;
+            Debug.Log("¸¶Áö¸·´ë»ç");
 
-            Debug.Log("¸¶Áö¸· ´ë»ç :  " + Dialogs[currentDialogIndex].choices);
-            EventBus.Publish(DailyRoutineManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
+            if (Dialogs[currentDialogIndex].choices != null && Dialogs[currentDialogIndex].choices.Count > 0)
+            {
+                isSelectDialougeLast = true;
+
+
+                foreach (var c in Dialogs[currentDialogIndex].choices)
+                    Debug.Log($"¸¶Áö¸· ´ë»ç ¼±ÅÃÁö: {c.Text}, EffectId: {c.EffectId}");
+
+                EventBus.Publish(DailyRoutineManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
+            }
         }
 
         int index = 0;
@@ -255,7 +280,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
             index++;
 
-            yield return new WaitForSeconds(typingSpeed);
+            yield return typingYield; 
         }
 
         isTypingEffect = false;
@@ -265,5 +290,21 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
 
 
+    }
+    /// <summary>
+    /// typingYield¸¦ typingSpeed °ª¿¡ ¸Â°Ô »õ·Î »ý¼ºÇÏ´Â ÇÔ¼ö¸¦ Á¤ÀÇÇÑ´Ù.
+    /// </summary>
+    private void RefreshTypingYield() 
+    {
+        typingYield = new WaitForSeconds(typingSpeed);  
+    }
+
+    /// <summary>
+    /// typingSpeedÀÇ ¼Óµµ °ªÀ» Á¶ÀýÇÏ´Â ¸Þ¼­µå
+    /// </summary>
+    public void SetTypingSpeed(float newTypingSpeed) 
+    {
+        typingSpeed = newTypingSpeed;
+        RefreshTypingYield();
     }
 }
