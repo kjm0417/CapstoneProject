@@ -72,7 +72,8 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
             }
         }
 
-        EventBus.Publish(isSuccess ? "MiniGame.Success" : "MiniGame.Fail");
+        //ex) 퀘스트 할당량이나 미니게임 결과에 따라 받는 걸 reward말고 다른 곳에서 적용해야 할 떄 사용
+        EventBus.Publish(isSuccess ? EventNames.MiniGameSuccesed : EventNames.MiniGameFailed);
         OnCompleted?.Invoke(this, args);
 
         OnCompleteHook(isSuccess, args);
@@ -137,25 +138,15 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     /// 미니게임 성공 시 지급 보상 조회
     protected virtual void ApplyReward(MiniGameReward reward)
     {
-        // PlayerManager 연동 예시 (실제 메서드에 맞게 수정)
-        switch (reward.type)
+        var playerManager = PlayerManager.Instance;
+        if (playerManager == null)
         {
-            case RewardType.StressDown:
-                Debug.Log($"[Reward] -stress : {reward.amount}");
-                break;
-            case RewardType.StressUp:
-                Debug.Log($"[Reward] +stress : {reward.amount}");
-                break;
-            case RewardType.cuncentrationDown:
-                Debug.Log($"[Reward] -cuncentration : {reward.amount}");
-                break;
-            case RewardType.ConcentrationUp:
-                Debug.Log($"[Reward] +concentration : {reward.amount}");
-                break;
-           
+            Debug.LogWarning("[MiniGameBase] PlayerManager instance is not available.");
+            return;
         }
-    }
 
+        playerManager.ApplyReward(reward);
+    }
     // ====== 확장 훅 ======
 
     /// <summary>시작 시 1회 호출</summary>
@@ -176,3 +167,4 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     /// <summary>실시간 클리어 여부(기본: 미사용)</summary>
     protected virtual bool CheckClearRealtime() => false;
 }
+

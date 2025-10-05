@@ -413,7 +413,11 @@ MonoBehaviour:
   _id: DinoJump
   _duration: 30
   _successReward: []
-  _failReward: []
+  _failReward:
+  - type: 1
+    amount: 10
+  - type: 3
+    amount: 10
   gameRoot: {fileID: 454341542537414524}
   groundCollider2D: {fileID: 6199947139349923499}
   groundVisual: {fileID: 9079152081935701492}

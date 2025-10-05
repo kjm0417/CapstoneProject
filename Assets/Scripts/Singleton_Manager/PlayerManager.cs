@@ -109,6 +109,44 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
     }
 
     /// <summary>
+    ///활동 중인 플레이어에게 미니 게임 보상을 적용
+    /// </summary>
+    public void ApplyReward(MiniGameReward reward)
+    {
+        if (Active is not PlayerState state)
+        {
+            Debug.LogWarning("[PlayerManager] 보상을 받을 수 있는 활성 플레이어가 없습니다.");
+            return;
+        }
+
+        if (reward.amount == 0)
+        {
+            return;
+        }
+
+        switch (reward.type)
+        {
+            case RewardType.StressDown:
+                state.SetStress(state.Stress - reward.amount);
+                break;
+            case RewardType.StressUp:
+                state.SetStress(state.Stress + reward.amount);
+                break;
+            case RewardType.ConcentrationUp:
+                state.SetConcentration(state.Concentration + reward.amount);
+                break;
+            case RewardType.cuncentrationDown:
+                state.SetConcentration(state.Concentration - reward.amount);
+                break;
+            default:
+                Debug.LogWarning($"[PlayerManager] Unsupported reward type: {reward.type}");
+                return;
+        }
+
+        EventBus.Publish<IPlayerStateReadOnly>(EventNames.PlayerStatsChanged, state);
+    }
+
+    /// <summary>
     /// 상태 변경 헬퍼(매니저를 통해서만 상태를 바꾸도록 유도).
     /// </summary>
     public void DamageActive(int amount)
@@ -116,3 +154,4 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
         if (Active is PlayerState s) s.Damage(amount);
     }
 }
+

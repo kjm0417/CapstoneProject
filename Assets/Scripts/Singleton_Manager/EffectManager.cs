@@ -38,7 +38,7 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
             string miniGameId = effectIds[1];
 
-            EventBus.Publish(MiniGameManager.OnMiniGameStarted, miniGameId);
+            //EventBus.Publish(MiniGameManager.OnMiniGameStarted, miniGameId);
         }
         else
         {
