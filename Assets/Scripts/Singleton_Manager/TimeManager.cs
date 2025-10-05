@@ -35,6 +35,15 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         InitDate(10, 1,31,0); //10월 1일부터 시작 , 0 ~ 6 = 월요일~일요일
     }
 
+    private void OnEnable()
+    {
+        EventBus.Subscribe(OnDayEnded, UpdateDate);
+    }
+    private void OnDisable()
+    {
+        EventBus.UnSubscribe(OnDayEnded, UpdateDate);
+    }
+
     private void Update()
     {
         //임시 코드
@@ -42,6 +51,22 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         {
             UpdateDate(); 
         }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            EventBus.Publish(DailyRoutineManager.OnDailyWakeUp);
+        }
+        //if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    EventBus.Publish(DailyRoutineManager.OnDailyGotoSchool);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    EventBus.Publish(DailyRoutineManager.OnDailyArriveSchool);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha4))
+        //{
+        //    EventBus.Publish(DailyRoutineManager.OnDailyParm);
+        //}
     }
 
     public void InitDate(int month,int day, int remainDay, int dayOfWeek) //게임 시작 시, 날짜 로드 또는 초기화 하는 메서드
@@ -49,11 +74,9 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         currentGameDate = new GameDate(month, day, remainDay, dayOfWeek);
 
         EventBus.Publish(OnDayStarted, currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
-        //EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
-
     }
 
-    private void UpdateDate() //날짜 변경 메서드. 하루 일상 끝나면 호출
+    public void UpdateDate() //날짜 변경 메서드. 하루 일상 끝나면 호출
     {
         currentGameDate.Day++;
         currentGameDate.WeekDay++;
@@ -74,7 +97,7 @@ public class TimeManager : SingleTonGeneric<TimeManager>
 
 
         EventBus.Publish(OnDayStarted,currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
-        //EventBus.Publish(OnDayStarted); //파라미터 없는 OnDayStarted 이벤트 구독한 구독자에게 이벤트 뿌림 - 퀘스트 부여
+       
     }
 
 }

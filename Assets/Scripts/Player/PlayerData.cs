@@ -29,4 +29,6 @@ public sealed class PlayerData : ScriptableObject
     {
         return new PlayerState(id, this);
     }
+
+
 }
