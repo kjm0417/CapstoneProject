@@ -101,13 +101,26 @@ MonoBehaviour:
     EffectId: 
     NextPattern: 
   - Day: 1
+    Pattern: ArriveSchool_Breakfast
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: "\uBBFC\uC8FC"
+    PlayerDialogue: "\uBC30\uAC00 \uACE0\uD504\uB2E4. \uBB50 \uBA39\uC744\uAE4C?(\uC544\uCE68
+      \uC2DC\uAC04)"
+    ChoiceId: 
+    MasterId: 1_Brakfast_0_0
+    ChoiceIndex: 
+    ChoiceText: 
+    EffectId: 
+    NextPattern: 
+  - Day: 1
     Pattern: ArriveSchool_Morning
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC624\uC804 \uC2DC\uAC04)"
     ChoiceId: 
-    MasterId: 1_Arrive_0_0
+    MasterId: 1_Morning_0_0
     ChoiceIndex: 
     ChoiceText: 
     EffectId: 
@@ -119,7 +132,7 @@ MonoBehaviour:
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC810\uC2EC \uC2DC\uAC04)"
     ChoiceId: 
-    MasterId: 1_Arrive_0_1
+    MasterId: 1_Lanch_0_0
     ChoiceIndex: 
     ChoiceText: 
     EffectId: 
@@ -131,7 +144,7 @@ MonoBehaviour:
     PlayerName: "\uBBFC\uC8FC"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC624\uD6C4 \uC2DC\uAC04)"
     ChoiceId: 
-    MasterId: 1_Arrive_0_2
+    MasterId: 1_Afternoon_0_0
     ChoiceIndex: 
     ChoiceText: 
     EffectId: 
@@ -143,7 +156,7 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Room_0_0_0
+    ChoiceId: 1_Room_0_0
     MasterId: 1_Room_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uCC28\uB97C \uD0C0\uACE0 \uAC04\uB2E4"
@@ -155,7 +168,7 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Room_0_0_1
+    ChoiceId: 1_Room_0_0
     MasterId: 1_Room_0_0
     ChoiceIndex: 1
     ChoiceText: "\uBC84\uC2A4\uB97C \uD0C0\uACE0 \uAC04\uB2E4"
@@ -167,23 +180,35 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Goto_0_0_0
+    ChoiceId: 1_Goto_0_0
     MasterId: 1_Goto_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC8FC\uD76C\uC5D0\uAC8C \uB9D0\uC744 \uAC74\uB2E4"
     EffectId: joheeMal
-    NextPattern: ArriveSchool_Morning
+    NextPattern: ArriveSchool_Breakfast
   - Day: 0
     Pattern: 
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Goto_0_0_1
+    ChoiceId: 1_Goto_0_0
     MasterId: 1_Goto_0_0
     ChoiceIndex: 1
     ChoiceText: "\uBB34\uC2DC\uD558\uACE0 \uAC04\uB2E4"
     EffectId: goingSchool
+    NextPattern: ArriveSchool_Breakfast
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Brakfast_0_0
+    MasterId: 1_Brakfast_0_0
+    ChoiceIndex: 0
+    ChoiceText: "\uAC00\uBC29\uC5D0\uC11C \uBE75\uC744 \uAEBC\uB0B8\uB2E4."
+    EffectId: EatBread
     NextPattern: ArriveSchool_Morning
   - Day: 0
     Pattern: 
@@ -191,8 +216,20 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Arrive_0_0_0
-    MasterId: 1_Arrive_0_0
+    ChoiceId: 1_Brakfast_0_1
+    MasterId: 1_Brakfast_0_0
+    ChoiceIndex: 1
+    ChoiceText: "\uAC00\uBC29\uC5D0\uC11C \uD544\uD1B5\uC744 \uAEBC\uB0B8\uB2E4."
+    EffectId: TakeOutaPencil
+    NextPattern: ArriveSchool_Morning
+  - Day: 0
+    Pattern: 
+    PlayerId: 0
+    PlayerImagePos: 0
+    PlayerName: 
+    PlayerDialogue: 
+    ChoiceId: 1_Morning_0_0
+    MasterId: 1_Morning_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC624\uC804)"
     EffectId: Study_JumpMiniGame
@@ -203,20 +240,20 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Arrive_0_0_1
-    MasterId: 1_Arrive_0_0
+    ChoiceId: 1_Morning_0_1
+    MasterId: 1_Morning_0_0
     ChoiceIndex: 1
     ChoiceText: "\uC270\uB2E4 (\uC624\uC804)"
     EffectId: Rest
-    NextPattern: 
+    NextPattern: ArriveSchool_Morning
   - Day: 0
     Pattern: 
     PlayerId: 0
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Arrive_0_1_0
-    MasterId: 1_Arrive_0_1
+    ChoiceId: 1_Lanch_0_0
+    MasterId: 1_Lanch_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC810\uC2EC \uC2DC\uAC04)"
     EffectId: Study_ListenEnglish
@@ -227,11 +264,11 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Arrive_0_2_0
-    MasterId: 1_Arrive_0_2
+    ChoiceId: 1_Afternoon_0_0
+    MasterId: 1_Afternoon_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC624\uD6C4)"
-    EffectId: StartStudy_JumpMiniGame
+    EffectId: Study_JumpMiniGame
     NextPattern: 
   - Day: 0
     Pattern: 
@@ -239,8 +276,8 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Arrive_0_2_1
-    MasterId: 1_Arrive_0_2
+    ChoiceId: 1_Afternoon_0_1
+    MasterId: 1_Afternoon_0_0
     ChoiceIndex: 1
     ChoiceText: "\uC270\uB2E4 (\uC624\uD6C4)"
     EffectId: Rest
