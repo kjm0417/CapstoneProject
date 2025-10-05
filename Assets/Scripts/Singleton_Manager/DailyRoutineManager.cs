@@ -7,6 +7,7 @@ public enum DailyRoutine
 {
     Room, //방
     GotoSchool, //등교
+    ArriveSchool_Breakfast, //학교 - 아침 시간
     ArriveSchool_Morning, //학교 - 오전 시간
     ArriveSchool_Lanch, //학교 - 점심
     ArriveSchool_Afternoon, //학교 - 오후 시간
@@ -21,6 +22,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     public static string OnDailyWakeUp = "OnDailyWakeUpEvent";
     public static string OnDailyGotoSchool = "OnDailyGotoSchoolEvent";
 
+    public static string OnDailySchool_BreakFast = "OnDailySchool_BreakFastEvent";
     public static string OnDailySchool_Morning = "OnDailySchoolMorningEvent";
     public static string OnDailySchool_Lanch = "OnDailySchoolLanchEvent";
     public static string OnDailySchool_Afternoon = "OnDailySchoolnoonEvent";
@@ -47,9 +49,11 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     private readonly Dictionary<int, Dictionary<string, List<DialogData>>> DailyCache = new Dictionary<int, Dictionary<string, List<DialogData>>>();
     private bool isStoryCacheBuilt;
 
+
+    [SerializeField]
     private DailyRoutine dailyRoutine;
 
-    private DailyRoutine DailyRoutine
+    public DailyRoutine DailyRoutine
     {
         get
         {
@@ -78,15 +82,18 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
         EventBus.Subscribe<GameDate>(TimeManager.OnDayStarted, OnDailyStart);   //1. 하루 시작 이벤트 구독
 
-        EventBus.Subscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //2. 침대에서 일어난 상태 이벤트 구독
+        EventBus.Subscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //침대에서 일어난 상태 이벤트 구독 해제
 
-        EventBus.Subscribe(OnDailyGotoSchool, OnChangeSchoolMorningUI);   //3. 등교 상태 이벤트 구독
+        EventBus.Subscribe(OnDailyGotoSchool, OnChangeSchoolBreakFastUI);   //2. 등교 상태
 
-        EventBus.Subscribe(OnDailySchool_Morning, OnSchoolLanchUI);  //4. 학교 이벤트 구독
+        EventBus.Subscribe(OnDailySchool_BreakFast, OnChangeSchoolMorningUI);   //3. 학교 - 아침 시간
 
-        EventBus.Subscribe(OnDailySchool_Lanch, OnSchoolAfternoonUI);  //4. 학교 이벤트 구독
 
-        EventBus.Subscribe(OnDailySchool_Afternoon, OnAfterSchoolSelectUI);  //4. 학교 이벤트 구독
+        EventBus.Subscribe(OnDailySchool_Morning, OnSchoolLanchUI);  //4. 학교 - 오전 시간
+
+        EventBus.Subscribe(OnDailySchool_Lanch, OnSchoolAfternoonUI);  //4. 학교 - 점심 시간
+
+        EventBus.Subscribe(OnDailySchool_Afternoon, OnAfterSchoolSelectUI);  //4. 학교 - 오후 시간ㅇ
 
 
 
@@ -107,7 +114,9 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
         EventBus.UnSubscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //침대에서 일어난 상태 이벤트 구독 해제
 
-        EventBus.UnSubscribe(OnDailyGotoSchool, OnChangeSchoolMorningUI);   //등교 상태 이벤트 구독 해제
+        EventBus.UnSubscribe(OnDailyGotoSchool, OnChangeSchoolBreakFastUI);   //등교 상태 이벤트 구독 해제
+
+        EventBus.UnSubscribe(OnDailySchool_BreakFast, OnChangeSchoolMorningUI);   //등교 상태 이벤트 구독 해제
 
 
         EventBus.UnSubscribe(OnDailySchool_Morning, OnSchoolLanchUI);  //4. 학교 이벤트 구독
@@ -136,6 +145,11 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         DailyRoutine = DailyRoutine.GotoSchool; //등교 패턴으로 변경  
     }
 
+    private void OnChangeSchoolBreakFastUI()
+    {
+        DailyPatternDialougeDataLoad(dailyRoutine);
+        DailyRoutine = DailyRoutine.ArriveSchool_Breakfast; //학교 아침 시간
+    }
     private void OnChangeSchoolMorningUI() //학교 오전 시간 변경
     {
         DailyPatternDialougeDataLoad(dailyRoutine);
@@ -153,7 +167,6 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         DailyPatternDialougeDataLoad(dailyRoutine);
         DailyRoutine = DailyRoutine.ArriveSchool_Afternoon; 
     }
-
 
 
     private void OnParmSelectUI() //학교 야자시간 변경

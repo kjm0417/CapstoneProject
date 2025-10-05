@@ -8,7 +8,7 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 {
     public static string OnSelectEffectStarted = "OnEffectStartEvent"; //선택에 따른 연출 
 
-    public static string OnNoneSelectEffectStarted = "OnEffectStartEvent"; //선택과 관계 없는 연출
+    public static string OnNoneSelectEffectStarted = "OnNoneSelectEffectStartEvent"; //선택과 관계 없는 연출
 
     private bool isSelect;
 
@@ -25,6 +25,7 @@ public class EffectManager : MonoBehaviour //연출 매니저.
         EventBus.UnSubscribe<string, string>(OnSelectEffectStarted, OnSelectEffect);
 
         EventBus.UnSubscribe<string>(OnNoneSelectEffectStarted, OnNoneSelectEffect);
+
     }
 
     private void OnSelectEffect(string effectId, string NextPattern)
@@ -48,6 +49,12 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
     private IEnumerator StartEffect(string effectId, string NextPattern = "")
     {
+        if(effectId == "Rest")
+        {
+            EventBus.Publish(UIManager.OnRestQuestions,true);
+            yield break;
+        }
+
         Debug.Log($"{effectId}에 맞는 연출 진행 중");
         yield return new WaitForSeconds(3.0f);
         Debug.Log($"{effectId}에 맞는 연출 끝");
@@ -72,6 +79,9 @@ public class EffectManager : MonoBehaviour //연출 매니저.
         {
             case "GotoSchool":
                 EventBus.Publish(DailyRoutineManager.OnDailyGotoSchool);
+                break;
+            case "ArriveSchool_Breakfast":
+                EventBus.Publish(DailyRoutineManager.OnDailySchool_BreakFast);
                 break;
             case "ArriveSchool_Morning":
                 EventBus.Publish(DailyRoutineManager.OnDailySchool_Morning);

@@ -39,6 +39,7 @@ public class MiniGameManager : MonoBehaviour
 
     private void StartMiniGameById(string id)
     {
+
         if (miniGameMap.TryGetValue(id, out var miniGame))
         {
             Debug.Log($"미니게임 시작: {miniGame.Id}");
