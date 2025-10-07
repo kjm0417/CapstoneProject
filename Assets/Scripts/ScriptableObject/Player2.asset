@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 364d7266cb4d3fe40997358c68fccc89, type: 3}
   m_Name: Player2
   m_EditorClassIdentifier: 
-  playerImage: {fileID: 21300000, guid: d58d8a1c1c8c2df4d8eaf66e3ab90211, type: 3}
-  id: "\uCC44\uC740"
+  id: "\uC724\uCC44\uC740"
   maxHP: 100
   stress: 0
   concentration: 50

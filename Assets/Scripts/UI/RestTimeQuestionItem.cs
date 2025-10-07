@@ -3,19 +3,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum RestPeriod
-{
-    Morning,       // 오전
-    Afternoon,     // 오후
-    Evening,       // 야자
-    EveningExtend  // 야자 연장
-}
 
 public class RestTimeQuestionItem : MonoBehaviour
 {
-    [Header("현재 상태")]
-    [SerializeField] private RestPeriod currentPeriod = RestPeriod.Morning;
-
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI hundredsText;
     [SerializeField] private TextMeshProUGUI tensText;
@@ -30,19 +20,24 @@ public class RestTimeQuestionItem : MonoBehaviour
     [SerializeField] private Button onesUp;
     [SerializeField] private Button onesDown;
 
-    [SerializeField] private Button timeCheckBtn;
-
     [Header("최대 시간 설정")]
-    [SerializeField] private int maxMorning = 250;
-    [SerializeField] private int maxAfternoon = 190;
-    [SerializeField] private int maxEvening = 180;
-    [SerializeField] private int maxEveningExtend = 120;
+    [SerializeField] private int maxGotoSchool = 10; //등교시간
+    [SerializeField] private int maxBreakfast = 10; //아침 시간(조례)
+    [SerializeField] private int maxMorning = 240; //오전 시간
+    [SerializeField] private int maxLanch = 20; //점심 시간
+    [SerializeField] private int maxAfternoon = 170; //오후 시간
+    [SerializeField] private int maxParm = 50; //야자 시간 
+    [SerializeField] private int maxAfterSchool; //야자 연장 시간 or 학원 시간 
+
 
     private int[] digits = new int[3]; // [0]=hundreds, [1]=tens, [2]=ones
 
     [SerializeField]
     int currentTime;
-    private void Start()
+
+    private bool isFirstEnable = true; // 최초 1회만 GetMaxMinutes() 호출
+
+    private void OnEnable()
     {
         hundredsUp.onClick.AddListener(() => ChangeDigit(0, +1));
         hundredsDown.onClick.AddListener(() => ChangeDigit(0, -1));
@@ -53,16 +48,50 @@ public class RestTimeQuestionItem : MonoBehaviour
         onesUp.onClick.AddListener(() => ChangeDigit(2, +1));
         onesDown.onClick.AddListener(() => ChangeDigit(2, -1));
 
-        timeCheckBtn.onClick.AddListener(() => OnCheckTime());
-        maxTimeText.text = $"{GetMaxMinutes()} 분";
+        if (isFirstEnable)
+        {
+            currentMaxTime = GetMaxMinutes();
+            maxTimeText.text = $"{currentMaxTime} 분";
+            isFirstEnable = false;
+        }
+        else
+        {
+            maxTimeText.text = $"{prevlastTime} 분";
+        }
+
+
         UpdateTimeUI();
     }
+    [SerializeField]
+    public int prevlastTime;
 
-    private void OnCheckTime()
+    [SerializeField]
+    int currentMaxTime = 0;
+
+    private void OnDisable()
     {
-        EventBus.Publish(UIManager.OnRestTimeSelected, currentTime);
-        RestPeriod next = GetNextPeriod(currentPeriod);
-        SetPeriod(next);
+        hundredsUp.onClick.RemoveAllListeners();
+        hundredsDown.onClick.RemoveAllListeners();
+        tensUp.onClick.RemoveAllListeners();
+        tensDown.onClick.RemoveAllListeners();
+        onesUp.onClick.RemoveAllListeners();
+        onesDown.onClick.RemoveAllListeners();
+
+        Set();
+    }
+    void Set()
+    {
+        currentMaxTime -= currentTime; // 10 - 5 = 5
+
+        if(currentMaxTime <= 0)
+        {
+            EventBus.Publish(EffectManager.OnRestTimeEnded, true);
+            isFirstEnable = true;
+        }
+        prevlastTime = currentMaxTime;
+
+        currentTime = 0;
+        digits[0] = digits[1] = digits[2] = 0;
     }
 
     private void ChangeDigit(int index, int delta)
@@ -101,12 +130,12 @@ public class RestTimeQuestionItem : MonoBehaviour
         }
 
         // 최대 보정 (넘으면 롤백)
-        if (GetTotalMinutes() > GetMaxMinutes()) //최대 시간 초과 하면
+        if (GetTotalMinutes() > currentMaxTime) //최대 시간 초과 하면
         {
             digits[0] = before / 100;
             digits[1] = (before % 100) / 10;
             digits[2] = before % 10;
-            Debug.Log("최대 시간 초과 → 변경 취소");
+            Debug.Log("최대 시간 초과 -> 이전 값으로 세팅");
         }
 
         UpdateTimeUI();
@@ -127,34 +156,18 @@ public class RestTimeQuestionItem : MonoBehaviour
 
     private int GetMaxMinutes()
     {
-        switch (currentPeriod)
+        DailyRoutine dailyRoutine = DailyRoutineManager.Instance.DailyRoutine;
+
+        switch (dailyRoutine)
         {
-            case RestPeriod.Morning: return maxMorning;
-            case RestPeriod.Afternoon: return maxAfternoon;
-            case RestPeriod.Evening: return maxEvening;
-            case RestPeriod.EveningExtend: return maxEveningExtend;
+            case DailyRoutine.GotoSchool: return maxGotoSchool;
+            case DailyRoutine.ArriveSchool_Breakfast: return maxBreakfast;
+            case DailyRoutine.ArriveSchool_Morning: return maxMorning;
+            case DailyRoutine.ArriveSchool_Lanch: return maxLanch;
+            case DailyRoutine.ArriveSchool_Afternoon: return maxAfternoon;
+            case DailyRoutine.Parm: return maxParm;
+            case DailyRoutine.AfterSchool: return maxAfterSchool;
             default: return 0;
         }
-    }
-    private RestPeriod GetNextPeriod(RestPeriod current)
-    {
-        switch (current)
-        {
-            case RestPeriod.Morning: return RestPeriod.Afternoon;
-            case RestPeriod.Afternoon: return RestPeriod.Evening;
-            case RestPeriod.Evening: return RestPeriod.EveningExtend;
-            case RestPeriod.EveningExtend:
-            default:
-                return RestPeriod.Morning; // 마지막이면 다시 Morning으로 순환
-        }
-    }
-    public void SetPeriod(RestPeriod period)
-    {
-        currentPeriod = period;
-        digits[0] = digits[1] = digits[2] = 0;
-
-        int max = GetMaxMinutes();
-        maxTimeText.text = $"{max}";
-        UpdateTimeUI();
     }
 }
