@@ -35,6 +35,7 @@ public class SingleTonGeneric<T> : MonoBehaviour where T : Component // ex) publ
 
         else
         {
+            Debug.Log("awake");
             Destroy(gameObject);
         }
     }

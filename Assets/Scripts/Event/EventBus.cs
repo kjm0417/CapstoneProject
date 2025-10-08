@@ -10,6 +10,7 @@ public static class EventBus
     // 파라미터 없는 구독
     public static void Subscribe(string eventName, Action listener)
     {
+        Debug.Log(eventName);
         if (eventActionDictionary.ContainsKey(eventName))
             eventActionDictionary[eventName] += listener;
         else

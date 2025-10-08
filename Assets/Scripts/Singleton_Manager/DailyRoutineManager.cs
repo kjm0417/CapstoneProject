@@ -46,12 +46,13 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
             dailyRoutine = value;
         }
     }
- 
-
     protected override void Awake()
     {
         base.Awake();
+        Debug.Log("awake");
     }
+
+
     private void OnEnable()
     {
         BuildDailyPattenrCache();
@@ -79,28 +80,27 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         {
             case "GotoSchool":
                 DailyRoutine = DailyRoutine.GotoSchool; //등교 패턴으로 변경  
-                OnChangeSchoolBreakFastUI();
                 break;
             case "ArriveSchool_Breakfast":
                 DailyRoutine = DailyRoutine.ArriveSchool_Breakfast; //학교 아침 시간
-                OnChangeSchoolMorningUI();
                 break;
             case "ArriveSchool_Morning":
-                OnSchoolLanchUI();
+                DailyRoutine = DailyRoutine.ArriveSchool_Morning; //학교 오전시간
                 break;
             case "ArriveSchool_Lanch":
-                OnSchoolAfternoonUI();
+                DailyRoutine = DailyRoutine.ArriveSchool_Lanch; //학교 점심시간
                 break;
             case "ArriveSchool_Afternoon":
-                OnAfterSchoolSelectUI();
+                DailyRoutine = DailyRoutine.ArriveSchool_Afternoon; //학교 오후시간
                 break;
             case "Parm":
-                OnParmSelectUI();
+                DailyRoutine = DailyRoutine.Parm; //야자 패턴으로 변경
                 break;
             case "AfterSchool":
-                OnAfterSchoolSelectUI();
+                DailyRoutine = DailyRoutine.AfterSchool; //학원 패턴으로 변경
                 break;
         }
+        OnChangeRoutine(DailyRoutine);
     }
 
     private void OnDailyStart(GameDate date)
@@ -108,45 +108,14 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         currentDay = date.Day;
         DailyRoutine = DailyRoutine.Room;
     }
- 
-    private void OnChangeGotoSchoolUI() //등교 변경
+    
+    private void OnChangeRoutine(DailyRoutine dailyRoutine)
+    {
+         DailyPatternDialougeDataLoad(dailyRoutine);
+    }
+    private void OnChangeGotoSchoolUI() //방 -> 등교 변경
     {
         DailyPatternDialougeDataLoad(dailyRoutine);
-    }
-
-    private void OnChangeSchoolBreakFastUI()
-    {
-        DailyPatternDialougeDataLoad(dailyRoutine);
-       
-    }
-    private void OnChangeSchoolMorningUI() //학교 오전 시간 변경
-    {
-        DailyPatternDialougeDataLoad(dailyRoutine);
-        DailyRoutine = DailyRoutine.ArriveSchool_Morning; 
-    }
-
-    private void OnSchoolLanchUI() //학교 점심 시간 변경
-    {
-        DailyPatternDialougeDataLoad(dailyRoutine);
-        DailyRoutine = DailyRoutine.ArriveSchool_Lanch; 
-    }
-
-    private void OnSchoolAfternoonUI() //학교 오후 시간 변경
-    {
-        DailyPatternDialougeDataLoad(dailyRoutine);
-        DailyRoutine = DailyRoutine.ArriveSchool_Afternoon; 
-    }
-
-
-    private void OnParmSelectUI() //학교 야자시간 변경
-    {
-        DailyPatternDialougeDataLoad(dailyRoutine);     
-        DailyRoutine = DailyRoutine.Parm; //야자 패턴으로 변경   
-    }
-    private void OnAfterSchoolSelectUI() //학원 변경
-    {
-        DailyPatternDialougeDataLoad(dailyRoutine);
-        DailyRoutine = DailyRoutine.AfterSchool; 
     }
 
     ///// <summary>

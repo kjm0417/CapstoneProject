@@ -77,17 +77,20 @@ public class RestTimeQuestionItem : MonoBehaviour
         onesUp.onClick.RemoveAllListeners();
         onesDown.onClick.RemoveAllListeners();
 
+        //EventBus.Publish(EffectManager.OnRestTimeEnded, false, currentTime);
+
         Set();
     }
     void Set()
     {
         currentMaxTime -= currentTime; // 10 - 5 = 5
 
-        if(currentMaxTime <= 0)
+        if (currentMaxTime <= 0)
         {
-            EventBus.Publish(EffectManager.OnRestTimeEnded, true);
+            EventBus.Publish(EffectManager.OnRestTimeEnded, true, currentTime);
             isFirstEnable = true;
         }
+
         prevlastTime = currentMaxTime;
 
         currentTime = 0;
@@ -157,6 +160,8 @@ public class RestTimeQuestionItem : MonoBehaviour
     private int GetMaxMinutes()
     {
         DailyRoutine dailyRoutine = DailyRoutineManager.Instance.DailyRoutine;
+
+        Debug.Log(dailyRoutine);
 
         switch (dailyRoutine)
         {
