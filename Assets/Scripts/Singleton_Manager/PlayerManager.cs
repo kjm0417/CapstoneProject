@@ -144,6 +144,8 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
         }
 
         EventBus.Publish<IPlayerStateReadOnly>(EventNames.PlayerStatsChanged, state);
+
+        //ex) 사용 에시 : PlayerManager.Instance.ApplyReward(new MiniGameReward { type = RewardType.StressDown, amount = 10 });
     }
 
     /// <summary>
