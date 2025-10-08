@@ -19,9 +19,11 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
         [Tooltip("IMiniGame.Id 와 동일해야 함")]
         public string id;
 
+
         [Tooltip("해당 미니게임 프리팹(루트에 IMiniGame 구현 컴포넌트가 있어야 함)")]
         public GameObject prefab;
     }
+
 
     [Header("Registry")]
     [Tooltip("프로젝트 내 미니게임 프리팹 등록 테이블")]
@@ -157,57 +159,51 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
         }
         _currentGame = null;
     }
+
+    /// <summary>
+    /// ID 하나에 대한 Duration 조회 (등록된 프리팹의 컴포넌트에서 바로 읽음).
+    /// - 성공 시 true/실패 시 false
+    public bool TryGetDuration(string gameIdRaw, out float duration)
+    {
+        duration = 0f;
+        var gameId = gameIdRaw;
+        if (string.IsNullOrEmpty(gameId)) return false;
+
+        if (!_prefabById.TryGetValue(gameId, out var prefab) || prefab == null)
+            return false;
+
+
+        var miniBase = prefab.GetComponentInChildren<MiniGameBase>(true);
+        if (miniBase != null)
+        {
+            duration = miniBase.Duration; // public float Duration => _duration;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// 등록된 모든 미니게임의 Duration 테이블(ID→Duration)을 만든다.
+    public IReadOnlyDictionary<string, float> GetAllDurations()
+    {
+        var map = new Dictionary<string, float>();
+        foreach (var kv in _prefabById)
+        {
+            var id = kv.Key;
+            var prefab = kv.Value;
+            if (prefab == null) continue;
+
+            float d;
+            if (TryGetDuration(id, out d))
+            {
+                map[id] = d;
+            }
+            else
+            {
+                Debug.LogWarning($"[MiniGameManager] '{id}' 프리팹에서 Duration을 찾지 못했습니다. (IMiniGame/MiniGameBase 확인 필요)");
+            }
+        }
+        return map;
+    }
 }
-
-//using System.Collections.Generic;
-//using UnityEngine;
-
-//public class MiniGameManager : MonoBehaviour
-////EffectManager로 부터 받은 effectId(미니게임 ID)와 매핑하여 해당 미니게임 시작 
-//{
-//    public static string OnMiniGameStarted = "OnMiniGameStartEvent";
-
-//    private Dictionary<string, MiniGameBase> miniGameMap = new Dictionary<string, MiniGameBase>();
-
-//    private void Awake()
-//    {
-//        MiniGameBase[] allMiniGames = FindObjectsOfType<MiniGameBase>(true); //비활성화된 오브젝트도 찾음
-//        foreach (var game in allMiniGames)
-//        {
-//            if (!miniGameMap.ContainsKey(game.Id))
-//            {
-//                miniGameMap.Add(game.Id, game);
-//            }
-//            else
-//            {
-//                Debug.LogWarning($"중복된 MiniGame ID 발견: {game.Id}");
-//            }
-//        }
-
-//    }
-
-//    private void OnEnable()
-//    {
-//        EventBus.Subscribe<string>(OnMiniGameStarted, StartMiniGameById);
-//    }
-
-//    private void OnDisable()
-//    {
-//        EventBus.UnSubscribe<string>(OnMiniGameStarted, StartMiniGameById);
-//    }
-
-
-
-//    private void StartMiniGameById(string id)
-//    {
-//        if (miniGameMap.TryGetValue(id, out var miniGame))
-//        {
-//            Debug.Log($"미니게임 시작: {miniGame.Id}");
-//            miniGame.Init();
-//            miniGame.StartGame();
-//        }
-//        else
-//        {
-//            Debug.LogWarning($"MiniGame ID {id} 에 해당하는 미니게임 없음");
-//        }
-//     }

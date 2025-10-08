@@ -615,7 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3f4a5b6c7d8091a2b3c4d5e6f70819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: 'ListenEnglish '
+  _id: ListenEnglish
   _duration: 30
   _successReward: []
   _failReward: []
