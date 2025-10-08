@@ -16,7 +16,7 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
     public static string OnRestQuestions = "OnRestQuestionEvent"; //얼마나 쉴지 보여주는 UI 이벤트
 
     [SerializeField]
-    GameObject RestQuestionUI;
+    GameObject RestQuestionUI; //얼마나 쉴지 보여주는 UI
 
     protected override void Awake()
     {
@@ -62,6 +62,14 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
 
     private void OnRestQuestUI(bool isActive)
     {
-        RestQuestionUI.gameObject.SetActive(isActive);
+        //if(isActive)
+        //{
+        //    RestQuestionUI.GetComponent<CanvasGroup>().alpha = 1.0f;
+        //}
+        //else
+        //{
+        //    RestQuestionUI.GetComponent<CanvasGroup>().alpha = 0.0f;
+        //}
+       RestQuestionUI.gameObject.SetActive(isActive); //자주쓰는 패널은 CanvasGroup의 알파값을 조절하여 DiryFlag 최소화
     }
 }

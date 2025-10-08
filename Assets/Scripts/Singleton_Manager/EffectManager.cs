@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 //          ==== 자습한다 선택 && 미니게임 클리어 시 ====
-//자습한다/쉰다 선택 시, 진행되는 흐름들을 정의 
+//자습한다/쉰다 선택 시,
 //0. 자습한다/쉰다 선택지 활성화
 //1. 키보드 조작을 이용하여 자습한다 선택 버튼에 갖다 댄다.
 //2. 할 일 목록 UI에서 미니게임을 선택한다.
@@ -37,10 +37,10 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
     public static string OnNoneSelectEffectStarted = "OnNoneSelectEffectStartEvent"; //선택과 관계 없는 연출
 
-    public static string OnRestTimeEnded = "OnRestTimeEndEvent"; //쉴 시간이 0분일 때
+    public static string OnRestTimeEnded = "OnRestTimeEndEvent"; //몇분 쉴지 선택했을 때 이벤트
 
 
-    private bool isDailyRoutineSelct; //false : 스토리 진행을 위한 연출 / true : 다음 패턴으로 이동하기 위한 연출 
+    private bool isNestPattern; //false : 스토리 진행을 위한 연출 / true : 다음 패턴으로 이동하기 위한 연출 
     // 
 
 
@@ -50,7 +50,7 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
         EventBus.Subscribe<string>(OnNoneSelectEffectStarted, OnNoneSelectEffect);
 
-        EventBus.Subscribe<bool>(OnRestTimeEnded, OnChangeDailyRoutine);
+        EventBus.Subscribe<bool,int>(OnRestTimeEnded, OnDailyRest);
     }
 
     private void OnDisable()
@@ -59,18 +59,17 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
         EventBus.UnSubscribe<string>(OnNoneSelectEffectStarted, OnNoneSelectEffect);
 
-        EventBus.UnSubscribe<bool>(OnRestTimeEnded, OnChangeDailyRoutine);
+        EventBus.UnSubscribe<bool,int>(OnRestTimeEnded, OnDailyRest);
     }
 
     private void OnSelectEffect(ChoiceData choiceData) //선택 버튼 선택이 아닌 선택 후 확정 시 호출되는 메서드
     {
-        isDailyRoutineSelct = true;
+        isNestPattern = true;
 
         if(choiceData.ChoiceId.Equals("Study")) //미니게임 이벤트 조건(스터디 플래너 판별)
         {
             //예시. effectId(액셀의 effectID 방식) = JumpMiniGame 
-
-            //EventBus.Publish(MiniGameManager.OnMiniGameStarted, choiceData.EffectId);
+            EventBus.Publish("MiniGame.StartById", choiceData.EffectId);
         }
         else if (choiceData.ChoiceId.Equals("Rest"))
         {
@@ -82,15 +81,19 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
     private void OnNoneSelectEffect(string effectId)
     {
-        isDailyRoutineSelct = false;     
+        isNestPattern = false;     
     }
-    private void OnChangeDailyRoutine(bool isEnd)
+    private void OnDailyRest(bool isEnd,int selectRestTime)
     {
+        currentRestTime = selectRestTime;
         isDailyChange = isEnd;
     }
 
     [SerializeField]
-    bool isDailyChange = false;
+    bool isDailyChange = false; //다음 패턴으로 갈지에 대한 여부. 쉴 시간이 0분이면 다음 패턴 이동 true
+
+    [SerializeField]
+    int currentRestTime = 0; // 이거 이용해서 몇분 쉬냐에 따라 집중력 올라가게끔 하면 될듯
 
     private IEnumerator StartEffect(ChoiceData choiceData) //연출 진행 -> 연출 끝 -> 암전
     {
@@ -100,22 +103,19 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
         if(choiceData.ChoiceId.Equals("Rest"))
         {
-            FadeInOutManager.Instance.FadeOutAndLoad(() =>
+            FadeInOutManager.Instance.FadeOutAndLoad(() => //암전
             {  
                 if(isDailyChange == false)
                 {
                     EventBus.Publish(DialougeSystem.OnLastDialougeSelected, true); //마지막 대사 활성화
-
                 }
                else
                 {
-                    Debug.Log("쉴 시간이 0분이므로 다음 패턴 변경");
                     EventBus.Publish(DailyRoutineManager.OnDailyChanged, choiceData.NextPattern);
                     isDailyChange = false;
                 }
-                FadeInOutManager.Instance.FadeInLoad();
 
-                Debug.Log("FadeOut 완료 . 선택 대사 재출력");
+                FadeInOutManager.Instance.FadeInLoad(); //암전 해제
             });
         }
         else

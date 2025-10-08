@@ -55,18 +55,6 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         {
             EventBus.Publish(DailyRoutineManager.OnDailyWakeUp);
         }
-        //if (Input.GetKeyDown(KeyCode.Alpha2))
-        //{
-        //    EventBus.Publish(DailyRoutineManager.OnDailyGotoSchool);
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    EventBus.Publish(DailyRoutineManager.OnDailyArriveSchool);
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha4))
-        //{
-        //    EventBus.Publish(DailyRoutineManager.OnDailyParm);
-        //}
     }
 
     public void InitDate(int month,int day, int remainDay, int dayOfWeek) //게임 시작 시, 날짜 로드 또는 초기화 하는 메서드

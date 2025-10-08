@@ -64,7 +64,9 @@ public class FadeInOutManager : SingleTonGeneric<FadeInOutManager>
     {
         float t = 0f;
         Color c = FadeImage.color;
+
         c.a = 1f;
+
         FadeImage.color = c;
 
         while (t < Fadeduration)
