@@ -12,14 +12,22 @@ public class SubjectItem : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI SubjectDetail;
 
-    public void SubjectSet(int period,string subject, int StartPage, int EndPage)
+    public void SubjectSet(string subject, int Time)
     {
-        Period.text = period.ToString();
-
         Subject.text = subject;
 
-        SubjectDetail.text = $"{StartPage} ~ {EndPage} pp";
+        SubjectDetail.text = Time.ToString();
     }
+
+    //public void SubjectSet(int period,string subject, int StartPage, int EndPage)
+    //{
+    //    Period.text = period.ToString();
+
+    //    Subject.text = subject;
+
+    //    SubjectDetail.text = $"{StartPage} ~ {EndPage} pp";
+    //}
 
 
 }
+ 

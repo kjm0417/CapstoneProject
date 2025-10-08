@@ -7,29 +7,18 @@ public enum DailyRoutine
 {
     Room, //방
     GotoSchool, //등교
+    ArriveSchool_Breakfast, //학교 - 아침 시간
     ArriveSchool_Morning, //학교 - 오전 시간
     ArriveSchool_Lanch, //학교 - 점심
     ArriveSchool_Afternoon, //학교 - 오후 시간
     Parm, //야자
-    AfterSchool, //학원
+    AfterSchool, //야자 연장 or 학원
 }
 public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 변경 및 선택 대사를 위한 매니저
 {
-    public static string OnReturnButtonSelected = "OnReturnButtonSelectEvent";
-    public static string OnCreateButtonSelected = "OnCreateButtonSelectEvent";
+    public static string OnDailyChanged = "OnDailyChange";
 
     public static string OnDailyWakeUp = "OnDailyWakeUpEvent";
-    public static string OnDailyGotoSchool = "OnDailyGotoSchoolEvent";
-
-    public static string OnDailySchool_Morning = "OnDailySchoolMorningEvent";
-    public static string OnDailySchool_Lanch = "OnDailySchoolLanchEvent";
-    public static string OnDailySchool_Afternoon = "OnDailySchoolnoonEvent";
-
-
-
-
-    public static string OnDailyEndedParm = "OnDailyParmEvent";
-    public static string OnDailyEndedAfterSchool = "OnDailyAfterSchool";
 
     [SerializeField]
     DialougeSystem dialougeSystem;
@@ -37,19 +26,16 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     [SerializeField]
     DailyDialougeExcel DailyDialougeDB;
 
-    [SerializeField] private DailyChangeSelect choiceButtonPrefab;
-    [SerializeField] private Transform choiceButtonParent; // 버튼들을 담을 부모
-
-    private ObjectPool<DailyChangeSelect> choiceBtnItemPool;
-
-    private List<DailyChangeSelect> choiceBtnItemList = new List<DailyChangeSelect>();
-
     private readonly Dictionary<int, Dictionary<string, List<DialogData>>> DailyCache = new Dictionary<int, Dictionary<string, List<DialogData>>>();
     private bool isStoryCacheBuilt;
 
+    [SerializeField]
+    private int currentDay;
+
+    [SerializeField]
     private DailyRoutine dailyRoutine;
 
-    private DailyRoutine DailyRoutine
+    public DailyRoutine DailyRoutine
     {
         get
         {
@@ -60,70 +46,63 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
             dailyRoutine = value;
         }
     }
+ 
 
     protected override void Awake()
     {
         base.Awake();
-
-        choiceBtnItemPool = new ObjectPool<DailyChangeSelect>(choiceButtonPrefab, 3, choiceButtonParent);
-
     }
     private void OnEnable()
     {
         BuildDailyPattenrCache();
 
-        EventBus.Subscribe<List<ChoiceData>>(OnCreateButtonSelected, CreateChoiceButtons); //선택 버튼 생성 이벤트 구독
-
-        EventBus.Subscribe(OnReturnButtonSelected, ReturnChoiceButtons); //선택 버튼 클릭 이벤트 구독
-
         EventBus.Subscribe<GameDate>(TimeManager.OnDayStarted, OnDailyStart);   //1. 하루 시작 이벤트 구독
 
-        EventBus.Subscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //2. 침대에서 일어난 상태 이벤트 구독
+        EventBus.Subscribe<string>(OnDailyChanged, OnDailyRoutineChange);   //침대에서 일어난 상태 이벤트 구독 해제
 
-        EventBus.Subscribe(OnDailyGotoSchool, OnChangeSchoolMorningUI);   //3. 등교 상태 이벤트 구독
+        EventBus.Subscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //침대에서 일어난 상태 이벤트 구독 해제
 
-        EventBus.Subscribe(OnDailySchool_Morning, OnSchoolLanchUI);  //4. 학교 이벤트 구독
-
-        EventBus.Subscribe(OnDailySchool_Lanch, OnSchoolAfternoonUI);  //4. 학교 이벤트 구독
-
-        EventBus.Subscribe(OnDailySchool_Afternoon, OnAfterSchoolSelectUI);  //4. 학교 이벤트 구독
-
-
-
-
-        //하루 끝
-        EventBus.Subscribe(OnDailyEndedParm, OnParmSelectUI);   //5. 야자 이벤트 구독
-
-        EventBus.Subscribe(OnDailyEndedAfterSchool, OnAfterSchoolSelectUI);   //5. 야자 이벤트 구독
     }
 
     private void OnDisable()
     {
-        EventBus.UnSubscribe<List<ChoiceData>>(OnCreateButtonSelected, CreateChoiceButtons);  //선택 버튼 생성 이벤트 구독 해제
-
-        EventBus.UnSubscribe(OnReturnButtonSelected, ReturnChoiceButtons); //선택 버튼 클릭 이벤트 구독 해제
-
         EventBus.UnSubscribe<GameDate>(TimeManager.OnDayStarted, OnDailyStart);   //하루 시작 이벤트 구독 해제
 
+        EventBus.UnSubscribe<string>(OnDailyChanged, OnDailyRoutineChange);   //침대에서 일어난 상태 이벤트 구독 해제
+
         EventBus.UnSubscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //침대에서 일어난 상태 이벤트 구독 해제
-
-        EventBus.UnSubscribe(OnDailyGotoSchool, OnChangeSchoolMorningUI);   //등교 상태 이벤트 구독 해제
-
-
-        EventBus.UnSubscribe(OnDailySchool_Morning, OnSchoolLanchUI);  //4. 학교 이벤트 구독
-
-        EventBus.UnSubscribe(OnDailySchool_Lanch, OnSchoolAfternoonUI);  //4. 학교 이벤트 구독
-
-        EventBus.UnSubscribe(OnDailySchool_Afternoon, OnAfterSchoolSelectUI);  //4. 학교 이벤트 구독
-
-
-        //하루 끝
-        EventBus.UnSubscribe(OnDailyEndedParm, OnParmSelectUI);   //야자 이벤트 구독 해제
-
-        EventBus.UnSubscribe(OnDailyEndedAfterSchool, OnAfterSchoolSelectUI);   //학원 이벤트 구독 해제
     }
 
-    private int currentDay;
+    private void OnDailyRoutineChange(string NextPattern) 
+    {
+        switch (NextPattern)
+        {
+            case "GotoSchool":
+                DailyRoutine = DailyRoutine.GotoSchool; //등교 패턴으로 변경  
+                OnChangeSchoolBreakFastUI();
+                break;
+            case "ArriveSchool_Breakfast":
+                DailyRoutine = DailyRoutine.ArriveSchool_Breakfast; //학교 아침 시간
+                OnChangeSchoolMorningUI();
+                break;
+            case "ArriveSchool_Morning":
+                OnSchoolLanchUI();
+                break;
+            case "ArriveSchool_Lanch":
+                OnSchoolAfternoonUI();
+                break;
+            case "ArriveSchool_Afternoon":
+                OnAfterSchoolSelectUI();
+                break;
+            case "Parm":
+                OnParmSelectUI();
+                break;
+            case "AfterSchool":
+                OnAfterSchoolSelectUI();
+                break;
+        }
+    }
+
     private void OnDailyStart(GameDate date)
     {
         currentDay = date.Day;
@@ -133,9 +112,13 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     private void OnChangeGotoSchoolUI() //등교 변경
     {
         DailyPatternDialougeDataLoad(dailyRoutine);
-        DailyRoutine = DailyRoutine.GotoSchool; //등교 패턴으로 변경  
     }
 
+    private void OnChangeSchoolBreakFastUI()
+    {
+        DailyPatternDialougeDataLoad(dailyRoutine);
+       
+    }
     private void OnChangeSchoolMorningUI() //학교 오전 시간 변경
     {
         DailyPatternDialougeDataLoad(dailyRoutine);
@@ -153,7 +136,6 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         DailyPatternDialougeDataLoad(dailyRoutine);
         DailyRoutine = DailyRoutine.ArriveSchool_Afternoon; 
     }
-
 
 
     private void OnParmSelectUI() //학교 야자시간 변경
@@ -177,7 +159,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         string patternKey = routineState.ToString();
 
         if (!DailyCache.TryGetValue(currentDay, out var dayCache) ||
-            !dayCache.TryGetValue(patternKey, out var dialogDatas))
+             !dayCache.TryGetValue(patternKey, out var dialogDatas))
         {
             Debug.LogWarning($"{currentDay}의 패턴({patternKey}) 대사가 없음");
             dialougeSystem.InitSelectDialouge(Array.Empty<DialogData>(), true);
@@ -199,6 +181,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         for (int i = 0; i < DailyDialougeDB.Transition.Count; i++)
         {
             var row = DailyDialougeDB.Transition[i];
+
             if (!DailyCache.TryGetValue(row.Day, out var dayCache))
             {
                 dayCache = new Dictionary<string, List<DialogData>>();
@@ -226,10 +209,13 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
                 {
                     choices.Add(new ChoiceData
                     {
+                        ChoiceId = choiceRow.ChoiceId,
+
                         Text = choiceRow.ChoiceText,
                         EffectId = choiceRow.EffectId,
                         NextPattern = choiceRow.NextPattern,
                     });
+
                 }
             }
 
@@ -276,37 +262,5 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     //    dialougeSystem.InitSelectDialouge(dialogDatas.ToArray(), true );
     //}
     #endregion
-    ///// <summary>
-    ///// 선택 버튼 풀 생성하는 메서드
-    ///// <summary>
-    private void CreateChoiceButtons(List<ChoiceData> choices)
-    {
-        ReturnChoiceButtons();
-
-        foreach (var choice in choices)
-        {
-            DailyChangeSelect choiceBtn = choiceBtnItemPool.Get();
-
-            choiceBtn.InitButtonText(choice);
-
-            choiceBtnItemList.Add(choiceBtn);
-
-        }
-
-    }
-
-    ///// <summary>
-    ///// 선택 버튼 풀 반환하는 메서드
-    ///// <summary>
-    private void ReturnChoiceButtons()
-    {
-        foreach (DailyChangeSelect choiceBtnItem in choiceBtnItemList)
-        {
-            choiceBtnItemPool.Return(choiceBtnItem);
-        }
-
-        choiceBtnItemList.Clear();
-
-    }
 
 }
