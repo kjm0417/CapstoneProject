@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
+public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리 및 UI 시각적 제어만 담당
 {
     [SerializeField]
     SubjectItem SubjectItem;
@@ -15,9 +15,14 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
 
     public static string OnRestQuestions = "OnRestQuestionEvent"; //얼마나 쉴지 보여주는 UI 이벤트
 
+    public static string OnInGameUI = "OnInGameUIEvent"; //전체적인 인 게임 UI 이벤트
+
+
     [SerializeField]
     GameObject RestQuestionUI; //얼마나 쉴지 보여주는 UI
 
+    [SerializeField]
+    GameObject InGameUI;
     protected override void Awake()
     {
         base.Awake();
@@ -29,6 +34,8 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
     {
         EventBus.Subscribe<List<QuestData>>(QuestManager.OnQuestStarted, UpdateQuestUI);
 
+        EventBus.Subscribe<bool>(OnInGameUI, OnIngameUI);
+
         EventBus.Subscribe<bool>(OnRestQuestions, OnRestQuestUI);
     }
 
@@ -36,7 +43,10 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
     {     
         EventBus.UnSubscribe<List<QuestData>>(QuestManager.OnQuestStarted, UpdateQuestUI);
 
+        EventBus.UnSubscribe<bool>(OnInGameUI, OnIngameUI);
+
         EventBus.UnSubscribe<bool>(OnRestQuestions, OnRestQuestUI);
+
     }
 
 
@@ -54,22 +64,18 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리
         foreach (QuestData questData in questDataList)
         {
             SubjectItem subjectItem = itemPool.Get();
-            subjectItem.SubjectSet(questData.Subject,questData.StudyTime);
+            subjectItem.SubjectSet(questData.Subject,questData.StudyTime, questData.MasterID);
             activeItems.Add(subjectItem);
         }
 
     }
 
+    private void OnIngameUI(bool isActive)
+    {
+        InGameUI.gameObject.SetActive(isActive);
+    }
     private void OnRestQuestUI(bool isActive)
     {
-        //if(isActive)
-        //{
-        //    RestQuestionUI.GetComponent<CanvasGroup>().alpha = 1.0f;
-        //}
-        //else
-        //{
-        //    RestQuestionUI.GetComponent<CanvasGroup>().alpha = 0.0f;
-        //}
-       RestQuestionUI.gameObject.SetActive(isActive); //자주쓰는 패널은 CanvasGroup의 알파값을 조절하여 DiryFlag 최소화
+       RestQuestionUI.gameObject.SetActive(isActive); 
     }
 }

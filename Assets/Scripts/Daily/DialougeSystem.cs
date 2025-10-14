@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.VirtualTexturing;
 using UnityEngine.UI;
@@ -42,6 +43,8 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 {
     public static string OnLastDialougeSelected = "OnLastDialougeSelect";
 
+    public static string OnNotNextDialoue = "OnNotNextDialouge"; //´ë»ç Á¾·á ¹æÁö ÀÌº¥Æ®
+
     [SerializeField]
     DailyDialougeExcel DailyDialougeDB;
 
@@ -79,12 +82,19 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     {
         EventBus.Subscribe<bool>(DailySelectButtonManager.OnReturnButtonSelected, SetUpUI);
         EventBus.Subscribe<bool>(OnLastDialougeSelected, ShowLastDialogueInfo);
+        EventBus.Subscribe<bool>(OnNotNextDialoue, OnFlag);
     }
 
     private void OnDisable()
     {
         EventBus.UnSubscribe<bool>(DailySelectButtonManager.OnReturnButtonSelected, SetUpUI);
         EventBus.UnSubscribe<bool>(OnLastDialougeSelected, ShowLastDialogueInfo);
+        EventBus.UnSubscribe<bool>(OnNotNextDialoue, OnFlag);
+    }
+
+    private void OnFlag(bool isActive)
+    {
+        isSelectDialougeLast = isActive;
     }
 
     /// <summary>
@@ -109,7 +119,6 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
         if(isAutoStart && Dialogs.Length > 0)
         {
-            Debug.Log("¼±ÅÃ ´ë»ç ÁøÇà");
             StartCoroutine(DialogueFlow());
         }
     }
@@ -159,7 +168,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
        }
 
-       if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) && !isSelectDialougeLast)
+       if( (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && !isSelectDialougeLast)
         {
             if(isTypingEffect) //ÅØ½ºÆ® Å¸ÀÌÇÎÈ¿°ú¸¦ Àç»ýÁßÀÏ ¶§ , ¸¶¿ì½º ¿Þ Å¬¸¯ ½Ã, È¿°ú Á¾·á
             {
@@ -234,10 +243,10 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
         speaker.objectArrow.SetActive(false); //È­»ìÇ¥´Â ´ë»ç Á¾·áµÇ¾úÀ» ¶§¸¸ È°¼ºÈ­ÇÏ±â ¶§¹®¿¡ Ç×»ó false;
 
-        //Ä³¸¯ÅÍ ÀÌ¹ÌÁö UI ¾ËÆÄ °ª º¯°æ
-        Color color = speaker.PlayerImage.color;
-        color.a = isActive == true ? 1 : 0f;
-        speaker.PlayerImage.color = color;
+        //Ä³¸¯ÅÍ ÀÌ¹ÌÁö UI ¾ËÆÄ °ª º¯°æ - Àá±ñ º¸·ù
+       // Color color = speaker.PlayerImage.color;
+        //color.a = isActive == true ? 1 : 0f;
+       // speaker.PlayerImage.color = color;
 
     }
     /// <summary>
@@ -253,21 +262,19 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
         }
     }
 
-    [SerializeField]
-    bool isSelectDialougeLast; //¸¶Áö¸· ¼±ÅÃ ´ë»çÀÏ ¶§
+    public bool isSelectDialougeLast; //¸¶Áö¸· ¼±ÅÃ ´ë»çÀÏ ¶§
+
     IEnumerator OnTypingText()
     {
         if (currentDialogIndex == Dialogs.Length - 1)
         {
-            Debug.Log("¸¶Áö¸·´ë»ç");
 
             if (Dialogs[currentDialogIndex].choices != null && Dialogs[currentDialogIndex].choices.Count > 0)
             {
-                isSelectDialougeLast = true;
-
+                isSelectDialougeLast = true; //´ëÈ­ Á¾·á ¹æÁö
 
                 foreach (var c in Dialogs[currentDialogIndex].choices)
-                    Debug.Log($"¸¶Áö¸· ´ë»ç ¼±ÅÃÁö: {c.Text}, EffectId: {c.EffectId}");
+                    Debug.Log($"¸¶Áö¸· ´ë»ç ¼±ÅÃÁö: {c.Text} EffectId: {c.EffectId}");
 
                 EventBus.Publish(DailySelectButtonManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
             }

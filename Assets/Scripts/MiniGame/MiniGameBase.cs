@@ -12,6 +12,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     [SerializeField] private MiniGameReward[] _failReward;
 
     public string Id => _id;
+
     public float Duration => _duration;
     public float RemainingTime { get; protected set; }
     public bool IsRunning { get; protected set; }

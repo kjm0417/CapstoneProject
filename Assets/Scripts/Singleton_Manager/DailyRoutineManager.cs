@@ -107,11 +107,14 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     {
         currentDay = date.Day;
         DailyRoutine = DailyRoutine.Room;
+
+        EventBus.Publish(UIManager.OnInGameUI, false);
     }
     
     private void OnChangeRoutine(DailyRoutine dailyRoutine)
     {
-         DailyPatternDialougeDataLoad(dailyRoutine);
+
+        DailyPatternDialougeDataLoad(dailyRoutine);
     }
     private void OnChangeGotoSchoolUI() //방 -> 등교 변경
     {
