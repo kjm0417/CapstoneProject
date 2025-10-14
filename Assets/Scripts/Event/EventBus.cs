@@ -10,7 +10,6 @@ public static class EventBus
     // 파라미터 없는 구독
     public static void Subscribe(string eventName, Action listener)
     {
-        Debug.Log(eventName);
         if (eventActionDictionary.ContainsKey(eventName))
             eventActionDictionary[eventName] += listener;
         else
@@ -59,7 +58,10 @@ public static class EventBus
         if (eventDelegateDictionary.ContainsKey(eventName))
             (eventDelegateDictionary[eventName] as Action<T>)?.Invoke(param);
         else
-            Debug.Log($"해당 {eventName} 이벤트는 존재하지 않는다.");
+        {
+            Debug.LogError($"[EventBus] {eventName} 이벤트 타입 불일치! " +
+                           $"발행 타입: {typeof(T)}, 구독 타입: {param.GetType().GenericTypeArguments[0]}");
+        }
     }
 
     // 파라미터 2개 있는 구독

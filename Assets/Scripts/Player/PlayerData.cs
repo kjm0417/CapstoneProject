@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Game/PlayerData", fileName = "PlayerData")]
@@ -30,5 +32,20 @@ public sealed class PlayerData : ScriptableObject
         return new PlayerState(id, this);
     }
 
+    [Serializable]
+    public class RoutineRule
+    {
+        public DailyRoutine routine;
+        public string requiredEffectId;
+        public List<string> allowedEffectIds = new();
+    }
+
+    public List<RoutineRule> rules = new();
+    public bool TryGetRule(DailyRoutine routine, out RoutineRule rule)
+    {
+        for (int i = 0; i < rules.Count; i++)
+            if (rules[i].routine == routine) { rule = rules[i]; return true; }
+        rule = null; return false;
+    }
 
 }
