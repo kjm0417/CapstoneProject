@@ -3,16 +3,11 @@ using UnityEngine.UI;
 
 public class DailyStudySelectButton : DailySelectButtonManager
 {
-    public static string OnStudyPressed = "OnStudyPressEvent";
-    public static string OnStudyUIClear = "OnStudyEscPressEvent"; //과목 UI 이미지 빼는 
-
     protected override void OnEnable()
     {
         //base.OnEnable();
         EventBus.Subscribe<UIMode>(OnUIModeChanged, HandleUIModeChanged);
         EventBus.Subscribe<bool>(UIManager.OnInGameUI, OnInGameUIActive);
-        EventBus.Subscribe(OnStudyPressed, OnStudyPressButton);
-        EventBus.Subscribe(OnStudyUIClear, OnEscPressed);
     }
 
     protected override void OnDisable()
@@ -21,19 +16,16 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
         EventBus.UnSubscribe<UIMode>(OnUIModeChanged, HandleUIModeChanged);
         EventBus.UnSubscribe<bool>(UIManager.OnInGameUI, OnInGameUIActive);
-        EventBus.UnSubscribe(OnStudyPressed, OnStudyPressButton);
-        EventBus.UnSubscribe(OnStudyUIClear, OnEscPressed);
     }
 
-    private void OnEscPressed()
-    {
-        ClearStudyColum(true);
-    }
     [SerializeField]
     private UIMode localMode;
     private bool isSyncingMode = false;
     [SerializeField]
-    protected int currentStudyColum;
+    private int currentStudyColum;
+    [SerializeField]
+    private bool isStudyUI;
+
     private void HandleUIModeChanged(UIMode newMode)
     {
         if (isSyncingMode) return; //스택 오버플로우 방지
@@ -43,7 +35,7 @@ public class DailyStudySelectButton : DailySelectButtonManager
         Mode = localMode;
         isSyncingMode = false;
     }
-    private Button[] studyButton = new Button[7];
+    private Button[] studyButtons = new Button[7];
 
     [SerializeField]
     GameObject SubjectItemParent;
@@ -58,13 +50,13 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
         if (isActive)
         {
-            if (studyButton[0] == null)
+            if (studyButtons[0] == null)
             {
                 subjectItems = SubjectItemParent.GetComponentsInChildren<SubjectItem>();
 
-                for (int i = 0; i < studyButton.Length; i++)
+                for (int i = 0; i < studyButtons.Length; i++)
                 {
-                    studyButton[i] = subjectItems[i].GetButton();
+                    studyButtons[i] = subjectItems[i].GetButton();
                 }
             }
         }
@@ -107,7 +99,7 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
         isStudySelectReady = true;
 
-        Image img = studyButton[currentStudyColum].GetComponent<Image>();
+        Image img = studyButtons[currentStudyColum].GetComponent<Image>();
 
         if (img != null)
         {
@@ -116,16 +108,18 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
     }
 
-    private void ClearStudyColum(bool resetToDefault)
+    protected override void ClearStudyColum(bool resetToDefault)
     {
-        for (int i = 0; i < studyButton.Length; i++)
+        isStudySelectReady = false;
+
+        for (int i = 0; i < studyButtons.Length; i++)
         {
             if(resetToDefault == false && i == currentStudyColum) //현재 버튼은 제외하기
             {
                 continue;
             }
 
-            Image img = studyButton[i].GetComponent<Image>();
+            Image img = studyButtons[i].GetComponent<Image>();
             if (img != null)
             {
                 img.sprite = defaultSprite;  // 원래 스프라이트로 되돌리기
@@ -133,8 +127,12 @@ public class DailyStudySelectButton : DailySelectButtonManager
         }
     }
 
-    private void OnStudyPressButton()
+    protected override void OnStudyPressButton()
     {
+        if (!isStudySelectReady) { return; } //과목 선택 안할 시 return;
+
+        base.HandleAfterPress();
+
         ClearStudyColum(true);
         InitStudy();
 
@@ -142,8 +140,11 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
         int studyTime = subjectItems[currentStudyColum].SubjectTime;
 
+        EventBus.Publish("MiniGame.StartById", $"{miniGameId}");
+
         //choiceBtnItemList[currentIndex].PressButton(Mode);
         Debug.Log($"자습한다 버튼 선택 확정(여기서 미니게임 실행) - 미니게임 ID : {miniGameId} || 공부 시간 :  {studyTime}");
     }
-    
+
+
 }

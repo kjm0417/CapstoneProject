@@ -13,6 +13,8 @@ public class DailySelectButtonManager : MonoBehaviour
 
     public static string OnCurrentRestTime = "OnPossibleRestButtonEvent"; //현재 쉬는 시간 받아오기
 
+    protected string OnUIModeChanged = "OnUIModeChangeEvent";
+
     private static ObjectPool<DailyChangeSelect> choiceBtnItemPool;
 
     protected List<DailyChangeSelect> choiceBtnItemList = new List<DailyChangeSelect>();
@@ -24,29 +26,10 @@ public class DailySelectButtonManager : MonoBehaviour
     protected int currentIndex = 0; // 현재 대사의 버튼 인덱스
 
     [SerializeField]
-    protected  bool isTimeSelectReady;
-
-    [SerializeField]
     private string currentPlayerId;
 
     [SerializeField]
-    protected bool isRestQuestionUI;
-
-    [SerializeField]
-    protected bool isStudyUI;
-
-    [SerializeField]
-    protected bool isUpSelected = false; //위 화살표 키를 통해 RestUI의 버튼들 조작 가능
-
-    //[SerializeField]
-    //protected int currentColum;
-
-    [SerializeField]
     protected KeyCode lastArrowKey = KeyCode.None; // 마지막으로 누른 방향키
-
-    [SerializeField]
-    protected  bool isStudySelectReady;
-
 
     [SerializeField]
     protected UIMode uiMode;
@@ -66,6 +49,33 @@ public class DailySelectButtonManager : MonoBehaviour
         }
     }
 
+
+    #region RestUI 관련
+    [Header("RestUI 관련")]
+    [SerializeField]
+    DailyRestSelectButton restButton;
+
+    protected virtual void SelectFinshed(bool isUp) { }
+    protected virtual void MoveColumn(int direction) { }
+    protected virtual void SelectCloum(bool isUp) { }
+
+    protected virtual void ClearRestColum(bool restState) { }
+
+    protected virtual void OnRestPressButton() { }
+    #endregion
+
+    #region StudyUI 관련
+    [Header("StudyUI 관련")]
+    [SerializeField]
+    DailyStudySelectButton studyButton;
+    protected virtual void MoveStudyColum(int direction) { }
+    protected virtual void SelectStudyColum() { }
+
+    protected virtual void ClearStudyColum(bool studyState) { }
+    protected virtual void OnStudyPressButton() { }
+    #endregion
+
+
     private void Awake()
     {
         if(choiceBtnItemPool == null)
@@ -75,9 +85,6 @@ public class DailySelectButtonManager : MonoBehaviour
       
 
     }
-
-    protected string OnUIModeChanged = "OnUIModeChangeEvent";
-
     protected virtual void OnEnable()
     {
         EventBus.Subscribe<IPlayerStateReadOnly>(EventNames.ActiveCharacterChanged, OnPlayerChanged);
@@ -103,17 +110,10 @@ public class DailySelectButtonManager : MonoBehaviour
     }
 
 
-
-    #region RestUI 관련
-    protected virtual void SelectFinshed(bool isUp) { }
-    protected virtual void MoveColumn(int direction) { }
-    protected virtual void SelectCloum(bool isUp) { }
-    #endregion
-
-    #region StudyUI 관련
-    protected virtual void MoveStudyColum(int direction) { }
-    protected virtual void SelectStudyColum() { }
-    #endregion
+    [SerializeField]
+    protected bool isStudySelectReady;
+    [SerializeField]
+    protected bool isTimeSelectReady;
 
     private void Update()
     {
@@ -130,14 +130,13 @@ public class DailySelectButtonManager : MonoBehaviour
 
             if (Mode == UIMode.Study)
             {
-                Debug.Log("Study esc");
-                EventBus.Publish(DailyStudySelectButton.OnStudyUIClear);
+                studyButton?.ClearStudyColum(true);
             }
             if (Mode == UIMode.Rest)
             {
-                Debug.Log("휴식 esc");
+                restButton?.ClearRestColum(true);
+
                 EventBus.Publish(RestTimeQuestionItem.OnRestUIBacked, true);
-                EventBus.Publish(DailyRestSelectButton.OnRestSelectUIClear);
             }
             isStudySelectReady = false;
             isTimeSelectReady = false;
@@ -180,58 +179,50 @@ public class DailySelectButtonManager : MonoBehaviour
         switch(Mode)
         {
             case UIMode.Rest:
-                EventBus.Publish(DailyRestSelectButton.OnRestSelectUIClear);
-                EventBus.Publish(DailyRestSelectButton.OnRestPressed);
+                restButton?.OnRestPressButton();
                 break;
             case UIMode.Study:
-                if (isStudySelectReady)
-                {
-                    EventBus.Publish(DailyStudySelectButton.OnStudyUIClear);
-                    EventBus.Publish(DailyStudySelectButton.OnStudyPressed);
-                }
-                else //과목을 선택 안할 시 대사 정지
-                {
-                    return;
-                }
+                studyButton?.OnStudyPressButton();            
                 break;
             case UIMode.FixedStudy:
-                Debug.Log("아침/오전 패턴의 영어듣기 (여기서 영어듣기 미니게임 실행)");
+                EventBus.Publish("MiniGame.StartById", "listening");
+                HandleAfterPress();
                 break;
             case UIMode.None:
                 Debug.Log("None 모드");
                 choiceBtnItemList[currentIndex].PressButton(Mode);
+                HandleAfterPress();
                 break;
         }
 
+    }
+    /// <summary>
+    /// 선택(확정) 이후 공통으로 호출되는 처리
+    /// </summary>
+    protected virtual void HandleAfterPress()
+    {
         EventBus.Publish(DialougeSystem.OnNotNextDialoue, false);
-
         StartCoroutine(ReturnChoiceButtonsNextFrame());
     }
-    private IEnumerator ReturnChoiceButtonsNextFrame()
+    protected virtual IEnumerator ReturnChoiceButtonsNextFrame()
     {
         yield return null;
         ReturnChoiceButtons();
     }
     private void UpdateStudyMode()
     {
-        if (isStudyUI == false) { return; }
-
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             if (Mode == UIMode.Study)
             {
-                Debug.Log("a");
-
                 CurrentButtonImageColorActive(false);
 
                 isTimeSelectReady = true;
 
                 lastArrowKey = KeyCode.UpArrow;
+
                 SelectStudyColum();
             }
-
-
-
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -242,10 +233,9 @@ public class DailySelectButtonManager : MonoBehaviour
                 isTimeSelectReady = true;
 
                 lastArrowKey = KeyCode.DownArrow;
-                SelectStudyColum();
+
+               SelectStudyColum();
             }
-
-
         }
 
         if ((Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) && Mode == UIMode.Study)
@@ -261,46 +251,51 @@ public class DailySelectButtonManager : MonoBehaviour
 
         }
     }
-
+    [SerializeField]
+    protected bool isUpSelected = false; //위 화살표 키를 통해 RestUI의 버튼들 조작 가능
     private void UpdateRestMode()
     {
-        if (isRestQuestionUI == false) { return; }
+        //if (isRestQuestionUI == false) { return; }
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            CurrentButtonImageColorActive(false);
-
-            if (lastArrowKey != KeyCode.UpArrow)
+            if(Mode == UIMode.Rest)
             {
-                isTimeSelectReady = true;
                 isUpSelected = true;
+
+                CurrentButtonImageColorActive(false);
+                isTimeSelectReady = true;
                 lastArrowKey = KeyCode.UpArrow;
                 SelectCloum(true);
             }
-            else
-            {
-                SelectFinshed(true);
-            }
-
+          
         }
-
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            CurrentButtonImageColorActive(false);
-
-            if (lastArrowKey != KeyCode.DownArrow)
+            if (Mode == UIMode.Rest)
             {
-                isTimeSelectReady = true;
                 isUpSelected = false;
+
+                CurrentButtonImageColorActive(false);
+                isTimeSelectReady = true;
                 lastArrowKey = KeyCode.DownArrow;
                 SelectCloum(false);
             }
-            else
+        }
+        if ((Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) && Mode == UIMode.Rest)
+        {
+            if (lastArrowKey == KeyCode.UpArrow)
+            {
+                SelectFinshed(true);
+            }
+            else if (lastArrowKey == KeyCode.DownArrow)
             {
                 SelectFinshed(false);
             }
 
         }
+
+  
 
     }
     /// <summary>
@@ -413,8 +408,7 @@ public class DailySelectButtonManager : MonoBehaviour
     }
 
     void SetUI()
-    {
-        isTimeSelectReady = false;
+    {      
 
         ChoiceData choiceData = choiceBtnItemList[currentIndex].GetChoiceData();
 

@@ -80,14 +80,14 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
     private void OnEnable()
     {
-        EventBus.Subscribe<bool>(DailySelectButtonManager.OnReturnButtonSelected, SetUpUI);
+        EventBus.Subscribe(DailySelectButtonManager.OnReturnButtonSelected, SetUpUI);
         EventBus.Subscribe<bool>(OnLastDialougeSelected, ShowLastDialogueInfo);
         EventBus.Subscribe<bool>(OnNotNextDialoue, OnFlag);
     }
 
     private void OnDisable()
     {
-        EventBus.UnSubscribe<bool>(DailySelectButtonManager.OnReturnButtonSelected, SetUpUI);
+        EventBus.UnSubscribe(DailySelectButtonManager.OnReturnButtonSelected, SetUpUI);
         EventBus.UnSubscribe<bool>(OnLastDialougeSelected, ShowLastDialogueInfo);
         EventBus.UnSubscribe<bool>(OnNotNextDialoue, OnFlag);
     }
@@ -138,13 +138,13 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     /// - ¸ðµç ´ëÈ­ °ü·Ã °ÔÀÓ ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­ ¹×
     /// Ä³¸¯ÅÍ ÀÌ¹ÌÁö¸¦ º¸ÀÌµµ·Ï ¼³Á¤
     /// </summary>
-    private void SetUpUI(bool isActive)
+    private void SetUpUI()
     {
         for (int i = 0; i < Speakers.Length; i++)
         {
             SetActiveObjects(Speakers[i], false); //´ëÈ­ °ü·Ã °ÔÀÓ ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
 
-            Speakers[i].PlayerImage.gameObject.SetActive(isActive); //Ä³¸¯ÅÍ ÀÌ¹ÌÁö´Â º¸ÀÌµµ·Ï
+            //Speakers[i].PlayerImage.gameObject.SetActive(true); //Ä³¸¯ÅÍ ÀÌ¹ÌÁö´Â º¸ÀÌµµ·Ï
         }
 
         isSelectDialougeLast = false;
@@ -157,7 +157,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     {
        if(isFirst == true) //´ë»ç ºÐ±â°¡ ½ÃÀÛµÉ ¶§, 1È¸¸¸ È£Ãâ
         {
-            SetUpUI(true); //ÃÊ±âÈ­. 
+            SetUpUI(); //ÃÊ±âÈ­. 
 
             if(isAutoStart) //ÀÚµ¿ Àç»ý(isAutoStart°¡ true)·Î µÇ¾î ÀÖÀ¸¸é 
             {
@@ -190,7 +190,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
             }
             else //´ë»ç°¡ ´õ ÀÌ»ó ¾øÀ» °æ¿ì ¸ðµç ¿ÀºêÁ§Æ®¸¦ ºñÈ°¼ºÈ­ÇÏ°í true ¹ÝÈ¯
             {
-                SetUpUI(false);
+                SetUpUI();
 
                 return true;
             }
@@ -271,10 +271,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
             if (Dialogs[currentDialogIndex].choices != null && Dialogs[currentDialogIndex].choices.Count > 0)
             {
-                isSelectDialougeLast = true; //´ëÈ­ Á¾·á ¹æÁö
-
-                foreach (var c in Dialogs[currentDialogIndex].choices)
-                    Debug.Log($"¸¶Áö¸· ´ë»ç ¼±ÅÃÁö: {c.Text} EffectId: {c.EffectId}");
+                isSelectDialougeLast = true; //´ëÈ­ Á¾·á ¹æÁö            
 
                 EventBus.Publish(DailySelectButtonManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
             }

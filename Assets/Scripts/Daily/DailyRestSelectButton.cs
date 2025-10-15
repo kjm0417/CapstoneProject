@@ -5,13 +5,17 @@ using UnityEngine.UI;
 public class DailyRestSelectButton : DailySelectButtonManager
 {
     public static string OnRestPressed = "OnRestPressEvent";
-    public static string OnRestSelectUIClear = "OnRestEscPressEvent"; //시간 선택 버튼 UI 이미지 빼는
+  
     [Header("RestUI 버튼 관련")]
     [SerializeField]
     RestTimeQuestionItem restQuestionItem;
     private Button[] upButtons = new Button[3];
     private Button[] downButtons = new Button[3];
-
+    //[SerializeField]
+    //protected bool isTimeSelectReady;
+    [SerializeField]
+    protected bool isRestQuestionUI;
+  
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -22,7 +26,6 @@ public class DailyRestSelectButton : DailySelectButtonManager
 
         EventBus.Subscribe(OnRestPressed, OnRestPressButton);
 
-        EventBus.Subscribe(OnRestSelectUIClear, OnEscPressed);
     }
 
     protected override void OnDisable()
@@ -35,23 +38,16 @@ public class DailyRestSelectButton : DailySelectButtonManager
 
         EventBus.UnSubscribe(OnRestPressed, OnRestPressButton);
 
-        EventBus.UnSubscribe(OnRestSelectUIClear, OnEscPressed);
+    }
 
-    }
-    private void OnEscPressed()
-    {
-        ClearColum(true);
-    }
-    [SerializeField]
-    private UIMode localMode;
+
     private bool isSyncingMode = false;
     private void HandleUIModeChanged(UIMode newMode)
     {
         if (isSyncingMode) return; //스택 오버플로우 방지
 
         isSyncingMode = true;
-        localMode = newMode;
-        Mode = localMode;
+        Mode = newMode;
         isSyncingMode = false;
     }
 
@@ -86,16 +82,17 @@ public class DailyRestSelectButton : DailySelectButtonManager
         isTimeSelectReady = false;
         isUpSelected = false;
         lastArrowKey = KeyCode.None;
-        isUpSelected = false;
     }
     /// <summary>
     /// 시간 선택 버튼 움직임 관련 메서드
     /// </summary>
     protected override void MoveColumn(int direction)
     {
-        ClearColum(false);
+        if (isRestQuestionUI == false) { return; }
+
 
         currentColum += direction;
+
 
         if (currentColum < 0)
         {
@@ -106,15 +103,17 @@ public class DailyRestSelectButton : DailySelectButtonManager
             currentColum = 0;
         }
 
+        Debug.Log(isUpSelected);
+
         if (isUpSelected)
         {
             Debug.Log("1열 , 좌우 이동");
-            SelectCloum(upButtons[currentColum]);
+            SelectCloum(true);
         }
         else
         {
             Debug.Log("2열 , 좌우 이동");
-            SelectCloum(downButtons[currentColum]);
+            SelectCloum(false);
         }
     }
     /// <summary>
@@ -122,10 +121,11 @@ public class DailyRestSelectButton : DailySelectButtonManager
     /// </summary>
     protected override void SelectCloum(bool isUp)
     {
-        ClearColum(false);
-
-        if(isUp)
+        ClearRestColum(false);
+    
+        if (isUp)
         {
+            Debug.Log("1열 , 색");
             ColorBlock cb =  upButtons[currentColum].colors;
 
             cb.normalColor = Color.yellow;
@@ -133,18 +133,20 @@ public class DailyRestSelectButton : DailySelectButtonManager
         }
         else
         {
+            Debug.Log("2열 , 색");
             ColorBlock cb = downButtons[currentColum].colors;
 
             cb.normalColor = Color.yellow;
             downButtons[currentColum].colors = cb;
         }
     }
+
     /// <summary>
     /// 시간 버튼 선택 후 확정하였을 때 버튼 클릭 이벤트 발행 메서드
     /// </summary>
     protected override void SelectFinshed(bool isUp)
     {
-        if(isUp)
+        if (isUp)
         {
             upButtons[currentColum].onClick.Invoke();
         }
@@ -157,7 +159,7 @@ public class DailyRestSelectButton : DailySelectButtonManager
     /// 시간 버튼의 색상을 모두 초기화 하거나, 현재 선택된 버튼을 제외한 
     /// 버튼 색상을 모두 초기화 하는 메서드
     /// </summary>
-    private void ClearColum(bool keepCurrent)
+    protected override void ClearRestColum(bool keepCurrent)
     {
         if (isRestQuestionUI == false) { return; }
 
@@ -166,8 +168,7 @@ public class DailyRestSelectButton : DailySelectButtonManager
             ColorBlock cb = upButtons[i].colors;
 
             if (!keepCurrent && i == currentColum && isUpSelected)
-            {
-               
+            {             
                 continue;
             }
 
@@ -189,9 +190,18 @@ public class DailyRestSelectButton : DailySelectButtonManager
         }
     }
     [SerializeField]
-    protected int currentColum;
-    private  void OnRestPressButton()
+    private int currentColum;
+    protected override void OnRestPressButton()
     {
+        if(restQuestionItem.currentTime <= 0 )
+        {
+            Debug.Log("현재 고른 시간이 0보다 작음");
+            return;
+        }
+
+        base.HandleAfterPress();
+
+        ClearRestColum(true);
         OnRestSelectEvent();
     }
     private void OnRestSelectEvent()

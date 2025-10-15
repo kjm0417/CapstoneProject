@@ -17,7 +17,7 @@ MonoBehaviour:
     Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uC77C\uC5B4\uB098\uC57C\uC9C0\u2026"
     ChoiceId: 
     MasterId: 
@@ -29,7 +29,7 @@ MonoBehaviour:
     Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uC624\uB298 \uB2A6\uC7A0\uC774\uB124?"
     ChoiceId: 
     MasterId: 
@@ -41,7 +41,7 @@ MonoBehaviour:
     Pattern: GotoSchool
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uB3C4\uCC29\uD588\uB2E4."
     ChoiceId: 
     MasterId: 
@@ -79,7 +79,7 @@ MonoBehaviour:
     Pattern: Room
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uBB50 \uD0C0\uACE0 \uAC00\uC9C0?"
     ChoiceId: 
     MasterId: 1_Room_0_0
@@ -91,7 +91,7 @@ MonoBehaviour:
     Pattern: GotoSchool
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C?(\uB4F1\uAD50)"
     ChoiceId: 
     MasterId: 1_Goto_0_0
@@ -103,7 +103,7 @@ MonoBehaviour:
     Pattern: ArriveSchool_Breakfast
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C?(\uC544\uCE68 \uC2DC\uAC04)"
     ChoiceId: 
     MasterId: 1_Brakfast_0_0
@@ -115,7 +115,7 @@ MonoBehaviour:
     Pattern: ArriveSchool_Morning
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC624\uC804 \uC2DC\uAC04)"
     ChoiceId: 
     MasterId: 1_Morning_0_0
@@ -127,7 +127,7 @@ MonoBehaviour:
     Pattern: ArriveSchool_Lanch
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC810\uC2EC \uC2DC\uAC04)"
     ChoiceId: 
     MasterId: 1_Lanch_0_0
@@ -139,7 +139,7 @@ MonoBehaviour:
     Pattern: ArriveSchool_Afternoon
     PlayerId: 0
     PlayerImagePos: 0
-    PlayerName: "\uBBFC\uC8FC"
+    PlayerName: "\uAC15\uC8FC\uD76C"
     PlayerDialogue: "\uBB34\uC5C7\uC744 \uD560\uAE4C? (\uC624\uD6C4 \uC2DC\uAC04)"
     ChoiceId: 
     MasterId: 1_Afternoon_0_0

@@ -1079,16 +1079,16 @@ MonoBehaviour:
   choiceButtonPrefab: {fileID: 6581664190828948180, guid: 16e47c7f6cb3de24abb615b688a8cdef, type: 3}
   choiceButtonParent: {fileID: 960186028}
   currentIndex: 0
-  isTimeSelectReady: 0
   currentPlayerId: 
-  isRestQuestionUI: 0
-  isStudyUI: 0
-  isUpSelected: 0
   lastArrowKey: 0
-  isStudySelectReady: 0
   uiMode: 0
+  restButton: {fileID: 1614026052}
+  studyButton: {fileID: 478756517}
+  isButtonMove: 1
   localMode: 0
   currentStudyColum: 0
+  isStudySelectReady: 0
+  isStudyUI: 0
   SubjectItemParent: {fileID: 739398139}
   selectedSprite: {fileID: 3699202404108382776, guid: f7a23511564d4a04585b2faa57db1d7c, type: 3}
   defaultSprite: {fileID: 8062671108855894579, guid: 685707ae72e91654d8723843502e0d58, type: 3}
@@ -2508,8 +2508,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   games:
-  - id: 'ListenEnglish '
+  - id: test
     prefab: {fileID: 9190949095946556049, guid: 7ef52583cdbcf1249b5f9922d2b32379, type: 3}
+  - id: listening
+    prefab: {fileID: 2072560938628518327, guid: 731c17077f4f8954f9a947b2cfe46227, type: 3}
   miniGameParent: {fileID: 546889029}
   runner: {fileID: 262488350}
   useUnscaledTime: 1
@@ -5388,16 +5390,16 @@ MonoBehaviour:
   choiceButtonPrefab: {fileID: 6581664190828948180, guid: 16e47c7f6cb3de24abb615b688a8cdef, type: 3}
   choiceButtonParent: {fileID: 960186028}
   currentIndex: 0
-  isTimeSelectReady: 0
   currentPlayerId: 
-  isRestQuestionUI: 0
-  isStudyUI: 0
-  isUpSelected: 0
   lastArrowKey: 0
-  isStudySelectReady: 0
   uiMode: 0
+  restButton: {fileID: 1614026052}
+  studyButton: {fileID: 478756517}
+  isButtonMove: 1
   restQuestionItem: {fileID: 391253163}
-  localMode: 0
+  isTimeSelectReady: 0
+  isRestQuestionUI: 0
+  isUpSelected: 0
   currentColum: 0
 --- !u!1 &1637949469
 GameObject:

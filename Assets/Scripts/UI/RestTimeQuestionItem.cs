@@ -33,7 +33,7 @@ public class RestTimeQuestionItem : MonoBehaviour
     private int[] digits = new int[3]; // [0]=hundreds, [1]=tens, [2]=ones
 
     [SerializeField]
-    int currentTime;
+    public int currentTime;
 
     [SerializeField]
     public int prevlastTime = 0;
