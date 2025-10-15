@@ -94,7 +94,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //일상적인 대화 �
 
     private void OnFlag(bool isActive)
     {
-        isSelectDialougeLast = isActive;
+        SetActiveObjects(Speakers[currentSpeakerIndex], isActive);
     }
 
     /// <summary>

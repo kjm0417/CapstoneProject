@@ -18,8 +18,6 @@ public class DailyStudySelectButton : DailySelectButtonManager
         EventBus.UnSubscribe<bool>(UIManager.OnInGameUI, OnInGameUIActive);
     }
 
-    [SerializeField]
-    private UIMode localMode;
     private bool isSyncingMode = false;
     [SerializeField]
     private int currentStudyColum;
@@ -31,8 +29,7 @@ public class DailyStudySelectButton : DailySelectButtonManager
         if (isSyncingMode) return; //스택 오버플로우 방지
 
         isSyncingMode = true;
-        localMode = newMode;
-        Mode = localMode;
+        Mode = newMode;
         isSyncingMode = false;
     }
     private Button[] studyButtons = new Button[7];
@@ -97,7 +94,7 @@ public class DailyStudySelectButton : DailySelectButtonManager
         base.CurrentButtonImageColorActive(false);
 
 
-        isStudySelectReady = true;
+        //isStudySelectReady = true;
 
         Image img = studyButtons[currentStudyColum].GetComponent<Image>();
 
@@ -129,21 +126,22 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
     protected override void OnStudyPressButton()
     {
-        if (!isStudySelectReady) { return; } //과목 선택 안할 시 return;
-
-        base.HandleAfterPress();
-
         ClearStudyColum(true);
         InitStudy();
+
+        HandleUIModeChanged(UIMode.None);
 
         string miniGameId = subjectItems[currentStudyColum].MiniGameId;
 
         int studyTime = subjectItems[currentStudyColum].SubjectTime;
 
+        DecreseRestTime = studyTime;
+
         EventBus.Publish("MiniGame.StartById", $"{miniGameId}");
 
         //choiceBtnItemList[currentIndex].PressButton(Mode);
-        Debug.Log($"자습한다 버튼 선택 확정(여기서 미니게임 실행) - 미니게임 ID : {miniGameId} || 공부 시간 :  {studyTime}");
+        Debug.Log($"자습한다 버튼 선택 확정(여기서 미니게임 실행) " +
+            $"- 미니게임 ID : {miniGameId} || 공부 시간 :  {DecreseRestTime}");
     }
 
 

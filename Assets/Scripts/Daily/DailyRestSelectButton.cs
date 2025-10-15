@@ -199,18 +199,20 @@ public class DailyRestSelectButton : DailySelectButtonManager
             return;
         }
 
+
+        ChoiceData choiceData = choiceBtnItemList[currentIndex].GetChoiceData();
         base.HandleAfterPress();
 
+        HandleUIModeChanged(UIMode.None);
+
         ClearRestColum(true);
-        OnRestSelectEvent();
+        OnRestSelectEvent(choiceData);
     }
-    private void OnRestSelectEvent()
+    private void OnRestSelectEvent(ChoiceData choiceData)
     {
         EventBus.Publish(RestTimeQuestionItem.OnRestTimeCalculated); //최대시간 계산
 
         EventBus.Publish(UIManager.OnRestQuestions, false); //얼마나 쉴지 보여주는 ui 비활성화
-
-        ChoiceData choiceData = choiceBtnItemList[currentIndex].GetChoiceData();
         EventBus.Publish(EffectManager.OnSelectEffectStarted, choiceData);
     }
 }

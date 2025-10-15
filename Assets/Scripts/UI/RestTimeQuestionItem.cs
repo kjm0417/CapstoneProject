@@ -60,7 +60,7 @@ public class RestTimeQuestionItem : MonoBehaviour
 
     public static string OnRestUIBacked = "OnRestUIBackEvent"; //현재 UI 활성화 된 상태에서 ESC 키 누름에 대한 이벤트
 
-    public static string OnRestTimeCalculated = "OnRestUIBackEvent";  //다음 시간까지 "최대시간"분, 최대시간 계산하는 이벤트
+    public static string OnRestTimeCalculated = "OnRestTimeCalculateEvent";  //다음 시간까지 "최대시간"분, 최대시간 계산하는 이벤트
 
 
     private void OnEnable()
@@ -129,8 +129,6 @@ public class RestTimeQuestionItem : MonoBehaviour
     /// </summary>
     void SetNotFirstMaxTime() 
     {
-        // int usedTime = (time == -1) ? currentTime : time;
-
         prevlastTime -= currentTime; // 10 - 5 = 5
 
         if (prevlastTime <= 0)

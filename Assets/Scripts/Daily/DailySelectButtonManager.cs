@@ -54,6 +54,8 @@ public class DailySelectButtonManager : MonoBehaviour
     [Header("RestUI 관련")]
     [SerializeField]
     DailyRestSelectButton restButton;
+    [SerializeField]
+    protected bool isTimeSelectReady;
 
     protected virtual void SelectFinshed(bool isUp) { }
     protected virtual void MoveColumn(int direction) { }
@@ -68,6 +70,15 @@ public class DailySelectButtonManager : MonoBehaviour
     [Header("StudyUI 관련")]
     [SerializeField]
     DailyStudySelectButton studyButton;
+
+    [SerializeField]
+    protected bool isStudySelectReady; //과목 선택 안한 상태에서 선택하려고 할 때 플래그
+    
+    protected int DecreseRestTime
+    {
+        get;
+        set;
+    }
     protected virtual void MoveStudyColum(int direction) { }
     protected virtual void SelectStudyColum() { }
 
@@ -108,13 +119,6 @@ public class DailySelectButtonManager : MonoBehaviour
     {
         currentPlayerId = state.Id;
     }
-
-
-    [SerializeField]
-    protected bool isStudySelectReady;
-    [SerializeField]
-    protected bool isTimeSelectReady;
-
     private void Update()
     {
         UpdateRestMode();
@@ -182,7 +186,9 @@ public class DailySelectButtonManager : MonoBehaviour
                 restButton?.OnRestPressButton();
                 break;
             case UIMode.Study:
-                studyButton?.OnStudyPressButton();            
+                if (!isStudySelectReady) { return; } //과목 선택 안할 시 return;
+                studyButton?.OnStudyPressButton();
+                HandleAfterPress();
                 break;
             case UIMode.FixedStudy:
                 EventBus.Publish("MiniGame.StartById", "listening");
@@ -204,7 +210,7 @@ public class DailySelectButtonManager : MonoBehaviour
         EventBus.Publish(DialougeSystem.OnNotNextDialoue, false);
         StartCoroutine(ReturnChoiceButtonsNextFrame());
     }
-    protected virtual IEnumerator ReturnChoiceButtonsNextFrame()
+    private IEnumerator ReturnChoiceButtonsNextFrame()
     {
         yield return null;
         ReturnChoiceButtons();
@@ -218,7 +224,7 @@ public class DailySelectButtonManager : MonoBehaviour
                 CurrentButtonImageColorActive(false);
 
                 isTimeSelectReady = true;
-
+                isStudySelectReady = true;
                 lastArrowKey = KeyCode.UpArrow;
 
                 SelectStudyColum();
@@ -231,6 +237,7 @@ public class DailySelectButtonManager : MonoBehaviour
                 CurrentButtonImageColorActive(false);
 
                 isTimeSelectReady = true;
+                isStudySelectReady = true;
 
                 lastArrowKey = KeyCode.DownArrow;
 
@@ -421,7 +428,7 @@ public class DailySelectButtonManager : MonoBehaviour
 
             EventBus.Publish(UIManager.OnInGameUI, false);
 
-            EventBus.Publish(UIManager.OnRestQuestions, true);
+            EventBus.Publish(UIManager.OnRestQuestions, true);      
         }
         else if (choiceData.ChoiceId.Equals("Study"))
         {
