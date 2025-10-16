@@ -286,15 +286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   choiceButtonPrefab: {fileID: 6581664190828948180, guid: 16e47c7f6cb3de24abb615b688a8cdef, type: 3}
   choiceButtonParent: {fileID: 918606852}
-  currentIndex: 0
   currentPlayerId: 
-  lastArrowKey: 0
-  uiMode: 0
-  restButton: {fileID: 0}
-  isTimeSelectReady: 0
-  studyButton: {fileID: 0}
-  isStudySelectReady: 0
-  isUpSelected: 0
 --- !u!4 &127879393
 Transform:
   m_ObjectHideFlags: 0
@@ -3230,7 +3222,6 @@ MonoBehaviour:
   SubjectItem: {fileID: 6615753770341737021, guid: 8ea86791938797c498d602e5f28c92b7, type: 3}
   SubjectItemParent: {fileID: 252714017}
   RestQuestionUI: {fileID: 1867885703}
-  InGameUI: {fileID: 0}
 --- !u!4 &1196922236
 Transform:
   m_ObjectHideFlags: 0
@@ -3643,7 +3634,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1328211450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4203,7 +4194,7 @@ MonoBehaviour:
   games:
   - id: DinoJump
     prefab: {fileID: 2072560938628518327, guid: 731c17077f4f8954f9a947b2cfe46227, type: 3}
-  - id: listening
+  - id: ListenEnglish
     prefab: {fileID: 9190949095946556049, guid: 7ef52583cdbcf1249b5f9922d2b32379, type: 3}
   miniGameParent: {fileID: 333697925}
   runner: {fileID: 891556696}
@@ -5254,11 +5245,16 @@ MonoBehaviour:
   tensDown: {fileID: 1010058150}
   onesUp: {fileID: 1477433809}
   onesDown: {fileID: 793843530}
-  dailyRoutineTime: {fileID: 0}
+  maxGotoSchool: 10
+  maxBreakfast: 10
+  maxMorning: 250
+  maxLanch: 20
+  maxAfternoon: 190
+  maxParm: 50
+  maxAfterSchool: 0
   currentTime: 0
   prevlastTime: 0
   currentMaxTime: 0
-  isTimeSelectBack: 0
 --- !u!114 &1867885706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6241,8 +6237,8 @@ SceneRoots:
   - {fileID: 1459550721}
   - {fileID: 1940777064}
   - {fileID: 1234160719}
-  - {fileID: 1054831527}
   - {fileID: 1196922236}
+  - {fileID: 1054831527}
   - {fileID: 641880001}
   - {fileID: 1328211451}
   - {fileID: 908049671}
