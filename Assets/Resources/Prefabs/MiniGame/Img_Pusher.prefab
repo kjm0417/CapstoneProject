@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8600088363979904280}
   - component: {fileID: 929676267954636575}
   - component: {fileID: 7014846173990892171}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Img_Pusher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
