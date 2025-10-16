@@ -1,5 +1,7 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SubjectItem : MonoBehaviour
 {
@@ -12,8 +14,27 @@ public class SubjectItem : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI SubjectDetail;
 
-    public void SubjectSet(string subject, int Time)
+    public string MiniGameId; //미니게임 ID;
+
+    public int SubjectTime;
+
+    Button StudyButton;
+
+    public Button GetButton()
     {
+        if(StudyButton == null) 
+        {
+            StudyButton = GetComponent<Button>();
+        }
+
+        return StudyButton;
+    }
+
+    public void SubjectSet(string subject, int Time, string MasterId)
+    {
+        this.MiniGameId = MasterId;
+        this.SubjectTime = Time;
+
         Subject.text = subject;
 
         SubjectDetail.text = Time.ToString();

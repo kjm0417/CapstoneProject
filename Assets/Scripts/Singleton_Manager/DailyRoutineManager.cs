@@ -18,7 +18,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 {
     public static string OnDailyChanged = "OnDailyChange";
 
-    public static string OnDailyWakeUp = "OnDailyWakeUpEvent";
+    public static string OnCurrentDailyDialouge = "OnCurrentDailyDialougeEvent";
 
     [SerializeField]
     DialougeSystem dialougeSystem;
@@ -49,7 +49,6 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     protected override void Awake()
     {
         base.Awake();
-        Debug.Log("awake");
     }
 
 
@@ -61,7 +60,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
         EventBus.Subscribe<string>(OnDailyChanged, OnDailyRoutineChange);   //침대에서 일어난 상태 이벤트 구독 해제
 
-        EventBus.Subscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //침대에서 일어난 상태 이벤트 구독 해제
+        EventBus.Subscribe(OnCurrentDailyDialouge, OnCurrentSelectDialouge);   //침대에서 일어난 상태 이벤트 구독 해제
 
     }
 
@@ -71,9 +70,15 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
         EventBus.UnSubscribe<string>(OnDailyChanged, OnDailyRoutineChange);   //침대에서 일어난 상태 이벤트 구독 해제
 
-        EventBus.UnSubscribe(OnDailyWakeUp, OnChangeGotoSchoolUI);   //침대에서 일어난 상태 이벤트 구독 해제
+        EventBus.UnSubscribe(OnCurrentDailyDialouge, OnCurrentSelectDialouge);   //침대에서 일어난 상태 이벤트 구독 해제
     }
+    private void OnDailyStart(GameDate date)
+    {
+        currentDay = date.Day;
+        DailyRoutine = DailyRoutine.Room;
 
+        EventBus.Publish(UIManager.OnInGameUI, false);
+    }
     private void OnDailyRoutineChange(string NextPattern) 
     {
         switch (NextPattern)
@@ -100,20 +105,15 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
                 DailyRoutine = DailyRoutine.AfterSchool; //학원 패턴으로 변경
                 break;
         }
-        OnChangeRoutine(DailyRoutine);
+
+        DailyPatternDialougeDataLoad(dailyRoutine);
     }
 
-    private void OnDailyStart(GameDate date)
-    {
-        currentDay = date.Day;
-        DailyRoutine = DailyRoutine.Room;
-    }
     
-    private void OnChangeRoutine(DailyRoutine dailyRoutine)
-    {
-         DailyPatternDialougeDataLoad(dailyRoutine);
-    }
-    private void OnChangeGotoSchoolUI() //방 -> 등교 변경
+    /// <summary>
+    /// 현재 패턴의 선택 대사 출력
+    /// </summary>
+    private void OnCurrentSelectDialouge()
     {
         DailyPatternDialougeDataLoad(dailyRoutine);
     }

@@ -51,9 +51,10 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         {
             UpdateDate(); 
         }
+        //임시 코드2
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            EventBus.Publish(DailyRoutineManager.OnDailyWakeUp);
+            EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
         }
     }
 

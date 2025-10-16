@@ -45,24 +45,16 @@ public class DailyChangeSelect : MonoBehaviour
             GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f); // 살짝 투명
         }
     }
-    public void PressButton()
+    public void PressButton(DailySelectButtonManager.UIMode mode)
     {
-        OnChoiceSelected();
+        EventBus.Publish(EffectManager.OnSelectEffectStarted, currentChoiceData);
     }
+    //private void OnRestSelectEvent()
+    //{
+    //    EventBus.Publish(RestTimeQuestionItem.OnRestTimeCalculated); //최대시간 계산
 
-    private void OnChoiceSelected()
-    {
-        Debug.Log($"선택된 텍스트: {currentChoiceData.Text}");
-        Debug.Log($"EffectId: {currentChoiceData.EffectId}");
+    //    EventBus.Publish(UIManager.OnRestQuestions, false); //얼마나 쉴지 보여주는 ui 비활성화
 
-        if (!string.IsNullOrEmpty(currentChoiceData.EffectId))
-        {
-            EventBus.Publish(EffectManager.OnSelectEffectStarted,currentChoiceData);
-        }
-
-        // 버튼 반환 이벤트 발행
-        EventBus.Publish(DailySelectButtonManager.OnReturnButtonSelected);
-        EventBus.Publish(DailySelectButtonManager.OnReturnButtonSelected,false);
-    }
-
+    //    EventBus.Publish(EffectManager.OnSelectEffectStarted, currentChoiceData);
+    //}
 }

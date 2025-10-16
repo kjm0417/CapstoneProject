@@ -40,7 +40,7 @@ public class EffectManager : MonoBehaviour //연출 매니저.
     public static string OnRestTimeEnded = "OnRestTimeEndEvent"; //몇분 쉴지 선택했을 때 이벤트
 
 
-    private bool isNestPattern; //false : 스토리 진행을 위한 연출 / true : 다음 패턴으로 이동하기 위한 연출 
+    private bool isNextPattern; //false : 스토리 진행을 위한 연출 / true : 다음 패턴으로 이동하기 위한 연출 
     // 
 
 
@@ -61,27 +61,19 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
         EventBus.UnSubscribe<bool,int>(OnRestTimeEnded, OnDailyRest);
     }
-
-    private void OnSelectEffect(ChoiceData choiceData) //선택 버튼 선택이 아닌 선택 후 확정 시 호출되는 메서드
+    /// <summary>
+    /// 버튼에 맞는 연출 실행하는 메서드
+    /// </summary>
+    private void OnSelectEffect(ChoiceData choiceData) 
     {
-        isNestPattern = true;
-
-        if(choiceData.ChoiceId.Equals("Study")) //미니게임 이벤트 조건(스터디 플래너 판별)
-        {
-            //예시. effectId(액셀의 effectID 방식) = JumpMiniGame 
-            EventBus.Publish("MiniGame.StartById", choiceData.EffectId);
-        }
-        else if (choiceData.ChoiceId.Equals("Rest"))
-        {
-            EventBus.Publish(UIManager.OnRestQuestions, false); //얼마나 쉴지 보여주는 ui 비활성화
-        }
+        isNextPattern = true;
 
         StartCoroutine(StartEffect(choiceData));
     }
 
     private void OnNoneSelectEffect(string effectId)
     {
-        isNestPattern = false;     
+        isNextPattern = false;     
     }
     private void OnDailyRest(bool isEnd,int selectRestTime)
     {
@@ -94,6 +86,10 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
     [SerializeField]
     int currentRestTime = 0; // 이거 이용해서 몇분 쉬냐에 따라 집중력 올라가게끔 하면 될듯
+
+    /// <summary>
+    /// 실제 연출 진행하는 코루틴
+    /// </summary>
 
     private IEnumerator StartEffect(ChoiceData choiceData) //연출 진행 -> 연출 끝 -> 암전
     {

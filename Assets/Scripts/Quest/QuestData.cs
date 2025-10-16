@@ -14,6 +14,7 @@ public class QuestData  //한 과목에 대한 클래스. ex) 1교시 화법과 작문 1~5pp
 
     public int StudyTime; //퀘스트 수행 시간 - 과목 수업 시간
 
+    public string MasterID;
     //public string IsCompleted; //퀘스트 완료 여부 - 과목 수업(미니 게임) 통과 여부
 
     //public QuestData(bool isCompleted)
