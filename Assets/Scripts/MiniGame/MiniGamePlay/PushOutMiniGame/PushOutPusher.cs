@@ -30,6 +30,8 @@ public class PushOutPusher : MonoBehaviour
     private float _impulse;
     private float _remainingLife;
 
+    public Collider2D Collider => hitCollider;
+
     /// <summary>푸셔 초기화</summary>
     public void Configure(Vector2 direction, float speed, float impulse, float lifetime)
     {
