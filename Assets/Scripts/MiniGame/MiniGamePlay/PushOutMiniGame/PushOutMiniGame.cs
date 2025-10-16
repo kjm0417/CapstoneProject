@@ -45,6 +45,7 @@ public class PushOutMiniGame : MiniGameBase
     [SerializeField] private AnimationCurve speedMultiplierByProgress = AnimationCurve.Linear(0f, 1f, 1f, 1.35f);
 
     private readonly List<PushOutPusher> _alivePushers = new List<PushOutPusher>();
+    private readonly List<Collider2D> _staticObstacleColliders = new List<Collider2D>();
     private float _elapsed;
     private float _globalSpawnTimer;
     private int _currentLaneIndex = -1;
@@ -98,6 +99,8 @@ public class PushOutMiniGame : MiniGameBase
 
         Vector2 centerPos = GetArenaCenter();
         player.Init(centerPos);
+        RefreshStaticObstacleColliders();
+        ApplyCollisionIgnores(player.Collider);
 
         foreach (var lane in lanes)
         {
@@ -217,6 +220,7 @@ public class PushOutMiniGame : MiniGameBase
         float speed = Random.Range(lane.speedRange.x, lane.speedRange.y) * speedMultiplier;
         float lifetime = Mathf.Max(0.5f, lane.lifetime);
         instance.Configure(direction, speed, lane.impulseStrength, lifetime);
+        ApplyCollisionIgnores(instance.Collider);
 
         if (lane.spawnAnimator)
         {
@@ -276,6 +280,37 @@ public class PushOutMiniGame : MiniGameBase
             {
                 _alivePushers.RemoveAt(i);
             }
+        }
+    }
+
+    private void RefreshStaticObstacleColliders()
+    {
+        _staticObstacleColliders.Clear();
+        if (!gameRoot) return;
+
+        Collider2D[] colliders = gameRoot.GetComponentsInChildren<Collider2D>(true);
+        foreach (var col in colliders)
+        {
+            if (!col || !col.enabled) continue;
+            if (player && (col == player.Collider || col.GetComponent<PushOutPlayer>())) continue;
+            if (col.GetComponent<PushOutPusher>()) continue;
+            if (col.isTrigger) continue;
+
+            Rigidbody2D attached = col.attachedRigidbody;
+            if (attached && attached.bodyType != RigidbodyType2D.Static) continue;
+
+            _staticObstacleColliders.Add(col);
+        }
+    }
+
+    private void ApplyCollisionIgnores(Collider2D actorCollider)
+    {
+        if (!actorCollider) return;
+
+        foreach (var obstacle in _staticObstacleColliders)
+        {
+            if (!obstacle) continue;
+            Physics2D.IgnoreCollision(actorCollider, obstacle, true);
         }
     }
 
