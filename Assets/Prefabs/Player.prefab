@@ -80,7 +80,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.46, y: 0.71}
   m_EdgeRadius: 0
 --- !u!114 &8703470480332255551
 MonoBehaviour:
@@ -240,10 +240,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerRb: {fileID: 6852465486276246804}
+  animator: {fileID: 5689538704543641414}
+  spriteRenderer: {fileID: 0}
+  initialData: {fileID: 11400000, guid: b26d8b7512564134ea32a06675daff5b, type: 2}
   _fallbackMoveSpeed: 3.5
   _blockDiagonal: 1
   _isMoving: 0
   _lastMoveDir: {x: 0, y: -1}
+  _canMove: 1
 --- !u!1 &8176400605727857697
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,6 +258,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7044683387746894815}
   - component: {fileID: 3728332599584056188}
+  - component: {fileID: 5689538704543641414}
   m_Layer: 0
   m_Name: Img_Player
   m_TagString: Untagged
@@ -320,7 +325,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 5989156143483698091, guid: 730e332f832be824fa17a853dbd99cc3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -331,3 +336,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &5689538704543641414
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8176400605727857697}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e5cec5c37bd12424c846cebff5dbd282, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

@@ -100,8 +100,8 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
         CleanupCurrent();
 
         // 새 인스턴스 스폰
-        var parent = miniGameParent != null ? miniGameParent : (runner != null ? (RectTransform)runner.transform : (RectTransform)transform);
-        _currentInstance = Instantiate(prefab, parent);
+       // var parent = miniGameParent != null ? miniGameParent : (runner != null ? (RectTransform)runner.transform : (RectTransform)transform);
+        _currentInstance = Instantiate(prefab, miniGameParent);
         var mb = _currentInstance.GetComponent<MonoBehaviour>();
         var game = mb as IMiniGame;
         if (game == null)
