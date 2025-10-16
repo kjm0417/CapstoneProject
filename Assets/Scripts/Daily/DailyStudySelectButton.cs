@@ -127,7 +127,6 @@ public class DailyStudySelectButton : DailySelectButtonManager
     protected override void OnStudyPressButton()
     {
         ClearStudyColum(true);
-        InitStudy();
 
         HandleUIModeChanged(UIMode.None);
 
@@ -139,6 +138,7 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
         EventBus.Publish("MiniGame.StartById", $"{miniGameId}");
 
+        InitStudy();
         //choiceBtnItemList[currentIndex].PressButton(Mode);
         Debug.Log($"자습한다 버튼 선택 확정(여기서 미니게임 실행) " +
             $"- 미니게임 ID : {miniGameId} || 공부 시간 :  {DecreseRestTime}");
