@@ -140,7 +140,7 @@ public class DailySelectButtonManager : MonoBehaviour
             {
                 restButton?.ClearRestColum(true);
 
-                EventBus.Publish(RestTimeQuestionItem.OnRestUIBacked, true);
+                EventBus.Publish(RestUIManager.OnRestUIBacked, true);
             }
             isStudySelectReady = false;
             isTimeSelectReady = false;
@@ -241,7 +241,7 @@ public class DailySelectButtonManager : MonoBehaviour
 
                 lastArrowKey = KeyCode.DownArrow;
 
-               SelectStudyColum();
+                SelectStudyColum();
             }
         }
 
@@ -459,7 +459,7 @@ public class DailySelectButtonManager : MonoBehaviour
     /// <summary>
     /// 현재 버튼의 색상의 명도를 높일지 말지에 대한 메서드
     /// </summary>
-    protected void CurrentButtonImageColorActive(bool acitve)
+    private void CurrentButtonImageColorActive(bool acitve)
     {
         if(choiceBtnItemList.Count > 0)
         {

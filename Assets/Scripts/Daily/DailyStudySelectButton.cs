@@ -91,11 +91,6 @@ public class DailyStudySelectButton : DailySelectButtonManager
     {
         ClearStudyColum(false);
 
-        base.CurrentButtonImageColorActive(false);
-
-
-        //isStudySelectReady = true;
-
         Image img = studyButtons[currentStudyColum].GetComponent<Image>();
 
         if (img != null)

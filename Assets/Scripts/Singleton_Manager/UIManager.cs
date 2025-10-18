@@ -76,6 +76,6 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리 및 UI �
     }
     private void OnRestQuestUI(bool isActive)
     {
-       RestQuestionUI.gameObject.SetActive(isActive); 
+        RestQuestionUI.gameObject.SetActive(isActive);
     }
 }
