@@ -4,36 +4,20 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class RestTimeQuestionItem : MonoBehaviour
+public class RestTimeQuestionUI : MonoBehaviour
 {
-    public Button GetHundredsUp() => hundredsUp;
-    public Button GetTensUp() => tensUp;
-    public Button GetOnesUp() => onesUp;
-    public Button GetHundredsDown() => hundredsDown;
-    public Button GetTensDown() => tensDown;
-    public Button GetOnesDown() => onesDown;
-
-    [Header("UI")]
-    [SerializeField] private TextMeshProUGUI hundredsText;
-    [SerializeField] private TextMeshProUGUI tensText;
-    [SerializeField] private TextMeshProUGUI onesText;
     [SerializeField] private TextMeshProUGUI maxTimeText;
-
-    [Header("버튼")]
-    [SerializeField] private Button hundredsUp;
-    [SerializeField] private Button hundredsDown;
-    [SerializeField] private Button tensUp;
-    [SerializeField] private Button tensDown;
-    [SerializeField] private Button onesUp;
-    [SerializeField] private Button onesDown;
 
     [SerializeField]
     DailyRoutineTime dailyRoutineTime;
 
     private int[] digits = new int[3]; // [0]=hundreds, [1]=tens, [2]=ones
 
+    [Header("텍스트")]
+    [SerializeField] public TextMeshProUGUI[] TimeTexts;
+
     [SerializeField]
-    public int currentTime;
+    public int currentStudyTime; //공부했을 때 차감되는 시간
 
     [SerializeField]
     public int prevlastTime = 0;
@@ -46,38 +30,26 @@ public class RestTimeQuestionItem : MonoBehaviour
     [SerializeField]
     private bool isTimeSelectBack;
 
-    private void OnBackActive(bool active) 
+    [SerializeField]
+    RestUIManager restUIManager;
+
+
+    public void OnBackActive(bool active)
     {
         if (active)  //ESC 누를시에 시간을 모두 0으로 초기화
         {
             digits[0] = digits[1] = digits[2] = 0;
-            currentTime = 0;
+            restUIManager.currentTime = 0;
             UpdateTimeUI();
         }
 
-        isTimeSelectBack = active; 
+        isTimeSelectBack = active;
     }
-
-    public static string OnRestUIBacked = "OnRestUIBackEvent"; //현재 UI 활성화 된 상태에서 ESC 키 누름에 대한 이벤트
-
-    public static string OnRestTimeCalculated = "OnRestTimeCalculateEvent";  //다음 시간까지 "최대시간"분, 최대시간 계산하는 이벤트
-
 
     private void OnEnable()
     {
-        EventBus.Subscribe<bool>(OnRestUIBacked, OnBackActive);
-        EventBus.Subscribe(OnRestTimeCalculated, SetNotFirstMaxTime);
-
-        hundredsUp.onClick.AddListener(() => ChangeDigit(0, +1));
-        hundredsDown.onClick.AddListener(() => ChangeDigit(0, -1));
-
-        tensUp.onClick.AddListener(() => ChangeDigit(1, +1));
-        tensDown.onClick.AddListener(() => ChangeDigit(1, -1));
-
-        onesUp.onClick.AddListener(() => ChangeDigit(2, +1));
-        onesDown.onClick.AddListener(() => ChangeDigit(2, -1));
-
-        
+        EventBus.Subscribe<bool>(RestUIManager.OnRestUIBacked, OnBackActive);
+        EventBus.Subscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);
 
         if (isFirstEnable)
         {
@@ -95,7 +67,7 @@ public class RestTimeQuestionItem : MonoBehaviour
     /// <summary>
     /// RestUI 활성화 되었을 때 MaxTime 계산 로직이며, 초기 MaxTime 계산임
     /// </summary>
-    void SetFirstMaxTime() //초기 MaxTime
+    public void SetFirstMaxTime() //초기 MaxTime
     {
         currentMaxTime = GetMaxMinutes();
         prevlastTime = currentMaxTime;
@@ -104,44 +76,28 @@ public class RestTimeQuestionItem : MonoBehaviour
     }
     private void OnDisable()
     {
-        EventBus.UnSubscribe<bool>(OnRestUIBacked, OnBackActive);
-        EventBus.UnSubscribe(OnRestTimeCalculated, SetNotFirstMaxTime);
-
-        hundredsUp.onClick.RemoveAllListeners();
-        hundredsDown.onClick.RemoveAllListeners();
-        tensUp.onClick.RemoveAllListeners();
-        tensDown.onClick.RemoveAllListeners();
-        onesUp.onClick.RemoveAllListeners();
-        onesDown.onClick.RemoveAllListeners();
-
-
-        //if (!isTimeSelectBack) //back 눌렀을때 MaxTime 계산안되게. esc키 안 눌렀을때만 Set()실행
-        //{
-        //    currentTime = 0;
-        //    digits[0] = digits[1] = digits[2] = 0;
-        //}
-
-        //SetNotFirstMaxTime();
-
+        EventBus.UnSubscribe<bool>(RestUIManager.OnRestUIBacked, OnBackActive);
+        EventBus.UnSubscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);
     }
+
     /// <summary>
     /// RestUI의  MaxTime 계산 로직이며, 초기 MaxTime 계산 아님.
     /// </summary>
-    void SetNotFirstMaxTime() 
+    void SetNotFirstMaxTime()
     {
-        prevlastTime -= currentTime; // 10 - 5 = 5
+        prevlastTime -= restUIManager.currentTime - currentStudyTime; // 10 - 5 = 5
 
         if (prevlastTime <= 0)
         {
-            EventBus.Publish(EffectManager.OnRestTimeEnded, true, currentTime);
+            EventBus.Publish(EffectManager.OnRestTimeEnded, true, restUIManager.currentTime);
             isFirstEnable = true;
         }
 
-        currentTime = 0;
+        restUIManager.currentTime = 0;
         digits[0] = digits[1] = digits[2] = 0;
     }
 
-    private void ChangeDigit(int index, int delta)
+    public void ChangeDigit(int index, int delta)
     {
         int before = GetTotalMinutes();
 
@@ -190,16 +146,16 @@ public class RestTimeQuestionItem : MonoBehaviour
 
     private void UpdateTimeUI()
     {
-        hundredsText.text = digits[0].ToString();
-        tensText.text = digits[1].ToString();
-        onesText.text = digits[2].ToString();   
+        TimeTexts[2].text = digits[0].ToString();
+        TimeTexts[1].text = digits[1].ToString();
+        TimeTexts[0].text = digits[2].ToString();
     }
 
     public int GetTotalMinutes()
     {
-        currentTime = digits[0] * 100 + digits[1] * 10 + digits[2];
+        restUIManager.currentTime = digits[0] * 100 + digits[1] * 10 + digits[2];
 
-        return currentTime;
+        return restUIManager.currentTime;
     }
 
     private int GetMaxMinutes()

@@ -8,7 +8,7 @@ public class DailyRestSelectButton : DailySelectButtonManager
   
     [Header("RestUI 버튼 관련")]
     [SerializeField]
-    RestTimeQuestionItem restQuestionItem;
+    RestUIManager restUIManager;
     private Button[] upButtons = new Button[3];
     private Button[] downButtons = new Button[3];
     //[SerializeField]
@@ -61,15 +61,15 @@ public class DailyRestSelectButton : DailySelectButtonManager
 
             if (upButtons[0] == null)
             {
-                upButtons[0] = restQuestionItem.GetOnesUp();
-                upButtons[1] = restQuestionItem.GetTensUp();
-                upButtons[2] = restQuestionItem.GetHundredsUp();
+                upButtons[0] = restUIManager.GetOnesUp();
+                upButtons[1] = restUIManager.GetTensUp();
+                upButtons[2] = restUIManager.GetHundredsUp();
             }
             if (downButtons[0] == null)
             {
-                downButtons[0] = restQuestionItem.GetOnesDown();
-                downButtons[1] = restQuestionItem.GetTensDown();
-                downButtons[2] = restQuestionItem.GetHundredsDown();
+                downButtons[0] = restUIManager.GetOnesDown();
+                downButtons[1] = restUIManager.GetTensDown();
+                downButtons[2] = restUIManager.GetHundredsDown();
             }
         }
 
@@ -193,7 +193,7 @@ public class DailyRestSelectButton : DailySelectButtonManager
     private int currentColum;
     protected override void OnRestPressButton()
     {
-        if(restQuestionItem.currentTime <= 0 )
+        if(restUIManager.currentTime <= 0 )
         {
             Debug.Log("현재 고른 시간이 0보다 작음");
             return;
@@ -208,9 +208,10 @@ public class DailyRestSelectButton : DailySelectButtonManager
         ClearRestColum(true);
         OnRestSelectEvent(choiceData);
     }
+ 
     private void OnRestSelectEvent(ChoiceData choiceData)
     {
-        EventBus.Publish(RestTimeQuestionItem.OnRestTimeCalculated); //최대시간 계산
+        EventBus.Publish(RestUIManager.OnRestTimeCalculated); //최대시간 계산
 
         EventBus.Publish(UIManager.OnRestQuestions, false); //얼마나 쉴지 보여주는 ui 비활성화
         EventBus.Publish(EffectManager.OnSelectEffectStarted, choiceData);

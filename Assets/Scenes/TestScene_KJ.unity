@@ -406,21 +406,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66add9441e9a53948acf3d655005222f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hundredsText: {fileID: 1382811738}
-  tensText: {fileID: 723510036}
-  onesText: {fileID: 1072014317}
   maxTimeText: {fileID: 1367111914}
-  hundredsUp: {fileID: 1382811737}
-  hundredsDown: {fileID: 1382811736}
-  tensUp: {fileID: 723510035}
-  tensDown: {fileID: 723510034}
-  onesUp: {fileID: 1072014316}
-  onesDown: {fileID: 1072014315}
   dailyRoutineTime: {fileID: 11400000, guid: 28c028bcd7cbcba4686b00e77b88dee4, type: 2}
-  currentTime: 0
+  TimeTexts:
+  - {fileID: 1072014317}
+  - {fileID: 723510036}
+  - {fileID: 1382811738}
+  currentStudyTime: 0
   prevlastTime: 0
   currentMaxTime: 0
   isTimeSelectBack: 0
+  restUIManager: {fileID: 1366349018}
 --- !u!114 &391253164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -982,6 +978,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1263495849923844135, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
+      propertyPath: m_Name
+      value: Down_Btn_10
+      objectReference: {fileID: 0}
     - target: {fileID: 1671819382038180356, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Navigation.m_Mode
       value: 0
@@ -1084,7 +1084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5107858387018694724, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
-      value: Time_1
+      value: Time_10
       objectReference: {fileID: 0}
     - target: {fileID: 5472352270528587851, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
@@ -1092,7 +1092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5724846530465260168, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
-      value: Up_Btn
+      value: Up_Btn_10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1546,6 +1546,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1263495849923844135, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
+      propertyPath: m_Name
+      value: Down_Btn_1
+      objectReference: {fileID: 0}
     - target: {fileID: 1671819382038180356, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Navigation.m_Mode
       value: 0
@@ -1648,7 +1652,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5107858387018694724, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
-      value: Time_0
+      value: Time_1
       objectReference: {fileID: 0}
     - target: {fileID: 5472352270528587851, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
@@ -1656,7 +1660,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5724846530465260168, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
-      value: Up_Btn
+      value: Up_Btn_1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1740,8 +1744,9 @@ GameObject:
   - component: {fileID: 1366349016}
   - component: {fileID: 1366349015}
   - component: {fileID: 1366349014}
+  - component: {fileID: 1366349018}
   m_Layer: 5
-  m_Name: RestUICanvas
+  m_Name: RestUICanvas_Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1830,6 +1835,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1366349018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366349013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db774c421450a9540a383fc39763e79f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  restTimeUI: {fileID: 391253163}
+  dailyRoutineRestTime: {fileID: 0}
+  TimeSelectUpButtons:
+  - {fileID: 1072014316}
+  - {fileID: 723510035}
+  - {fileID: 1382811737}
+  TimeSelectDownButtons:
+  - {fileID: 1072014315}
+  - {fileID: 723510034}
+  - {fileID: 1382811736}
+  currentTime: 0
 --- !u!1 &1367111912
 GameObject:
   m_ObjectHideFlags: 0
@@ -1986,6 +2014,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1263495849923844135, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
+      propertyPath: m_Name
+      value: Down_Btn_100
+      objectReference: {fileID: 0}
     - target: {fileID: 1671819382038180356, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Navigation.m_Mode
       value: 0
@@ -2088,7 +2120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5107858387018694724, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
-      value: Time_2
+      value: Time__100
       objectReference: {fileID: 0}
     - target: {fileID: 5472352270528587851, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
@@ -2096,7 +2128,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5724846530465260168, guid: c64ec1ab25b42de4692da9e91cfc19be, type: 3}
       propertyPath: m_Name
-      value: Up_Btn
+      value: Up_Btn_100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2496,7 +2528,7 @@ MonoBehaviour:
   studyButton: {fileID: 478756517}
   isStudySelectReady: 0
   isUpSelected: 0
-  restQuestionItem: {fileID: 391253163}
+  restUIManager: {fileID: 1366349018}
   isRestQuestionUI: 0
   currentColum: 0
 --- !u!1 &1637949469
