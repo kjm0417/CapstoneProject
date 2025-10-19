@@ -80,7 +80,9 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
         OnCompleteHook(isSuccess, args);
         Cleanup();
 
-        EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
+        //EventBus.Publish(RestUIManager.OnStudyRestTimeculated);
+
+        //EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
     }
 
     /// <summary>

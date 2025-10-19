@@ -118,7 +118,9 @@ public class DailyStudySelectButton : DailySelectButtonManager
             }
         }
     }
-
+    /// <summary>
+    /// 스터디 플래너 시간 저장 이벤트 발행 및 스터디 플래너 이벤트 발행
+    /// </summary>
     protected override void OnStudyPressButton()
     {
         ClearStudyColum(true);
@@ -129,14 +131,12 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
         int studyTime = subjectItems[currentStudyColum].SubjectTime;
 
-        DecreseRestTime = studyTime;
-
+        EventBus.Publish(RestUIManager.OnStudyRestTimeSaved, studyTime); //공부시간 -> RestTime 계산
+    
         EventBus.Publish("MiniGame.StartById", $"{miniGameId}");
 
         InitStudy();
-        //choiceBtnItemList[currentIndex].PressButton(Mode);
-        Debug.Log($"자습한다 버튼 선택 확정(여기서 미니게임 실행) " +
-            $"- 미니게임 ID : {miniGameId} || 공부 시간 :  {DecreseRestTime}");
+
     }
 
 

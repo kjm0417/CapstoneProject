@@ -45,10 +45,7 @@ public class DailyChangeSelect : MonoBehaviour
             GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f); // 살짝 투명
         }
     }
-    public void PressButton(DailySelectButtonManager.UIMode mode)
-    {
-        EventBus.Publish(EffectManager.OnSelectEffectStarted, currentChoiceData);
-    }
+ 
     //private void OnRestSelectEvent()
     //{
     //    EventBus.Publish(RestTimeQuestionItem.OnRestTimeCalculated); //최대시간 계산

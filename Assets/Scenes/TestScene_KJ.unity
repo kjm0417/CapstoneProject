@@ -407,7 +407,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxTimeText: {fileID: 1367111914}
-  dailyRoutineTime: {fileID: 11400000, guid: 28c028bcd7cbcba4686b00e77b88dee4, type: 2}
   TimeTexts:
   - {fileID: 1072014317}
   - {fileID: 723510036}
@@ -416,7 +415,6 @@ MonoBehaviour:
   prevlastTime: 0
   currentMaxTime: 0
   isTimeSelectBack: 0
-  restUIManager: {fileID: 1366349018}
 --- !u!114 &391253164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1848,7 +1846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   restTimeUI: {fileID: 391253163}
-  dailyRoutineRestTime: {fileID: 0}
+  dailyRoutineTime: {fileID: 11400000, guid: 28c028bcd7cbcba4686b00e77b88dee4, type: 2}
   TimeSelectUpButtons:
   - {fileID: 1072014316}
   - {fileID: 723510035}

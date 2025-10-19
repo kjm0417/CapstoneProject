@@ -8,8 +8,7 @@ public class RestTimeQuestionUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI maxTimeText;
 
-    [SerializeField]
-    DailyRoutineTime dailyRoutineTime;
+    IRestTimeProvider restTimeProvider;
 
     private int[] digits = new int[3]; // [0]=hundreds, [1]=tens, [2]=ones
 
@@ -17,83 +16,99 @@ public class RestTimeQuestionUI : MonoBehaviour
     [SerializeField] public TextMeshProUGUI[] TimeTexts;
 
     [SerializeField]
-    public int currentStudyTime; //공부했을 때 차감되는 시간
-
-    [SerializeField]
     public int prevlastTime = 0;
 
     [SerializeField]
     int currentMaxTime = 0;
 
-    private bool isFirstEnable = true; // 최초 1회만 GetMaxMinutes() 호출
-
     [SerializeField]
     private bool isTimeSelectBack;
 
-    [SerializeField]
-    RestUIManager restUIManager;
 
+
+    private void OnEnable()
+    {
+        EventBus.Subscribe<bool>(RestUIManager.OnRestUIBacked, OnBackActive);
+        EventBus.Subscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);
+        // EventBus.Subscribe(RestUIManager.OnRestTimeInitSetting, OnRestTimeInitSetting);
+
+        OnRestTimeInitCalcutate();
+    }
+    private void OnDisable()
+    {
+        EventBus.UnSubscribe<bool>(RestUIManager.OnRestUIBacked, OnBackActive);
+        EventBus.UnSubscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);     
+    }
+
+    [SerializeField]
+    private bool isFirstEnable = true; // 최초 1회만 GetMaxMinutes() 호출
+
+    public void InitRestUI(IRestTimeProvider provider)
+    {
+        restTimeProvider = provider;
+    }
+    public void OnRestTimeInitCalcutate()
+    {
+        if (isFirstEnable == false)
+        {
+            //스터디플래너를 통해 감소해야 될 시간이 0보다 크다면
+            if (restTimeProvider.CurrentDecreaseRestTime > 0) 
+            {
+                SetNotFirstMaxTime();
+            }
+            maxTimeText.text = $"{prevlastTime} 분";
+        }
+        else
+        {
+            SetFirstMaxTime();
+        }
+
+        UpdateTimeUI();
+    }
 
     public void OnBackActive(bool active)
     {
         if (active)  //ESC 누를시에 시간을 모두 0으로 초기화
         {
             digits[0] = digits[1] = digits[2] = 0;
-            restUIManager.currentTime = 0;
+
+            restTimeProvider.CurrentRestTime = 0;
+
             UpdateTimeUI();
         }
 
         isTimeSelectBack = active;
     }
 
-    private void OnEnable()
-    {
-        EventBus.Subscribe<bool>(RestUIManager.OnRestUIBacked, OnBackActive);
-        EventBus.Subscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);
-
-        if (isFirstEnable)
-        {
-            SetFirstMaxTime();
-        }
-        else
-        {
-            Debug.Log("1");
-            maxTimeText.text = $"{prevlastTime} 분";
-        }
-
-
-        UpdateTimeUI();
-    }
     /// <summary>
     /// RestUI 활성화 되었을 때 MaxTime 계산 로직이며, 초기 MaxTime 계산임
     /// </summary>
     public void SetFirstMaxTime() //초기 MaxTime
     {
-        currentMaxTime = GetMaxMinutes();
+        currentMaxTime = restTimeProvider.GetMaxRestMinutes();
         prevlastTime = currentMaxTime;
         maxTimeText.text = $"{currentMaxTime} 분";
         isFirstEnable = false;
     }
-    private void OnDisable()
-    {
-        EventBus.UnSubscribe<bool>(RestUIManager.OnRestUIBacked, OnBackActive);
-        EventBus.UnSubscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);
-    }
+
 
     /// <summary>
     /// RestUI의  MaxTime 계산 로직이며, 초기 MaxTime 계산 아님.
     /// </summary>
     void SetNotFirstMaxTime()
     {
-        prevlastTime -= restUIManager.currentTime - currentStudyTime; // 10 - 5 = 5
+        prevlastTime -= restTimeProvider.CurrentRestTime > 0 ? restTimeProvider.CurrentRestTime : restTimeProvider.CurrentDecreaseRestTime; // 10 - 5 = 5
 
         if (prevlastTime <= 0)
         {
-            EventBus.Publish(EffectManager.OnRestTimeEnded, true, restUIManager.currentTime);
+            EventBus.Publish(RestUIManager.OnRestTimeEnded);
+
             isFirstEnable = true;
         }
 
-        restUIManager.currentTime = 0;
+        restTimeProvider.CurrentRestTime = 0;
+        restTimeProvider.CurrentDecreaseRestTime = 0;
+
         digits[0] = digits[1] = digits[2] = 0;
     }
 
@@ -153,27 +168,10 @@ public class RestTimeQuestionUI : MonoBehaviour
 
     public int GetTotalMinutes()
     {
-        restUIManager.currentTime = digits[0] * 100 + digits[1] * 10 + digits[2];
+        restTimeProvider.CurrentRestTime = digits[0] * 100 + digits[1] * 10 + digits[2];
 
-        return restUIManager.currentTime;
+        return restTimeProvider.CurrentRestTime;
     }
 
-    private int GetMaxMinutes()
-    {
-        DailyRoutine dailyRoutine = DailyRoutineManager.Instance.DailyRoutine;
 
-        Debug.Log(dailyRoutine);
-
-        switch (dailyRoutine)
-        {
-            case DailyRoutine.GotoSchool: return dailyRoutineTime.maxGotoSchool;
-            case DailyRoutine.ArriveSchool_Breakfast: return dailyRoutineTime.maxBreakfast;
-            case DailyRoutine.ArriveSchool_Morning: return dailyRoutineTime.maxMorning;
-            case DailyRoutine.ArriveSchool_Lanch: return dailyRoutineTime.maxLanch;
-            case DailyRoutine.ArriveSchool_Afternoon: return dailyRoutineTime.maxAfternoon;
-            case DailyRoutine.Parm: return dailyRoutineTime.maxParm;
-            case DailyRoutine.AfterSchool: return dailyRoutineTime.maxAfterSchool;
-            default: return 0;
-        }
-    }
 }

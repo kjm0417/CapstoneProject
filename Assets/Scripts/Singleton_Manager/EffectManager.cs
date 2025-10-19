@@ -37,61 +37,43 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
     public static string OnNoneSelectEffectStarted = "OnNoneSelectEffectStartEvent"; //선택과 관계 없는 연출
 
-    public static string OnRestTimeEnded = "OnRestTimeEndEvent"; //몇분 쉴지 선택했을 때 이벤트
 
 
     private bool isNextPattern; //false : 스토리 진행을 위한 연출 / true : 다음 패턴으로 이동하기 위한 연출 
     // 
 
-
     private void OnEnable()
     {
-        EventBus.Subscribe<ChoiceData>(OnSelectEffectStarted, OnSelectEffect);
+        EventBus.Subscribe<ChoiceData,bool>(OnSelectEffectStarted, OnSelectEffect);
 
         EventBus.Subscribe<string>(OnNoneSelectEffectStarted, OnNoneSelectEffect);
-
-        EventBus.Subscribe<bool,int>(OnRestTimeEnded, OnDailyRest);
     }
 
     private void OnDisable()
     {
-        EventBus.UnSubscribe<ChoiceData>(OnSelectEffectStarted, OnSelectEffect);
+        EventBus.UnSubscribe<ChoiceData,bool>(OnSelectEffectStarted, OnSelectEffect);
 
         EventBus.UnSubscribe<string>(OnNoneSelectEffectStarted, OnNoneSelectEffect);
 
-        EventBus.UnSubscribe<bool,int>(OnRestTimeEnded, OnDailyRest);
     }
     /// <summary>
     /// 버튼에 맞는 연출 실행하는 메서드
     /// </summary>
-    private void OnSelectEffect(ChoiceData choiceData) 
+    private void OnSelectEffect(ChoiceData choiceData,bool isNextPattern) 
     {
-        isNextPattern = true;
-
-        StartCoroutine(StartEffect(choiceData));
+        StartCoroutine(StartEffect(choiceData, isNextPattern));
     }
 
     private void OnNoneSelectEffect(string effectId)
     {
         isNextPattern = false;     
     }
-    private void OnDailyRest(bool isEnd,int selectRestTime)
-    {
-        currentRestTime = selectRestTime;
-        isDailyChange = isEnd;
-    }
-
-    [SerializeField]
-    bool isDailyChange = false; //다음 패턴으로 갈지에 대한 여부. 쉴 시간이 0분이면 다음 패턴 이동 true
-
-    [SerializeField]
-    int currentRestTime = 0; // 이거 이용해서 몇분 쉬냐에 따라 집중력 올라가게끔 하면 될듯
 
     /// <summary>
     /// 실제 연출 진행하는 코루틴
     /// </summary>
 
-    private IEnumerator StartEffect(ChoiceData choiceData) //연출 진행 -> 연출 끝 -> 암전
+    private IEnumerator StartEffect(ChoiceData choiceData,bool isNext) //연출 진행 -> 연출 끝 -> 암전
     {
         Debug.Log($"{choiceData.EffectId}에 맞는 연출 진행 중");
         yield return new WaitForSeconds(3.0f);
@@ -100,19 +82,22 @@ public class EffectManager : MonoBehaviour //연출 매니저.
         if(choiceData.ChoiceId.Equals("Rest"))
         {
             FadeInOutManager.Instance.FadeOutAndLoad(() => //암전
-            {  
-                if(isDailyChange == false)
+            {
+                if (isNext == false)
                 {
                     EventBus.Publish(DialougeSystem.OnLastDialougeSelected, true); //마지막 대사 활성화
                 }
-               else
+                else
                 {
                     EventBus.Publish(DailyRoutineManager.OnDailyChanged, choiceData.NextPattern);
-                    isDailyChange = false;
                 }
 
                 FadeInOutManager.Instance.FadeInLoad(); //암전 해제
             });
+        }
+        else if (choiceData.ChoiceId.Equals("Study"))
+        {
+           
         }
         else
         {

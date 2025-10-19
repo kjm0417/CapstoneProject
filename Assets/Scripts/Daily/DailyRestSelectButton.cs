@@ -5,7 +5,9 @@ using UnityEngine.UI;
 public class DailyRestSelectButton : DailySelectButtonManager
 {
     public static string OnRestPressed = "OnRestPressEvent";
-  
+
+    public static string OnRestTimeAfterEnded = "OnRestTimeAfterEndEvent";
+
     [Header("RestUI 버튼 관련")]
     [SerializeField]
     RestUIManager restUIManager;
@@ -25,6 +27,7 @@ public class DailyRestSelectButton : DailySelectButtonManager
         EventBus.Subscribe<UIMode>(OnUIModeChanged, HandleUIModeChanged);
 
         EventBus.Subscribe(OnRestPressed, OnRestPressButton);
+        EventBus.Subscribe(OnRestTimeAfterEnded, OnRestSelectRestTimeEnd);
 
     }
 
@@ -37,6 +40,8 @@ public class DailyRestSelectButton : DailySelectButtonManager
         EventBus.UnSubscribe<UIMode>(OnUIModeChanged, HandleUIModeChanged);
 
         EventBus.UnSubscribe(OnRestPressed, OnRestPressButton);
+
+        EventBus.UnSubscribe(OnRestTimeAfterEnded, OnRestSelectRestTimeEnd);
 
     }
 
@@ -191,22 +196,22 @@ public class DailyRestSelectButton : DailySelectButtonManager
     }
     [SerializeField]
     private int currentColum;
+
+    private ChoiceData cachedChoiceData;
+
     protected override void OnRestPressButton()
     {
-        if(restUIManager.currentTime <= 0 )
+        if(restUIManager.CurrentRestTime <= 0 )
         {
             Debug.Log("현재 고른 시간이 0보다 작음");
             return;
         }
-
-
-        ChoiceData choiceData = choiceBtnItemList[currentIndex].GetChoiceData();
         base.HandleAfterPress();
 
-        HandleUIModeChanged(UIMode.None);
+        cachedChoiceData = choiceBtnItemList[currentIndex].GetChoiceData();
 
         ClearRestColum(true);
-        OnRestSelectEvent(choiceData);
+        OnRestSelectEvent(cachedChoiceData);
     }
  
     private void OnRestSelectEvent(ChoiceData choiceData)
@@ -214,6 +219,17 @@ public class DailyRestSelectButton : DailySelectButtonManager
         EventBus.Publish(RestUIManager.OnRestTimeCalculated); //최대시간 계산
 
         EventBus.Publish(UIManager.OnRestQuestions, false); //얼마나 쉴지 보여주는 ui 비활성화
-        EventBus.Publish(EffectManager.OnSelectEffectStarted, choiceData);
+
+        EventBus.Publish(EffectManager.OnSelectEffectStarted, choiceData, false);
+
+        HandleUIModeChanged(UIMode.None);
     }
+
+    private void OnRestSelectRestTimeEnd()
+    {
+        EventBus.Publish(EffectManager.OnSelectEffectStarted, cachedChoiceData,true);
+
+        HandleUIModeChanged(UIMode.None);
+    }
+
 }

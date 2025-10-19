@@ -11,8 +11,6 @@ public class DailySelectButtonManager : MonoBehaviour
 
     public static string OnCreateButtonSelected = "OnCreateButtonSelectEvent";
 
-    public static string OnCurrentRestTime = "OnPossibleRestButtonEvent"; //현재 쉬는 시간 받아오기
-
     protected string OnUIModeChanged = "OnUIModeChangeEvent";
 
     private static ObjectPool<DailyChangeSelect> choiceBtnItemPool;
@@ -31,6 +29,9 @@ public class DailySelectButtonManager : MonoBehaviour
     [SerializeField]
     protected KeyCode lastArrowKey = KeyCode.None; // 마지막으로 누른 방향키
 
+    private UIMode lastMode = UIMode.None;
+    public UIMode LastMode => lastMode;
+
     [SerializeField]
     protected UIMode uiMode;
     public enum UIMode { None, Rest, Study, FixedStudy }
@@ -38,10 +39,11 @@ public class DailySelectButtonManager : MonoBehaviour
     public UIMode Mode
     {
         get => uiMode;
-        protected set
+        set
         {
             if (uiMode != value)
             {
+                lastMode = uiMode; //이전 모드 저장
                 uiMode = value;
 
                 EventBus.Publish(OnUIModeChanged, uiMode);
@@ -74,11 +76,6 @@ public class DailySelectButtonManager : MonoBehaviour
     [SerializeField]
     protected bool isStudySelectReady; //과목 선택 안한 상태에서 선택하려고 할 때 플래그
     
-    protected int DecreseRestTime
-    {
-        get;
-        set;
-    }
     protected virtual void MoveStudyColum(int direction) { }
     protected virtual void SelectStudyColum() { }
 
@@ -119,6 +116,7 @@ public class DailySelectButtonManager : MonoBehaviour
     {
         currentPlayerId = state.Id;
     }
+    
     private void Update()
     {
         UpdateRestMode();
@@ -191,12 +189,14 @@ public class DailySelectButtonManager : MonoBehaviour
                 HandleAfterPress();
                 break;
             case UIMode.FixedStudy:
+                EventBus.Publish(RestUIManager.OnStudyRestTimeSaved, 10); //영어듣기는 10분
                 EventBus.Publish("MiniGame.StartById", "listening");
                 HandleAfterPress();
                 break;
             case UIMode.None:
                 Debug.Log("None 모드");
-                choiceBtnItemList[currentIndex].PressButton(Mode);
+                ChoiceData choiceData = choiceBtnItemList[currentIndex].GetChoiceData();
+                EventBus.Publish(EffectManager.OnSelectEffectStarted, choiceData,true);
                 HandleAfterPress();
                 break;
         }

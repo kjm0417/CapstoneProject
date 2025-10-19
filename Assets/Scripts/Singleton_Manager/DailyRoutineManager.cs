@@ -20,6 +20,8 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
     public static string OnCurrentDailyDialouge = "OnCurrentDailyDialougeEvent";
 
+    public static string OnNextDailyDialouge = "OnNextDailyDialougeEvent";
+
     [SerializeField]
     DialougeSystem dialougeSystem;
 
@@ -62,6 +64,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
         EventBus.Subscribe(OnCurrentDailyDialouge, OnCurrentSelectDialouge);   //침대에서 일어난 상태 이벤트 구독 해제
 
+        EventBus.Subscribe(OnNextDailyDialouge, OnNextPatternDialouge);
     }
 
     private void OnDisable()
@@ -71,6 +74,8 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         EventBus.UnSubscribe<string>(OnDailyChanged, OnDailyRoutineChange);   //침대에서 일어난 상태 이벤트 구독 해제
 
         EventBus.UnSubscribe(OnCurrentDailyDialouge, OnCurrentSelectDialouge);   //침대에서 일어난 상태 이벤트 구독 해제
+
+        EventBus.UnSubscribe(OnNextDailyDialouge, OnNextPatternDialouge);
     }
     private void OnDailyStart(GameDate date)
     {
@@ -79,6 +84,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
         EventBus.Publish(UIManager.OnInGameUI, false);
     }
+ 
     private void OnDailyRoutineChange(string NextPattern) 
     {
         switch (NextPattern)
@@ -106,9 +112,21 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
                 break;
         }
 
+        //EventBus.Publish(RestUIManager.OnStudyRestTimeculated);
+
         DailyPatternDialougeDataLoad(dailyRoutine);
     }
 
+    private void OnNextPatternDialouge()
+    {
+        int nextValue = (int)DailyRoutine + 1;
+
+        DailyRoutine nextRoutine = (DailyRoutine)nextValue;
+
+        string NextPatternName = nextRoutine.ToString();
+
+        OnDailyRoutineChange(NextPatternName);
+    }
     
     /// <summary>
     /// 현재 패턴의 선택 대사 출력
