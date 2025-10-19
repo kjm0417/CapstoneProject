@@ -1176,6 +1176,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PopupMiniGame
       objectReference: {fileID: 0}
+    - target: {fileID: 1886512866343936153, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1238,7 +1242,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 1.51
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1565,7 +1569,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &859898857
 Transform:
   m_ObjectHideFlags: 0

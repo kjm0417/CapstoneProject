@@ -413,11 +413,7 @@ MonoBehaviour:
   _id: vocab
   _duration: 30
   _successReward: []
-  _failReward:
-  - type: 1
-    amount: 10
-  - type: 3
-    amount: 10
+  _failReward: []
   gameRoot: {fileID: 454341542537414524}
   groundCollider2D: {fileID: 6199947139349923499}
   groundVisual: {fileID: 9079152081935701492}
