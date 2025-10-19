@@ -3157,6 +3157,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2051988696342178984, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2051988696342178984, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1280
+      objectReference: {fileID: 0}
+    - target: {fileID: 2051988696342178984, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 720
+      objectReference: {fileID: 0}
     - target: {fileID: 2859649534903344161, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
       propertyPath: m_Name
       value: InGame_Canvas
@@ -3330,6 +3342,14 @@ PrefabInstance:
     - target: {fileID: 6703899758467304166, guid: 80b5db1c78a08ea42bf4ab3ba49395fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8741408740847574874, guid: 80b5db1c78a08ea42bf4ab3ba49395fa, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1280
+      objectReference: {fileID: 0}
+    - target: {fileID: 8741408740847574874, guid: 80b5db1c78a08ea42bf4ab3ba49395fa, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 720
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
