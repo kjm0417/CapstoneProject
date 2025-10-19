@@ -76,8 +76,8 @@ public class RestUIManager : MonoBehaviour, IRestTimeProvider
         EventBus.Subscribe(OnStudyRestTimeculated, OnRestUIInitSetting);
         EventBus.Subscribe(OnRestTimeEnded, OnDailyRestTimeEnd);
 
+//EventBus.Subscribe(EventNames.MiniGameSuccesed, Test);
 
-        EventBus.Subscribe(EventNames.MiniGameSuccesed, Test);
         EventBus.Subscribe(EventNames.MiniGameFailed, Test1);
 
         for (int i = 0; i < 3; i++)
@@ -98,43 +98,47 @@ public class RestUIManager : MonoBehaviour, IRestTimeProvider
         EventBus.UnSubscribe(OnStudyRestTimeculated, OnRestUIInitSetting);
         EventBus.UnSubscribe(OnRestTimeEnded, OnDailyRestTimeEnd);
 
-        EventBus.UnSubscribe(EventNames.MiniGameSuccesed, Test);
+//EventBus.UnSubscribe(EventNames.MiniGameSuccesed, Test);
+
         EventBus.UnSubscribe(EventNames.MiniGameFailed, Test1);
+
         for (int i = 0; i < 3; i++)
         {
             TimeSelectUpButtons[i].onClick.RemoveAllListeners();
            TimeSelectDownButtons[i].onClick.RemoveAllListeners();
         }
     }
-    private void Test() //미니게임 성공
-    {
-        OnRestUIInitSetting(); //공부시간 -> RestTime 계산
-    }
+    //private void Test() //미니게임 성공
+    //{
+    //    OnRestUIInitSetting(); //공부시간 -> RestTime 계산
+        
+    //    //1-1미니게임 성공 했을 때 , RestTime에 관계 없이 다음 패턴으로 이동하는 것
+    //    //
+    //    //1-2 미니게임 성공했을 때, RestTime이 0분 이하일때 다음 패턴으로 이동하는 것.
+    //}
+
     private void Test1() //미니게임 실패
     {
         OnRestUIInitSetting(); //공부시간 -> RestTime 계산
 
         EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
     }
-    private void OnDailyRestTimeEnd() //다음 패턴 이동 및 대사 로드
+    private void OnDailyRestTimeEnd() //RestTime 0분 이하 일 대,
     {
        
-
         if (dailyButtonManager.Mode == DailySelectButtonManager.UIMode.Study )
         {
             EventBus.Publish(DailyRoutineManager.OnNextDailyDialouge);
-            Debug.Log("Study 모드 restime end");
         }
         else if(dailyButtonManager.Mode == DailySelectButtonManager.UIMode.Rest)
         {
             EventBus.Publish(DailyRestSelectButton.OnRestTimeAfterEnded);
-            Debug.Log("rest 모드 restime end");
         }
         else if (dailyButtonManager.Mode == DailySelectButtonManager.UIMode.FixedStudy)
         {
             EventBus.Publish(DailyRoutineManager.OnNextDailyDialouge);
-            Debug.Log("FixedStudy 모드 restime end");
         }
+
     }
 
     private void OnStudyTimeSave(int value) //StudyTime 저장

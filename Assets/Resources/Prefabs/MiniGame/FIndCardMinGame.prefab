@@ -5945,7 +5945,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aed205786877cd8469e4258c3cd08720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: FindCard
+  _id: literature_daily
   _duration: 30
   _successReward: []
   _failReward: []

@@ -410,7 +410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93e629ba24f0b0849a0e58b0cc1de6a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: listening
+  _id: vocab
   _duration: 30
   _successReward: []
   _failReward:

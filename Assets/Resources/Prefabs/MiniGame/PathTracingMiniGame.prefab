@@ -630,7 +630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a63eb50b4363564a910c31abede0be2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: PathTracing
+  _id: nonliterature_daily
   _duration: 30
   _successReward: []
   _failReward: []
