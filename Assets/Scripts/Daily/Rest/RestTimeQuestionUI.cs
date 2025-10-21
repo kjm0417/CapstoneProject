@@ -49,18 +49,30 @@ public class RestTimeQuestionUI : MonoBehaviour
     }
     public void OnRestTimeInitCalcutate()
     {
+        if (restTimeProvider.CurrentDecreaseRestTime > 0)
+        {
+            SetNotFirstMaxTime();
+            maxTimeText.text = $"{prevlastTime} 분";
+
+            isFirstEnable = false;
+            restTimeProvider.CurrentDecreaseRestTime = 0;
+
+            if(prevlastTime > 0 )
+            {
+                EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
+            }
+
+            return;
+        }
+
         if (isFirstEnable == false)
         {
-            //스터디플래너를 통해 감소해야 될 시간이 0보다 크다면
-            if (restTimeProvider.CurrentDecreaseRestTime > 0) 
-            {
-                SetNotFirstMaxTime();
-            }
             maxTimeText.text = $"{prevlastTime} 분";
         }
         else
         {
             SetFirstMaxTime();
+
         }
 
         UpdateTimeUI();
@@ -73,7 +85,6 @@ public class RestTimeQuestionUI : MonoBehaviour
             digits[0] = digits[1] = digits[2] = 0;
 
             restTimeProvider.CurrentRestTime = 0;
-
             UpdateTimeUI();
         }
 
@@ -95,7 +106,7 @@ public class RestTimeQuestionUI : MonoBehaviour
     /// <summary>
     /// RestUI의  MaxTime 계산 로직이며, 초기 MaxTime 계산 아님.
     /// </summary>
-    void SetNotFirstMaxTime()
+    public void SetNotFirstMaxTime()
     {
         prevlastTime -= restTimeProvider.CurrentRestTime > 0 ? restTimeProvider.CurrentRestTime : restTimeProvider.CurrentDecreaseRestTime; // 10 - 5 = 5
 
@@ -107,7 +118,6 @@ public class RestTimeQuestionUI : MonoBehaviour
         }
 
         restTimeProvider.CurrentRestTime = 0;
-        restTimeProvider.CurrentDecreaseRestTime = 0;
 
         digits[0] = digits[1] = digits[2] = 0;
     }
