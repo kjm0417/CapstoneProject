@@ -350,7 +350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 897525838662926516}
   col: {fileID: 3740209970190247242}
-  jumpVelocity: 15
+  jumpVelocity: 18
   gravityScale: 4.5
   groundMask:
     serializedVersion: 2
