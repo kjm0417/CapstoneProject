@@ -121,7 +121,7 @@ public class RestUIManager : MonoBehaviour, IRestTimeProvider
     {
         OnRestUIInitSetting(); //공부시간 -> RestTime 계산
 
-        EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
+        // EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
     }
     private void OnDailyRestTimeEnd() //RestTime 0분 이하 일 대,
     {
@@ -139,6 +139,7 @@ public class RestUIManager : MonoBehaviour, IRestTimeProvider
             EventBus.Publish(DailyRoutineManager.OnNextDailyDialouge);
         }
 
+        restTimeUI.SetFirstMaxTime();
     }
 
     private void OnStudyTimeSave(int value) //StudyTime 저장
@@ -148,6 +149,17 @@ public class RestUIManager : MonoBehaviour, IRestTimeProvider
     private void OnRestUIInitSetting() //쉰다 선택 -> RestTime 감소/ 자습한다 선택 -> StudyTime 존재 시, RestTime감소
     {
         restTimeUI.OnRestTimeInitCalcutate(); // <- 여기서 계산
+
+    }
+
+    private bool isStudyPlaying()
+    {
+        //스터디플래너를 통해 감소해야 될 시간이 0보다 크다면
+        if (CurrentDecreaseRestTime > 0)
+        {
+            return true;
+        }
+        return false;
     }
     public int GetMaxRestMinutes()
     {
