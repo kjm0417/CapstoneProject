@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// 2D Âê²Ù¸£ ½ºÅ¸ÀÏ ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯
-/// - EventBus·Î IPlayerStateReadOnly¸¦ ¼ö½Å(= ·±Å¸ÀÓ »óÅÂ¸¦ ±âÁØÀ¸·Î Ä³¸¯ÅÍ ÀüÈ¯)
-/// - Á¤Àû ¸®¼Ò½º(¼Óµµ/¾Ö´Ï/½ºÇÁ¶óÀÌÆ®)´Â PlayerManager¿¡¼­ PlayerData¸¦ Ã£¾Æ Àû¿ë
-/// - Update: ÀÔ·Â ÀüÃ³¸® ¹× ¾Ö´Ï ÆÄ¶ó¹ÌÅÍ °»½Å / FixedUpdate: ¹°¸® ÀÌµ¿
+/// 2D íƒ‘ë‹¤ìš´ ìŠ¤íƒ€ì¼ í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬
+/// - EventBusì™€ IPlayerStateReadOnlyë¥¼ ì‚¬ìš©(= ë©”íƒ€ë°ì´í„° ìƒíƒœë¥¼ ë°›ì•„ì™€ì„œ ìºë¦­í„° ì „í™˜)
+/// - ì‹¤ì œ ë¦¬ì†ŒìŠ¤(ì†ë„/ì• ë‹ˆë©”ì´ì…˜/ìŠ¤í”„ë¼ì´íŠ¸)ëŠ” PlayerManagerì—ì„œ PlayerDataë¥¼ ì°¾ì•„ ì ìš©
+/// - Update: ì…ë ¥ ì²˜ë¦¬ì™€ ì• ë‹ˆë©”ì´ì…˜ íŒŒë¼ë¯¸í„° ì„¤ì • / FixedUpdate: ë¬¼ë¦¬ ì´ë™
+/// - IPausable ì¸í„°í˜ì´ìŠ¤ êµ¬í˜„: PauseManagerì—ì„œ ì¼ì‹œì •ì§€ ê´€ë¦¬/í•´ì œ ê°€ëŠ¥
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IPausable
 {
     [Header("Links")]
     [SerializeField] private Rigidbody2D _playerRb;
@@ -18,45 +19,46 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     [Header("Data")]
-    [Tooltip("°ÔÀÓ ½ÃÀÛ ½Ã »ç¿ëÇÒ ±âº» PlayerData (¾øÀ¸¸é fallback ¼Óµµ·Î ½ÃÀÛ)")]
+    [Tooltip("ë§¤ë‹ˆì € ì—°ê²° ì „ ì‚¬ìš©í•  ê¸°ë³¸ PlayerData (ì—†ìœ¼ë©´ fallback ì†ë„ë§Œ ì‚¬ìš©)")]
     [SerializeField] private PlayerData initialData;
 
     [Header("Movement")]
-    [Tooltip("µ¥ÀÌÅÍ ¾øÀ» ¶§ ±âº» ÀÌµ¿ ¼Óµµ")]
+    [Tooltip("ë°ì´í„°ê°€ ì—†ì„ ë•Œ ê¸°ë³¸ ì´ë™ ì†ë„")]
     [SerializeField] private float _fallbackMoveSpeed = 3.5f;
-    [Tooltip("´ë°¢¼± ÀÔ·Â Â÷´Ü (4¹æÇâ °íÁ¤)")]
+    [Tooltip("ëŒ€ê°ì„  ì…ë ¥ ì°¨ë‹¨ (4ë°©í–¥ ì´ë™)")]
     [SerializeField] private bool _blockDiagonal = true;
 
     [Header("Runtime (ReadOnly)")]
     [SerializeField] private bool _isMoving;
     [SerializeField] private Vector2 _lastMoveDir = Vector2.down;
     [SerializeField] private bool _canMove = true;
+    [SerializeField] private bool _isPaused = false;
     private Vector2 _processedInput;
 
-    // ÀÔ·Â ¹öÆÛ
+    // ì…ë ¥ ê´€ë ¨
     private Vector2 moveInput;
 
-    // ·±Å¸ÀÓ »óÅÂ/Á¤Àû µ¥ÀÌÅÍ ÂüÁ¶
+    // ë©”íƒ€ë°ì´í„° ìƒíƒœ/ì‹¤ì œ ë¦¬ì†ŒìŠ¤ ê´€ë ¨
     private IPlayerStateReadOnly _state;
     private PlayerData _appliedData;
 
     public event Action<PlayerData> OnDataApplied;
 
-    // ¾Ö´Ï ÆÄ¶ó¹ÌÅÍ ÇØ½Ã
+    // ì• ë‹ˆë©”ì´ì…˜ íŒŒë¼ë¯¸í„° í•´ì‹œ
     private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     private static readonly int MoveXHash = Animator.StringToHash("MoveX");
     private static readonly int MoveYHash = Animator.StringToHash("MoveY");
 
-    // ½ºÇÁ¶óÀÌÆ® Ä³½Ã(µ¿ÀÏ °æ·Î Àç»ç¿ë)
+    // ìŠ¤í”„ë¼ì´íŠ¸ ìºì‹œ(ì¤‘ë³µ ë¡œë“œ ë°©ì§€)
     private static readonly Dictionary<string, Sprite[]> _spriteCache = new Dictionary<string, Sprite[]>();
 
-    // ÀÌµ¿ ¼Óµµ °è»ê(µ¥ÀÌÅÍ°¡ ¾øÀ¸¸é Æú¹é)
+    // ì´ë™ ì†ë„ ê³„ì‚°(ë°ì´í„°ê°€ ìˆìœ¼ë©´ ì‚¬ìš©)
     private float Speed => _appliedData != null
         ? Mathf.Max(0.1f, _appliedData.moveSpeed)
         : _fallbackMoveSpeed;
 
     /// <summary>
-    /// ÄÄÆ÷³ÍÆ® ±âº» ¸µÅ©¸¦ ÀÚµ¿ ¼¼ÆÃÇÕ´Ï´Ù.
+    /// ì»´í¬ë„ŒíŠ¸ ê¸°ë³¸ ë§í¬ë¥¼ ìë™ ì„¤ì •í•©ë‹ˆë‹¤.
     /// </summary>
     private void Reset()
     {
@@ -66,7 +68,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇÊ¼ö ¸µÅ©¸¦ º¸ÀåÇÏ°í ÃÊ±â µ¥ÀÌÅÍ/½ºÇÁ¶óÀÌÆ®¸¦ Àû¿ëÇÕ´Ï´Ù.
+    /// í•„ìˆ˜ ë§í¬ë¥¼ ì„¤ì •í•˜ê³  ì´ˆê¸° ë°ì´í„°/ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ì ìš©í•©ë‹ˆë‹¤.
     /// </summary>
     private void Awake()
     {
@@ -74,12 +76,15 @@ public class PlayerController : MonoBehaviour
         if (animator == null) animator = GetComponentInChildren<Animator>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
-        // ÃÊ±â¿£ PlayerState°¡ ¾øÀ» ¼ö ÀÖÀ¸¹Ç·Î PlayerData ±â¹İ Æú¹é Àû¿ë
+        // ì´ˆê¸°ì—” PlayerStateê°€ ì—†ì„ ìˆ˜ ìˆìœ¼ë¯€ë¡œ PlayerData ë¨¼ì € ì ìš© ì‹œë„
         ApplyData(initialData);
+        
+        // PauseManagerì— ë“±ë¡í•˜ì—¬ ì¼ì‹œì •ì§€ ê´€ë¦¬ ë°›ê¸°
+        PauseManager.Instance.RegisterPausable(this);
     }
 
     /// <summary>
-    /// È°¼º Ä³¸¯ÅÍ º¯°æ(»óÅÂ) ÀÌº¥Æ®¸¦ ±¸µ¶ÇÕ´Ï´Ù.
+    /// í™œì„± ìºë¦­í„° ë³€ê²½(ìƒíƒœ) ì´ë²¤íŠ¸ë¥¼ êµ¬ë…í•©ë‹ˆë‹¤.
     /// </summary>
     private void OnEnable()
     {
@@ -87,7 +92,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ±¸µ¶À» ÇØÁ¦ÇÕ´Ï´Ù.
+    /// êµ¬ë…ì„ í•´ì œí•©ë‹ˆë‹¤.
     /// </summary>
     private void OnDisable()
     {
@@ -95,7 +100,18 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÔ·ÂÀ» ÀüÃ³¸®ÇÏ°í ¾Ö´Ï¸ŞÀÌÅÍ ÆÄ¶ó¹ÌÅÍ¸¦ °»½ÅÇÕ´Ï´Ù.
+    /// ì˜¤ë¸Œì íŠ¸ê°€ íŒŒê´´ë  ë•Œ PauseManagerì—ì„œ ë“±ë¡ í•´ì œí•©ë‹ˆë‹¤.
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.UnregisterPausable(this);
+        }
+    }
+
+    /// <summary>
+    /// ì…ë ¥ì„ ì²˜ë¦¬í•˜ê³  ì• ë‹ˆë©”ì´ì…˜ íŒŒë¼ë¯¸í„°ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
     /// </summary>
     private void Update()
     {
@@ -116,11 +132,11 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ¹°¸® Æ½¿¡¼­ ÀÌµ¿À» ¼öÇàÇÕ´Ï´Ù.
+    /// ë¬¼ë¦¬ í‹±ë§ˆë‹¤ ì´ë™ì„ ì²˜ë¦¬í•©ë‹ˆë‹¤.
     /// </summary>
     private void FixedUpdate()
     {
-        if (!_canMove) return;
+        if (!_canMove || _isPaused) return;
         if (_processedInput.sqrMagnitude <= 1e-4f) return;
 
         Vector2 vel = _processedInput.normalized * Speed;
@@ -128,7 +144,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// PlayerInput Move(UnityEvent)¿¡¼­ È£Ãâ: ÀÔ·ÂÀ» ¹öÆÛ¿¡ ÀúÀåÇÕ´Ï´Ù.
+    /// PlayerInput Move(UnityEvent)ì—ì„œ í˜¸ì¶œ: ì…ë ¥ì„ ë³€ìˆ˜ì— ì €ì¥í•©ë‹ˆë‹¤.
     /// </summary>
     public void OnMove(InputAction.CallbackContext ctx)
     {
@@ -137,30 +153,30 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// EventBus·ÎºÎÅÍ »óÅÂ¸¦ ¼ö½ÅÇßÀ» ¶§ È£ÃâµË´Ï´Ù.
-    /// - »óÅÂ´Â ·±Å¸ÀÓ ¼öÄ¡(HP µî) ±âÁØ
-    /// - Á¤Àû ¸®¼Ò½º´Â PlayerManager¿¡¼­ PlayerData¸¦ Ã£¾Æ Àû¿ë
+    /// EventBusë¡œë¶€í„° ìƒíƒœë¥¼ ë°›ì•„ì™”ì„ ë•Œ í˜¸ì¶œë©ë‹ˆë‹¤.
+    /// - ìƒíƒœëŠ” ë©”íƒ€ë°ì´í„° ìœ„ì¹˜(HP ë“±) ê´€ë ¨
+    /// - ì‹¤ì œ ë¦¬ì†ŒìŠ¤ëŠ” PlayerManagerì—ì„œ PlayerDataë¥¼ ì°¾ì•„ ì ìš©
     /// </summary>
     private void HandleStateChanged(IPlayerStateReadOnly newState)
     {
         _state = newState;
 
-        // Á¤Àû µ¥ÀÌÅÍ Á¶È¸(¼Óµµ/¾Ö´Ï/½ºÇÁ¶óÀÌÆ®¿ë)
+        // ì‹¤ì œ ë¦¬ì†ŒìŠ¤ ì¡°íšŒ(ì†ë„/ì• ë‹ˆë©”ì´ì…˜/ìŠ¤í”„ë¼ì´íŠ¸ë“±)
         var data = PlayerManager.Instance ? PlayerManager.Instance.GetData(_state?.Id) : null;
         ApplyData(data);
 
-        // ÇÊ¿äÇÏ´Ù¸é _state.OnChanged¿¡ ¹ÙÀÎµùÇÏ¿© HP º¯È­ µîÀ» UI¿¡ ¹İ¿µÇÏ´Â °Íµµ °¡´É
-        // (Áö±İÀº ÄÁÆ®·Ñ·¯ ÀÌµ¿/¾Ö´Ï¸¸ ´ã´çÇÏ¹Ç·Î »ı·«)
+        // í•„ìš”í•˜ë‹¤ë©´ _state.OnChangedë¥¼ êµ¬ë…í•˜ì—¬ HP ë³€í™” ë“±ì„ UIì— ë°˜ì˜í•˜ëŠ” ê²ƒë„ ê°€ëŠ¥
+        // (í˜„ì¬ëŠ” ì»¨íŠ¸ë¡¤ëŸ¬ ì´ë™/ì• ë‹ˆë©”ì´ì…˜ ë‹´ë‹¹í•˜ë¯€ë¡œ ìƒëµ)
     }
 
     /// <summary>
-    /// PlayerData¸¦ Àû¿ëÇÏ°í(¼Óµµ/¾Ö´Ï/½ºÇÁ¶óÀÌÆ®), ÇÊ¿äÇÑ °æ¿ì ¾Ö´Ï¸¦ ¾ÈÀüÈ÷ ¸®¹ÙÀÎµùÇÕ´Ï´Ù.
+    /// PlayerDataë¥¼ ì ìš©í•˜ê³ (ì†ë„/ì• ë‹ˆë©”ì´ì…˜/ìŠ¤í”„ë¼ì´íŠ¸), í•„ìš”í•œ ê²½ìš° ì• ë‹ˆë©”ì´ì…˜ ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ë¦¬ë¡œë“œí•©ë‹ˆë‹¤.
     /// </summary>
     public void ApplyData(PlayerData data)
     {
         _appliedData = data;
 
-        // ¾Ö´Ï¸ŞÀÌÅÍ ÄÁÆ®·Ñ·¯ ±³Ã¼
+        // ì• ë‹ˆë©”ì´ì…˜ ì»¨íŠ¸ë¡¤ëŸ¬ êµì²´
         if (animator != null && _appliedData != null && _appliedData.animatorController != null)
         {
             if (animator.runtimeAnimatorController != _appliedData.animatorController)
@@ -175,14 +191,14 @@ public class PlayerController : MonoBehaviour
             if (HasParam(animator, MoveYHash)) animator.SetFloat(MoveYHash, _lastMoveDir.y);
         }
 
-        // Resources °æ·Î ±â¹İÀ¸·Î ½ÃÀÛ ½ºÇÁ¶óÀÌÆ® Àû¿ë(ÀÖÀ» °æ¿ì)
+        // Resources ê²½ë¡œ ê¸°ë°˜ìœ¼ë¡œ ê¸°ë³¸ ìŠ¤í”„ë¼ì´íŠ¸ ì„¤ì •(ì• ë‹ˆë©”ì´ì…˜ ì—†ì„ë•Œ)
         TryApplySpriteFromResources(_appliedData);
 
         OnDataApplied?.Invoke(_appliedData);
     }
 
     /// <summary>
-    /// PlayerData.resourcesAddress/defaultSpriteNameÀ» »ç¿ëÇØ ½ÃÀÛ ½ºÇÁ¶óÀÌÆ®¸¦ Àû¿ëÇÕ´Ï´Ù.
+    /// PlayerData.resourcesAddress/defaultSpriteNameì„ ê¸°ë°˜ìœ¼ë¡œ ê¸°ë³¸ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
     /// </summary>
     private void TryApplySpriteFromResources(PlayerData data)
     {
@@ -192,7 +208,7 @@ public class PlayerController : MonoBehaviour
         var sprites = LoadSpritesCached(data.resourcesAddress);
         if (sprites == null || sprites.Length == 0)
         {
-            Debug.LogWarning($"[PlayerController] Resources¿¡¼­ ½ºÇÁ¶óÀÌÆ®¸¦ Ã£Áö ¸øÇß½À´Ï´Ù: {data.resourcesAddress}");
+            Debug.LogWarning($"[PlayerController] Resourcesì—ì„œ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: {data.resourcesAddress}");
             return;
         }
 
@@ -213,7 +229,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Resources.LoadAll<Sprite>(path)¸¦ Ä³½Ã¿Í ÇÔ²² »ç¿ëÇÕ´Ï´Ù.
+    /// Resources.LoadAll<Sprite>(path)ë¥¼ ìºì‹œì™€ í•¨ê»˜ ì‚¬ìš©í•©ë‹ˆë‹¤.
     /// </summary>
     private static Sprite[] LoadSpritesCached(string path)
     {
@@ -231,7 +247,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// µ¥µåÁ¸ Àû¿ë: ¹Ì¼¼ÇÑ ÀÔ·Â °ªÀ» 0À¸·Î ½º³ÀÇÕ´Ï´Ù.
+    /// ë°ë“œì¡´ ì ìš©: ë¯¸ì„¸í•œ ì…ë ¥ ê°’ì„ 0ìœ¼ë¡œ ë§Œë“­ë‹ˆë‹¤.
     /// </summary>
     private static Vector2 Deadzone(Vector2 v, float dead = 0.2f)
     {
@@ -241,7 +257,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 4¹æÇâ ½º³À: ´õ Å« ÃàÀ» ¿ì¼±(-1/0/1)·Î °íÁ¤ÇÕ´Ï´Ù.
+    /// 4ë°©í–¥ ìŠ¤ëƒ…: ë” í° ì¶•ì„ ìš°ì„ (-1/0/1)ë¡œ ë§Œë“­ë‹ˆë‹¤.
     /// </summary>
     private static Vector2 SnapDir(Vector2 v)
     {
@@ -252,7 +268,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÌµ¿ ÀÔ·ÂÀ» Á¾ÇÕ Ã³¸®(µ¥µåÁ¸¡æ¿É¼Ç ´ë°¢¼± Â÷´Ü¡æ½º³À)ÇÕ´Ï´Ù.
+    /// ì´ë™ ì…ë ¥ì„ ìµœì¢… ì²˜ë¦¬(ë°ë“œì¡´+ì˜µì…˜ë³„ ëŒ€ê°ì„  ì°¨ë‹¨)í•©ë‹ˆë‹¤.
     /// </summary>
     private static Vector2 ProcessInput(Vector2 raw, bool blockDiagonal)
     {
@@ -263,7 +279,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇöÀç ¾Ö´Ï¸ŞÀÌÅÍ¿¡ ÇØ´ç ÆÄ¶ó¹ÌÅÍ°¡ Á¸ÀçÇÏ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+    /// í˜„ì¬ ì• ë‹ˆë©”ì´í„°ì— í•´ë‹¹ íŒŒë¼ë¯¸í„°ê°€ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
     /// </summary>
     private static bool HasParam(Animator anim, int nameHash)
     {
@@ -275,7 +291,60 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ÜºÎ¿¡¼­ ÀÌµ¿ °¡´É/ºÒ°¡¸¦ Åä±ÛÇÕ´Ï´Ù(ÄÆ½Å/´ëÈ­ µî).
+    /// ì™¸ë¶€ì—ì„œ ì´ë™ ê°€ëŠ¥/ë¶ˆê°€ëŠ¥ì„ ì„¤ì •í•©ë‹ˆë‹¤(ì»·ì‹ /ëŒ€í™” ë“±).
     /// </summary>
     public void SetMovementEnabled(bool enabled) => _canMove = enabled;
+
+    #region IPausable Implementation
+    
+    /// <summary>
+    /// IPausable: ì¼ì‹œì •ì§€ ìƒíƒœë¥¼ í™•ì¸í•©ë‹ˆë‹¤.
+    /// </summary>
+    public bool IsPaused => _isPaused;
+
+    /// <summary>
+    /// IPausable: í”Œë ˆì´ì–´ ì´ë™ê³¼ ì• ë‹ˆë©”ì´ì…˜ì„ ì¼ì‹œì •ì§€í•©ë‹ˆë‹¤.
+    /// </summary>
+    public void Pause()
+    {
+        if (!_isPaused)
+        {
+            _isPaused = true;
+            
+            // ì• ë‹ˆë©”ì´ì…˜ ì¼ì‹œì •ì§€ (ì´ë™ ì• ë‹ˆë©”ì´ì…˜ ì •ì§€)
+            if (animator != null)
+            {
+                animator.speed = 0f;
+            }
+            
+            // Rigidbody2D ì†ë„ ì •ì§€
+            if (_playerRb != null)
+            {
+                _playerRb.linearVelocity = Vector2.zero;
+            }
+            
+            Debug.Log($"[PlayerController] {gameObject.name} ì¼ì‹œì •ì§€");
+        }
+    }
+
+    /// <summary>
+    /// IPausable: í”Œë ˆì´ì–´ ì´ë™ê³¼ ì• ë‹ˆë©”ì´ì…˜ì„ ì¬ê°œí•©ë‹ˆë‹¤.
+    /// </summary>
+    public void Resume()
+    {
+        if (_isPaused)
+        {
+            _isPaused = false;
+            
+            // ì• ë‹ˆë©”ì´ì…˜ ì¬ê°œ (ì´ë™ ì• ë‹ˆë©”ì´ì…˜ ì¬ì‹œì‘)
+            if (animator != null)
+            {
+                animator.speed = 1f;
+            }
+            
+            Debug.Log($"[PlayerController] {gameObject.name} ì¬ê°œ");
+        }
+    }
+    
+    #endregion
 }
