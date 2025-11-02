@@ -7,7 +7,6 @@ using UnityEngine;
 /// </summary>
 public class PauseManager : SingleTonGeneric<PauseManager>
 {
-   
 
     [Header("일시정지 상태")]
     [SerializeField] private bool _isGamePaused = false;

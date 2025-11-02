@@ -136,7 +136,19 @@ public class PlayerController : MonoBehaviour, IPausable
     /// </summary>
     private void FixedUpdate()
     {
-        if (!_canMove || _isPaused) return;
+        // 디버그: 일시정지 상태 확인
+        if (_isPaused)
+        {
+            // Debug.Log($"[PlayerController] FixedUpdate: 일시정지 상태로 이동 차단");
+            return;
+        }
+        
+        if (!_canMove)
+        {
+            // Debug.Log($"[PlayerController] FixedUpdate: _canMove가 false로 이동 차단");
+            return;
+        }
+        
         if (_processedInput.sqrMagnitude <= 1e-4f) return;
 
         Vector2 vel = _processedInput.normalized * Speed;
@@ -315,15 +327,21 @@ public class PlayerController : MonoBehaviour, IPausable
             if (animator != null)
             {
                 animator.speed = 0f;
+                Debug.Log($"[PlayerController] 애니메이터 속도를 0으로 설정");
             }
             
             // Rigidbody2D 속도 정지
             if (_playerRb != null)
             {
                 _playerRb.linearVelocity = Vector2.zero;
+                Debug.Log($"[PlayerController] Rigidbody2D 속도를 0으로 설정");
             }
             
-            Debug.Log($"[PlayerController] {gameObject.name} 일시정지");
+            Debug.Log($"[PlayerController] {gameObject.name} 일시정지 완료! _isPaused = {_isPaused}");
+        }
+        else
+        {
+            Debug.Log($"[PlayerController] {gameObject.name} 이미 일시정지 상태입니다.");
         }
     }
 

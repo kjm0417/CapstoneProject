@@ -37,13 +37,17 @@ public class PauseManagerTester : MonoBehaviour
         // 미니게임 시작
         if (Input.GetKeyDown(startMiniGameKey))
         {
+            Debug.Log("[PauseManagerTester] 미니게임 시작 키 입력됨");
             PauseManager.Instance.StartMiniGame();
+            Debug.Log($"[PauseManagerTester] 미니게임 상태: {PauseManager.Instance.IsMiniGameActive}");
         }
         
         // 미니게임 종료
         if (Input.GetKeyDown(endMiniGameKey))
         {
+            Debug.Log("[PauseManagerTester] 미니게임 종료 키 입력됨");
             PauseManager.Instance.EndMiniGame();
+            Debug.Log($"[PauseManagerTester] 미니게임 상태: {PauseManager.Instance.IsMiniGameActive}");
         }
     }
 
