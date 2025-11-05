@@ -262,7 +262,7 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Lanch_0_0
+    ChoiceId: Study
     MasterId: 1_Lanch_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC810\uC2EC \uC2DC\uAC04)"
@@ -274,7 +274,7 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Afternoon_0_0
+    ChoiceId: Study
     MasterId: 1_Afternoon_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uC2B5\uD55C\uB2E4 (\uC624\uD6C4)"
@@ -286,7 +286,7 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: 1_Afternoon_0_1
+    ChoiceId: Rest
     MasterId: 1_Afternoon_0_0
     ChoiceIndex: 1
     ChoiceText: "\uC270\uB2E4 (\uC624\uD6C4)"

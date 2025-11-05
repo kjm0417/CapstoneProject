@@ -37,7 +37,7 @@ public class SubjectItem : MonoBehaviour
 
         Subject.text = subject;
 
-        SubjectDetail.text = Time.ToString();
+        SubjectDetail.text = Time.ToString() + "m";
     }
 
     //public void SubjectSet(int period,string subject, int StartPage, int EndPage)

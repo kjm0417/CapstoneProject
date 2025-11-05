@@ -32,7 +32,7 @@ public class DailyStudySelectButton : DailySelectButtonManager
         Mode = newMode;
         isSyncingMode = false;
     }
-    private Button[] studyButtons = new Button[7];
+    private Button[] studyButtons = new Button[11];
 
     [SerializeField]
     GameObject SubjectItemParent;
@@ -74,9 +74,9 @@ public class DailyStudySelectButton : DailySelectButtonManager
 
         if(currentStudyColum < 0)
         {
-            currentStudyColum = 6;
+            currentStudyColum = 10;
         }
-        else if(currentStudyColum > 6)
+        else if(currentStudyColum > 10)
         {
             currentStudyColum = 0;
         }

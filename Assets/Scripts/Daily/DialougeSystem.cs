@@ -103,7 +103,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //일상적인 대화 �
     public void InitSelectDialouge(DialogData[] dialogs , bool isAuto )
     {
        
-        Dialogs = dialogs;
+         Dialogs = dialogs;
         isAutoStart = isAuto;
 
         currentDialogIndex = -1;
@@ -296,8 +296,6 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //일상적인 대화 �
 
         //대사 완료시 커서 활성화
         Speakers[currentSpeakerIndex].objectArrow.SetActive(true);
-
-
 
     }
     /// <summary>

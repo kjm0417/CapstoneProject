@@ -27,7 +27,7 @@ public class UIManager : SingleTonGeneric<UIManager> //UI 동적 생성 관리 및 UI �
     {
         base.Awake();
 
-        itemPool = new ObjectPool<SubjectItem>(SubjectItem, 7, SubjectItemParent);
+        itemPool = new ObjectPool<SubjectItem>(SubjectItem, 11, SubjectItemParent);
     }
 
     private void OnEnable()
