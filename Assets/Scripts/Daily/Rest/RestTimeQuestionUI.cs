@@ -37,7 +37,9 @@ public class RestTimeQuestionUI : MonoBehaviour
     private void OnDisable()
     {
         EventBus.UnSubscribe<bool>(RestUIManager.OnRestUIBacked, OnBackActive);
-        EventBus.UnSubscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);     
+        EventBus.UnSubscribe(RestUIManager.OnRestTimeCalculated, SetNotFirstMaxTime);
+
+        NotActiveMaxTime();
     }
 
     [SerializeField]
@@ -102,6 +104,21 @@ public class RestTimeQuestionUI : MonoBehaviour
         isFirstEnable = false;
     }
 
+    [SerializeField]
+    bool isFirstDisable = true;
+    private void NotActiveMaxTime()
+    {
+        if (restTimeProvider.CurrentDecreaseRestTime > 0 && isFirstDisable)
+        {
+            currentMaxTime = restTimeProvider.GetMaxRestMinutes() - restTimeProvider.CurrentDecreaseRestTime;
+            prevlastTime = currentMaxTime;
+            maxTimeText.text = $"{currentMaxTime} 분";
+            isFirstDisable = false;
+
+            UpdateTimeUI();
+        }
+    }
+
 
     /// <summary>
     /// RestUI의  MaxTime 계산 로직이며, 초기 MaxTime 계산 아님.
@@ -115,6 +132,7 @@ public class RestTimeQuestionUI : MonoBehaviour
             EventBus.Publish(RestUIManager.OnRestTimeEnded);
 
             isFirstEnable = true;
+            isFirstDisable = true;
         }
 
         restTimeProvider.CurrentRestTime = 0;

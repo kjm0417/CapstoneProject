@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -45.602, y: 0.65732}
-  m_SizeDelta: {x: 201.59, y: 48.686}
+  m_AnchoredPosition: {x: -22.343887, y: 0.33774}
+  m_SizeDelta: {x: 223.8938, y: 19.324}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6729355077171042699
 CanvasRenderer:
@@ -92,14 +92,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -172,10 +172,10 @@ RectTransform:
   - {fileID: 4585710377493794697}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.1856, y: 115.9053}
-  m_SizeDelta: {x: 275.4114, y: 54}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 289.6777, y: 24.0537}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9126609619761373379
 CanvasRenderer:
@@ -231,6 +231,7 @@ MonoBehaviour:
   Subject: {fileID: 1903366460463333379}
   SubjectDetail: {fileID: 5125325850454959262}
   MiniGameId: 
+  SubjectTime: 0
 --- !u!114 &732084617701433263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,8 +310,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 96.4423, y: 1.7613}
-  m_SizeDelta: {x: 86.0066, y: 50.894}
+  m_AnchoredPosition: {x: 111.2, y: 0.000076771}
+  m_SizeDelta: {x: 43.189, y: 26.4357}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6922363972815102634
 CanvasRenderer:
@@ -367,8 +368,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

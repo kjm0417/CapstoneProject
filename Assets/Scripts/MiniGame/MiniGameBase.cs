@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class MiniGameBase : MonoBehaviour, IMiniGame
 {
-    [Header("±âº» ¼³Á¤")]
+    [Header("ï¿½âº» ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private string _id;
     [SerializeField] private float _duration;
 
-    [Header("°á°ú¿¡ µû¸¥ ³»¿ë")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private MiniGameReward[] _successReward;
     [SerializeField] private MiniGameReward[] _failReward;
 
@@ -22,9 +22,9 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     public event Action<IMiniGame, MiniGameCompleteArgs> OnCompleted;
     public event Action<IMiniGame, string> OnAborted;
 
-    private float elapsedTime; // °æ°ú ½Ã°£ ÃßÀû¿ë º¯¼ö
+    private float elapsedTime; // ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    // ¼ö¸íÁÖ±â ¸Ş¼­µå ±¸Çö   
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ ï¿½Ş¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½   
     public virtual void Init()
     {
         RemainingTime = Duration;
@@ -33,7 +33,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     }
 
     /// </summary>
-    /// °ÔÀÓ ½ÃÀÛ½Ã È£ÃâµÇ´Â ÇÔ¼ö
+    /// ê²Œì„ ì‹œì‘ì‹œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
     public void StartGame()
     {
         if (IsRunning) return;
@@ -41,7 +41,13 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
         elapsedTime = 0f;
         RemainingTime = Duration;
 
-        // EventBus ¾Ë¸²(¿É¼Ç)
+        // PauseManagerë¥¼ í†µí•´ ë‹¤ë¥¸ ì˜¤ë¸Œì íŠ¸ë“¤ ì¼ì‹œì •ì§€
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.StartMiniGame();
+        }
+
+        // EventBus ì•Œë¦¼(ì˜µì…˜)
         EventBus.Publish("MiniGame.Started");
         OnStarted?.Invoke(this);
 
@@ -50,11 +56,17 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     }
 
     /// </summary>
-    /// ¼º°øÇß´ÂÁö ½ÇÆĞ Çß´ÂÁö ³Ñ°ÜÁÖ´Â ÇÔ¼ö
+    /// ì„±ê³µí–ˆê±°ë‚˜ ì‹¤íŒ¨ ì¤‘ë‹¨ì„ ë‹´ë‹¹í•˜ëŠ” í•¨ìˆ˜
     public virtual void Complete(bool isSuccess)
     {
         if (!IsRunning) return;
         IsRunning = false;
+
+        // PauseManagerë¥¼ í†µí•´ ë‹¤ë¥¸ ì˜¤ë¸Œì íŠ¸ë“¤ ì¬ê°œ
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.EndMiniGame();
+        }
 
         var args = new MiniGameCompleteArgs
         {
@@ -63,7 +75,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
             remainingTime = RemainingTime
         };
 
-        // º¸»ó Áö±Ş
+        // ë³´ìƒ ì ìš©
         var list = isSuccess ? _successReward : _failReward;
         if (list != null)
         {
@@ -73,7 +85,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
             }
         }
 
-        //ex) Äù½ºÆ® ÇÒ´ç·®ÀÌ³ª ¹Ì´Ï°ÔÀÓ °á°ú¿¡ µû¶ó ¹Ş´Â °É reward¸»°í ´Ù¸¥ °÷¿¡¼­ Àû¿ëÇØ¾ß ÇÒ ‹š »ç¿ë
+        //ex) í¬ì¸íŠ¸ í• ë‹¹ì´ë‚˜ ë¯¸ë‹ˆê²Œì„ ê²°ê³¼ì— ë”°ë¼ ë°›ëŠ” ë³´ìƒ rewardì—ì„œ ë‹¤ë¥¸ ë§¤ë‹ˆì €ë¡œ ì „ë‹¬í•´ì•¼ í•  ìˆ˜ ìˆìŒ
         EventBus.Publish(isSuccess ? EventNames.MiniGameSuccesed : EventNames.MiniGameFailed);
         OnCompleted?.Invoke(this, args);
 
@@ -86,7 +98,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     }
 
     /// <summary>
-    ///¸Å ÇÁ·¹ÀÓ¸¶´Ù È£ÃâµÇ´Â ÇÔ¼ö
+    ///ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ È£ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½
     public void UpdateGame(float deltaTime)
     {
         if (!IsRunning) return;
@@ -97,7 +109,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
         OnUpdateHook(deltaTime);
         OnTick?.Invoke(this, deltaTime);
 
-        // ½Ã°£ ¸¸·á Ã³¸®(¿À¹öÇÏ¸é ½ÇÆĞ/¼º°ø ¿©ºÎ´Â ÈÅ¿¡¼­ °áÁ¤)
+        // ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½ ï¿½Å¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         if (RemainingTime <= 0f)
         {
             bool success = CheckClearOnTimeout();
@@ -105,7 +117,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
             return;
         }
 
-        // ½Ç½Ã°£ Å¬¸®¾î Ã¼Å©(¸ñÇ¥ ´Ş¼º Áï½Ã ¼º°ø)
+        // ï¿½Ç½Ã°ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ Ã¼Å©(ï¿½ï¿½Ç¥ ï¿½Ş¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         if (CheckClearRealtime())
         {
             Complete(true);
@@ -116,12 +128,18 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
     }
 
     /// <summary>
-    /// Áß´Ü  ½Ã È£ÃâµÇ´Â ÇÔ¼ö
+    /// ì¤‘ë‹¨ ì‹œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
     public virtual void Abort(string reason = "USER_ABORT")
     {
         if (!IsRunning)
             return;
         IsRunning = false;
+
+        // PauseManagerë¥¼ í†µí•´ ë‹¤ë¥¸ ì˜¤ë¸Œì íŠ¸ë“¤ ì¬ê°œ
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.EndMiniGame();
+        }
 
         OnAborted?.Invoke(this, reason);
         EventBus.Publish("MiniGame.Aborted");
@@ -132,7 +150,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
 
 
     /// <summary>
-    /// °ÔÀÓ Á¾·á ÈÄ Á¤¸®ÇØ¾ß ÇÒ ³»¿ë
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public virtual void Cleanup()
     {
         OnCleanupHook();
@@ -140,7 +158,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
 
     public virtual MiniGameReward[] GetRewards() => _successReward;
     /// <summary>
-    /// ¹Ì´Ï°ÔÀÓ ¼º°ø ½Ã Áö±Ş º¸»ó Á¶È¸
+    /// ï¿½Ì´Ï°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
     protected virtual void ApplyReward(MiniGameReward reward)
     {
         var playerManager = PlayerManager.Instance;
@@ -152,24 +170,24 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
 
         playerManager.ApplyReward(reward);
     }
-    // ====== È®Àå ÈÅ ======
+    // ====== È®ï¿½ï¿½ ï¿½ï¿½ ======
 
-    /// <summary>½ÃÀÛ ½Ã 1È¸ È£Ãâ</summary>
+    /// <summary>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ 1È¸ È£ï¿½ï¿½</summary>
     protected virtual void OnStartHook() { }
 
-    /// <summary>¸Å ÇÁ·¹ÀÓ È£Ãâ</summary>
+    /// <summary>ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½</summary>
     protected virtual void OnUpdateHook(float deltaTime) { }
 
-    /// <summary>¿Ï·á Á÷ÈÄ È£Ãâ</summary>
+    /// <summary>ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½</summary>
     protected virtual void OnCompleteHook(bool success, MiniGameCompleteArgs args) { }
 
-    /// <summary>Á¤¸® ´Ü°è È£Ãâ</summary>
+    /// <summary>ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½ È£ï¿½ï¿½</summary>
     protected virtual void OnCleanupHook() { }
 
-    /// <summary>½Ã°£ ¸¸·á ½Ã ¼º°ø ¿©ºÎ(±âº»: ½ÇÆĞ)</summary>
+    /// <summary>ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½âº»: ï¿½ï¿½ï¿½ï¿½)</summary>
     protected virtual bool CheckClearOnTimeout() => false;
 
-    /// <summary>½Ç½Ã°£ Å¬¸®¾î ¿©ºÎ(±âº»: ¹Ì»ç¿ë)</summary>
+    /// <summary>ï¿½Ç½Ã°ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½âº»: ï¿½Ì»ï¿½ï¿½)</summary>
     protected virtual bool CheckClearRealtime() => false;
 }
 

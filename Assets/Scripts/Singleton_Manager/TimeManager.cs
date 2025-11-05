@@ -21,6 +21,7 @@ public class GameDate
 public class TimeManager : SingleTonGeneric<TimeManager>
 {
     public static string OnDayStarted = "OnDayStartEvent"; //하루 일상 시작 될 때
+    public static string OnDayCurrent = "OnDayCurrentEvent"; //현재 날짜 계산
     public static string OnDayEnded = "OnDayEndedEvent"; //하루 일상 끝날 때
 
     public GameDate currentGameDate;
@@ -38,10 +39,13 @@ public class TimeManager : SingleTonGeneric<TimeManager>
     private void OnEnable()
     {
         EventBus.Subscribe(OnDayEnded, UpdateDate);
+        EventBus.Subscribe(OnDayCurrent, GetCurrentDate);
     }
     private void OnDisable()
     {
         EventBus.UnSubscribe(OnDayEnded, UpdateDate);
+
+        EventBus.UnSubscribe(OnDayCurrent, GetCurrentDate);
     }
 
     private void Update()
@@ -61,8 +65,7 @@ public class TimeManager : SingleTonGeneric<TimeManager>
     public void InitDate(int month,int day, int remainDay, int dayOfWeek) //게임 시작 시, 날짜 로드 또는 초기화 하는 메서드
     {
         currentGameDate = new GameDate(month, day, remainDay, dayOfWeek);
-
-        EventBus.Publish(OnDayStarted, currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
+        GetCurrentDate();
     }
 
     public void UpdateDate() //날짜 변경 메서드. 하루 일상 끝나면 호출
@@ -85,8 +88,14 @@ public class TimeManager : SingleTonGeneric<TimeManager>
         }
 
 
-        EventBus.Publish(OnDayStarted,currentGameDate); //GameDate 타입의 OnDayStarted 구독한 구독자에게 이벤트 뿌림 - 날짜 변경
-       
+        GetCurrentDate(); //InGameCalendar.cs에서 실제 UI 표시하는 메서드 호출
+
     }
+
+    void GetCurrentDate()
+    {
+        EventBus.Publish(OnDayStarted, currentGameDate); //InGameCalendar.cs에서 실제 UI 표시
+    }
+
 
 }
