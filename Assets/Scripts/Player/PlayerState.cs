@@ -76,7 +76,7 @@ public sealed class PlayerState : IPlayerStateReadOnly
 
     public void SetStress(int value)
     {
-        var clamped = Mathf.Clamp(value, 0, 100);
+        var clamped = Mathf.Clamp(value, 0, 100);   
         if (clamped == stress) return;
         stress = clamped;
         OnChanged?.Invoke(this);

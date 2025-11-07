@@ -36,7 +36,7 @@ public class DinoJumpPlayer : MonoBehaviour
     [Tooltip("아래로 쏘는 Raycast 길이(m)")]
     [SerializeField] private float groundRayLength = 0.15f;
 
-    // ���� ����
+    // 내부 상태
     private float _lastJumpPressed = -999f;
     private float _lastGrounded = -999f;
     private bool _jumpLockedUntilRelease = false;
@@ -54,7 +54,7 @@ public class DinoJumpPlayer : MonoBehaviour
 
         if (!body || !col)
         {
-            Debug.LogError("[MiniGamePlayer2D] Rigidbody2D/BoxCollider2D�� �ʿ��մϴ�.");
+            Debug.LogError("[MiniGamePlayer2D] Rigidbody2D/BoxCollider2D가 필요합니다.");
             return;
         }
 
@@ -76,13 +76,11 @@ public class DinoJumpPlayer : MonoBehaviour
                  || Input.GetMouseButtonDown(0)
                  || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
 
-        bool held = Input.GetKey(KeyCode.Space)
-                 || Input.GetKey(KeyCode.UpArrow)
-                 || Input.GetMouseButton(0)
-                 || (Input.touchCount > 0);
-
-        if (down) _lastJumpPressed = Time.time;
-        if (!held) _jumpLockedUntilRelease = false; 
+        if (down)
+        {
+            _lastJumpPressed = Time.time;
+            Debug.Log($"[DinoJumpPlayer] 점프 입력 감지! Time: {Time.time}");
+        }
     }
 
     /// <summary>물리 프레임 처리: 점프, 코요테 타임, 버퍼 적용</summary>
@@ -90,24 +88,41 @@ public class DinoJumpPlayer : MonoBehaviour
     {
         if (!body || !col) return;
 
-        // ���� üũ
-        if (IsPlayerGrounded())
+        // 바닥 체크
+        bool grounded = IsPlayerGrounded();
+        
+        if (grounded)
         {
             _lastGrounded = Time.time;
+            // 바닥에 닿으면 점프 잠금 해제 (다음 점프 준비)
             _jumpLockedUntilRelease = false;
         }
 
+        // 점프 입력 버퍼 체크
         bool wantJump = (Time.time - _lastJumpPressed) <= jumpBufferTime;
+        // 코요테 타임 체크 (바닥에서 떨어진 직후에도 점프 가능)
         bool coyote = (Time.time - _lastGrounded) <= coyoteTime;
 
+        // 점프 실행 조건: 입력 있음 + 바닥 근처 + 잠금 안됨
         if (wantJump && coyote && !_jumpLockedUntilRelease)
         {
+            // 점프 입력 소비
             _lastJumpPressed = -999f;
+            // 점프 잠금 (공중에서 다시 점프 방지)
             _jumpLockedUntilRelease = true;
 
+            // 점프 속도 적용
             Vector2 v = body.linearVelocity;
             v.y = jumpVelocity;
             body.linearVelocity = v;
+            
+            // Debug.Log($"[DinoJumpPlayer] ✓ 점프 실행! velocity.y = {jumpVelocity}");
+        }
+
+        // 안전장치: 플레이어가 너무 아래로 떨어지면 경고
+        if (body.position.y < -10f)
+        {
+            Debug.LogWarning($"[DinoJumpPlayer] 플레이어가 바닥 아래로 떨어짐! Y: {body.position.y}, Grounded: {_isGrounded}");
         }
     }
 
@@ -134,25 +149,48 @@ public class DinoJumpPlayer : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        // 바닥인지 확인
+        if (IsGroundObject(collision.gameObject))
         {
             _isGrounded = true;
-        }
-        else if(collision.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
-        {
-            // 장애물과 충돌 시 처리 (예: 게임 오버)
-            EventBus.Publish("MiniGame.Abort");
+            // Debug.Log("[DinoJumpPlayer] 바닥 충돌 감지 (OnCollisionEnter2D)");
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        // 바닥에서만 떨어졌을 때만 grounded 해제
+        if (IsGroundObject(collision.gameObject))
+        {
             _isGrounded = false;
+            // Debug.Log("[DinoJumpPlayer] 바닥에서 떨어짐 (OnCollisionExit2D)");
+        }
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // 바닥과 계속 접촉 중이면 grounded 유지
+        if (IsGroundObject(collision.gameObject))
+        {
+            _isGrounded = true;
+        }
+    }
+
+    /// <summary>바닥 오브젝트인지 확인</summary>
+    private bool IsGroundObject(GameObject obj)
+    {
+        if (obj == null) return false;
+
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        
+        // 레이어 또는 태그로 확인
+        return (groundLayer != -1 && obj.layer == groundLayer) || obj.CompareTag("Ground");
+    }
+
+    /// <summary>바닥 체크: 충돌 이벤트만 사용 (가장 확실함)</summary>
     private bool IsPlayerGrounded()
     {
+        // 충돌 이벤트만 사용 (OnCollisionEnter/Stay/Exit로 관리)
         return _isGrounded;
     }
 }

@@ -49,12 +49,17 @@ public class DinoJumpMiniGame : MiniGameBase
     [SerializeField] private float difficultyAccel = 0.0f;
     [SerializeField] private Text scoreText;
 
+    [Header("클리어 조건")]
+    [SerializeField] private int targetObstacleCount = 15; // 통과해야 할 장애물 수
+
     // 내부 상태
     private readonly List<Rigidbody2D> _obstacleBodies = new List<Rigidbody2D>();
     private float _spawnTimer;
     private float _nextSpawnDelay;
     private float _score;
     private float _tileWidthPx;
+    private int _passedObstacleCount = 0; // 통과한 장애물 수
+    private bool _hasCollided = false; // 장애물 충돌 여부
 
     // ================= MiniGameBase Hooks =================
 
@@ -79,7 +84,9 @@ public class DinoJumpMiniGame : MiniGameBase
         _spawnTimer = 0f;
         _nextSpawnDelay = Random.Range(spawnIntervalRange.x, spawnIntervalRange.y);
         _score = 0f;
-        if (scoreText) scoreText.text = "0";
+        _passedObstacleCount = 0;
+        _hasCollided = false;
+        if (scoreText) scoreText.text = $"0 / {targetObstacleCount}";
 
         // 연출용 타일 폭 자동
         _tileWidthPx = tileRecycleWidthPx > 0f
@@ -102,8 +109,31 @@ public class DinoJumpMiniGame : MiniGameBase
         UpdateScore(dt);
     }
 
-    /// <summary>제한시간 다 버티면 성공</summary>
-    protected override bool CheckClearOnTimeout() => true;
+    /// <summary>15개 장애물 통과 시 클리어</summary>
+    protected override bool CheckClearRealtime()
+    {
+        return _passedObstacleCount >= targetObstacleCount;
+    }
+
+    /// <summary>
+    /// 스트레스 증가: 시간 초과 후에만 3초당 +2 증가
+    /// </summary>
+    protected override void ApplyStressOverTime(float deltaTime)
+    {
+        // 시간 초과 후에만 스트레스 증가: 3초당 2 = 초당 0.67
+        if (RemainingTime <= 0f)
+        {
+            var playerManager = PlayerManager.Instance;
+            if (playerManager == null)
+            {
+                Debug.LogWarning("[DinoJump] PlayerManager가 없습니다!");
+                return;
+            }
+
+            float stressAmount = (2f / 3f) * deltaTime;
+            playerManager.AddStress(stressAmount);
+        }
+    }
 
     /// <summary>정리: 장애물 제거 및 플레이어 물리 중지</summary>
     protected override void OnCleanupHook()
@@ -130,6 +160,7 @@ public class DinoJumpMiniGame : MiniGameBase
     private void UpdateObstaclesFixed()
     {
         float leftBound = -1300f;
+        float playerCenterX = player ? player.Body.position.x : 0f;
 
         for (int i = _obstacleBodies.Count - 1; i >= 0; i--)
         {
@@ -143,6 +174,33 @@ public class DinoJumpMiniGame : MiniGameBase
             // 왼쪽 고정 속도 (velocity 사용)
             rb.linearVelocity = new Vector2(-obstacleSpeed, 0f);
 
+            // AABB 보조 충돌 체크 (통과 체크보다 먼저 처리)
+            var col = rb.GetComponent<Collider2D>();
+            if (player && player.Collider && col && player.Collider.bounds.Intersects(col.bounds))
+            {
+                // 충돌한 장애물 마킹 (통과 카운트 제외용)
+                if (!rb.gameObject.GetComponent<ObstacleCollided>())
+                {
+                    rb.gameObject.AddComponent<ObstacleCollided>();
+                    FailPerfectClear(); // 완벽한 클리어 실패
+                    Debug.Log("[DinoJump] 장애물 충돌! 완벽한 클리어(◇) 실패 (게임은 계속)");
+                }
+                // 게임은 계속 진행 - Complete 호출 안 함
+            }
+
+            // 플레이어를 지나쳤는지 체크 (통과 카운트)
+            // 충돌하지 않았고, 아직 통과 처리 안 된 장애물만 카운트
+            if (!rb.gameObject.GetComponent<ObstaclePassed>() && !rb.gameObject.GetComponent<ObstacleCollided>())
+            {
+                if (rb.position.x < playerCenterX - 0.5f) // 플레이어 뒤로 지나감
+                {
+                    rb.gameObject.AddComponent<ObstaclePassed>(); // 중복 카운트 방지
+                    _passedObstacleCount++;
+                    UpdateScoreUI();
+                    Debug.Log($"[DinoJump] 장애물 통과! ({_passedObstacleCount}/{targetObstacleCount})");
+                }
+            }
+
             // 화면 밖 제거
             if (rb.position.x < leftBound)
             {
@@ -150,16 +208,14 @@ public class DinoJumpMiniGame : MiniGameBase
                 _obstacleBodies.RemoveAt(i);
                 continue;
             }
-
-            // AABB 보조 충돌 체크
-            var col = rb.GetComponent<Collider2D>();
-            if (player && player.Collider && col && player.Collider.bounds.Intersects(col.bounds))
-            {
-                Complete(false);
-                return;
-            }
         }
     }
+
+    /// <summary>통과한 장애물 표시용 마커 컴포넌트</summary>
+    private class ObstaclePassed : MonoBehaviour { }
+
+    /// <summary>충돌한 장애물 표시용 마커 컴포넌트 (통과 카운트 제외)</summary>
+    private class ObstacleCollided : MonoBehaviour { }
 
     /// <summary>물리 틱: 스폰 타이머 갱신 후 배치 스폰</summary>
     private void UpdateSpawnTimerFixed()
@@ -169,6 +225,7 @@ public class DinoJumpMiniGame : MiniGameBase
         {
             _spawnTimer = 0f;
             _nextSpawnDelay = Random.Range(spawnIntervalRange.x, spawnIntervalRange.y);
+            // Debug.Log($"[DinoJump] 장애물 생성 - 다음 생성까지: {_nextSpawnDelay:F2}초");
             SpawnBurst();
         }
     }
@@ -218,26 +275,57 @@ public class DinoJumpMiniGame : MiniGameBase
 
             // 지면에 정확히 붙이기
             float halfH = col.bounds.extents.y;
+            float halfW = col.bounds.extents.x;
             Vector2 pos = new Vector2(x, topY + halfH - 0.005f);
             rb.position = pos;
+            Physics2D.SyncTransforms();
 
-            // 겹침 시 우측 보정
+            // 겹침 체크 및 보정 (장애물 레이어만 체크)
+            int obstacleLayer = LayerMask.GetMask("Obstacle");
+            if (obstacleLayer == 0) obstacleLayer = ~0; // Obstacle 레이어가 없으면 모든 레이어
+            
+            bool hasOverlap = false;
             for (int iter = 0; iter < spawnResolveMaxIterations; iter++)
             {
-                if (!Physics2D.OverlapBox(col.bounds.center, col.bounds.size * 0.98f, 0f, ~0))
-                    break;
+                // 현재 위치에서 장애물과의 겹침만 체크
+                Collider2D overlap = Physics2D.OverlapBox(
+                    col.bounds.center, 
+                    col.bounds.size * 0.9f, 
+                    0f,
+                    obstacleLayer
+                );
 
-                pos.x += 0.25f;
-                rb.position = pos;
-                Physics2D.SyncTransforms();
+                // 자기 자신이 아닌 다른 장애물과 겹치는지 확인
+                if (overlap != null && overlap != col)
+                {
+                    hasOverlap = true;
+                    // 겹친 장애물의 오른쪽으로 이동
+                    float overlapRight = overlap.bounds.max.x;
+                    pos.x = overlapRight + halfW + 0.2f; // 여유 공간
+                    rb.position = pos;
+                    Physics2D.SyncTransforms();
+                }
+                else
+                {
+                    hasOverlap = false;
+                    break;
+                }
+            }
+
+            // 겹침이 해결되지 않으면 생성 취소
+            if (hasOverlap)
+            {
+                Debug.LogWarning("[DinoJump] 장애물 겹침 해결 실패 - 생성 취소");
+                Destroy(go);
+                continue;
             }
 
             // 이동 시작 (velocity 사용)
             rb.linearVelocity = new Vector2(-obstacleSpeed, 0f);
             _obstacleBodies.Add(rb);
 
-            // 같은 배치 다음 X 간격
-            x += Random.Range(gapXRange.x, gapXRange.y);
+            // 같은 배치 다음 X 간격 (현재 장애물 너비 고려)
+            x = pos.x + halfW + Random.Range(gapXRange.x, gapXRange.y);
         }
     }
 
@@ -252,7 +340,6 @@ public class DinoJumpMiniGame : MiniGameBase
         _obstacleBodies.Clear();
     }
 
-    // ================= Visual Scrolling (연출용) =================
 
     /// <summary>연출용 타일 스크롤(충돌과 무관)</summary>
     private void UpdateScrollingVisuals(float dt)
@@ -291,12 +378,19 @@ public class DinoJumpMiniGame : MiniGameBase
         }
     }
 
-    // ================= Score =================
-
     /// <summary>생존 시간 점수</summary>
     private void UpdateScore(float dt)
     {
         _score += dt * 10f;
-        if (scoreText) scoreText.text = Mathf.FloorToInt(_score).ToString();
+        UpdateScoreUI();
+    }
+
+    /// <summary>점수 UI 업데이트</summary>
+    private void UpdateScoreUI()
+    {
+        if (scoreText)
+        {
+            scoreText.text = $"{_passedObstacleCount} / {targetObstacleCount}";
+        }
     }
 }

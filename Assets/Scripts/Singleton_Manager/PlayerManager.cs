@@ -3,11 +3,11 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// PlayerStateÀÇ ´ÜÀÏ ¼ÒÀ¯ÀÚ. ÀüÈ¯°ú Á¶È¸¸¦ Ã¥ÀÓÁö´Â ½Ì±ÛÅæ ¸Å´ÏÀú.
-/// - Awake: PlayerData ¸ñ·Ï¿¡¼­ PlayerState(±íÀº º¹»ç) »ı¼º, ¸Ê ±¸¼º
-/// - Start: Ã¹ È°¼º Ä³¸¯ÅÍ¸¦ ¼±Á¤(SetActive)
-/// - SetActive: Active¸¦ °»½ÅÇÏ°í, ÀÌº¥Æ®(OnPlayerChanged + EventBus) ¹ßÇà
-/// - Get/Has/GetData: »óÅÂ/µ¥ÀÌÅÍ Á¶È¸ À¯Æ¿
+/// PlayerStateë¥¼ ê´€ë¦¬ ë§¤ë‹ˆì €. ì „í™˜ê³¼ ì¡°íšŒë¥¼ ì±…ì„ì§€ëŠ” ì‹±ê¸€í†¤ ë§¤ë‹ˆì €.
+/// - Awake: PlayerData ëª©ë¡ì—ì„œ PlayerState(ëŸ°íƒ€ì„ ìƒíƒœ) ìƒì„±, ë”• ë“±ë¡
+/// - Start: ì²« í™œì„± ìºë¦­í„°ë¥¼ ì§€ì •(SetActive)
+/// - SetActive: Activeë¥¼ êµì²´í•˜ê³ , ì´ë²¤íŠ¸(OnPlayerChanged + EventBus) ë°œí–‰
+/// - Get/Has/GetData: ìƒíƒœ/ë°ì´í„° ì¡°íšŒ ìœ í‹¸
 /// </summary>
 public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
 {
@@ -17,15 +17,15 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
     private readonly Dictionary<string, PlayerState> _states = new Dictionary<string, PlayerState>();
     private readonly Dictionary<string, PlayerData> _dataById = new Dictionary<string, PlayerData>();
 
-    //ÇöÀç È°¼º ÇÃ·¹ÀÌ¾î(ÀĞ±â Àü¿ë)
+    // í˜„ì¬ í™œì„± í”Œë ˆì´ì–´ (ì½ê¸° ì „ìš©)
     public IPlayerStateReadOnly Active { get; private set; }
 
-    //È°¼º ÇÃ·¹ÀÌ¾î ÀüÈ¯ ½Ã ¹ß»ı
+    // í™œì„± í”Œë ˆì´ì–´ ì „í™˜ ì‹œ ë°œìƒ
     public event Action<IPlayerStateReadOnly> OnPlayerChanged;
 
     /// <summary>
-    /// PlayerData ¸®½ºÆ®·ÎºÎÅÍ ·±Å¸ÀÓ »óÅÂ µñ¼Å³Ê¸®¸¦ ÃÊ±âÈ­ÇÕ´Ï´Ù.
-    /// (ÀÌ ´Ü°è¿¡¼­´Â ÀÌº¥Æ®¸¦ ¹ßÇàÇÏÁö ¾Ê½À´Ï´Ù)
+    /// PlayerData ë¦¬ìŠ¤íŠ¸ë¡œë¶€í„° ëŸ°íƒ€ì„ ìƒíƒœ ë”•ì…”ë„ˆë¦¬ë¥¼ ì´ˆê¸°í™”í•©ë‹ˆë‹¤.
+    /// (ì´ ë‹¨ê³„ì—ì„œëŠ” ì´ë²¤íŠ¸ë¥¼ ë°œí–‰í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤)
     /// </summary>
     /// 
 
@@ -41,17 +41,17 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
             if (data == null) continue;
             if (string.IsNullOrEmpty(data.Id))
             {
-                Debug.LogWarning("PlayerData.Id °¡ ºñ¾î ÀÖ½À´Ï´Ù.", data);
+                Debug.LogWarning("PlayerData.Id ê°€ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.", data);
                 continue;
             }
-            var state = data.CreateRuntimeState(); // SO ¡æ State ±íÀºº¹»ç
+            var state = data.CreateRuntimeState(); // SO ë¡œ State ì¸ìŠ¤í„´ìŠ¤í™”
             _states[data.Id] = state;
             _dataById[data.Id] = data;
         }
     }
 
     /// <summary>
-    /// ¸ğµç ±¸µ¶ÀÚ(OnEnable)°¡ ÁØºñµÈ µÚ Ã¹ È°¼º Ä³¸¯ÅÍ¸¦ ¼±Á¤ÇÏ°í ÀÌº¥Æ®¸¦ ¹ßÇàÇÕ´Ï´Ù.
+    /// ëª¨ë“  ì‹œìŠ¤í…œ(OnEnable)ì´ ì¤€ë¹„ëœ í›„ ì²« í™œì„± ìºë¦­í„°ë¥¼ ì§€ì •í•˜ê³  ì´ë²¤íŠ¸ë¥¼ ë°œí–‰í•©ë‹ˆë‹¤.
     /// </summary>
     private void Start()
     {
@@ -66,12 +66,12 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
     }
 
     /// <summary>
-    /// ÁÖ¾îÁø idÀÇ »óÅÂ°¡ Á¸ÀçÇÏ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+    /// ì£¼ì–´ì§„ idì˜ ìƒíƒœê°€ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
     /// </summary>
     public bool Has(string id) => !string.IsNullOrEmpty(id) && _states.ContainsKey(id);
 
     /// <summary>
-    /// ÁÖ¾îÁø idÀÇ »óÅÂ(ÀĞ±â Àü¿ë)¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ¾øÀ¸¸é null.
+    /// ì£¼ì–´ì§„ idì˜ ìƒíƒœ(ì½ê¸° ì „ìš©)ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì—†ìœ¼ë©´ null.
     /// </summary>
     public IPlayerStateReadOnly Get(string id)
     {
@@ -79,7 +79,7 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
     }
 
     /// <summary>
-    /// ÁÖ¾îÁø idÀÇ PlayerData(Á¤Àû µ¥ÀÌÅÍ)¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ¾øÀ¸¸é null.
+    /// ì£¼ì–´ì§„ idì˜ PlayerData(ì›ë³¸ ë°ì´í„°)ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì—†ìœ¼ë©´ null.
     /// </summary>
     public PlayerData GetData(string id)
     {
@@ -88,7 +88,7 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
     }
 
     /// <summary>
-    /// È°¼º Ä³¸¯ÅÍ¸¦ ÀüÈ¯ÇÏ°í, »óÅÂ ÀÌº¥Æ®¿Í EventBus(IPlayerStateReadOnly)¸¦ ¹ßÇàÇÕ´Ï´Ù.
+    /// í™œì„± ìºë¦­í„°ë¥¼ ì „í™˜í•˜ê³ , ê´€ë ¨ ì´ë²¤íŠ¸ë¥¼ EventBus(IPlayerStateReadOnly)ë¡œ ë°œí–‰í•©ë‹ˆë‹¤.
     /// </summary>
     public void SetActive(string id)
     {
@@ -100,21 +100,21 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
 
         Active = _states[id];
 
-        // ·ÎÄÃ C# ÀÌº¥Æ®
+        // ï¿½ï¿½ï¿½ï¿½ C# ï¿½Ìºï¿½Æ®
         OnPlayerChanged?.Invoke(Active);
 
-        // EventBus·Î »óÅÂ ¹ßÇà(ÇÙ½É º¯°æÁ¡: PlayerData ¡æ IPlayerStateReadOnly)
+        // EventBusï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: PlayerData ï¿½ï¿½ IPlayerStateReadOnly)
         EventBus.Publish<IPlayerStateReadOnly>(EventNames.ActiveCharacterChanged, Active);
     }
 
     /// <summary>
-    ///È°µ¿ ÁßÀÎ ÇÃ·¹ÀÌ¾î¿¡°Ô ¹Ì´Ï °ÔÀÓ º¸»óÀ» Àû¿ë
+    ///È°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void ApplyReward(MiniGameReward reward)
     {
         if (Active is not PlayerState state)
         {
-            Debug.LogWarning("[PlayerManager] º¸»óÀ» ¹ŞÀ» ¼ö ÀÖ´Â È°¼º ÇÃ·¹ÀÌ¾î°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[PlayerManager] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ È°ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
@@ -134,7 +134,7 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
             case RewardType.ConcentrationUp:
                 state.SetConcentration(state.Concentration + reward.amount);
                 break;
-            case RewardType.cuncentrationDown:
+            case RewardType.ConcentrationDown:
                 state.SetConcentration(state.Concentration - reward.amount);
                 break;
             default:
@@ -144,15 +144,56 @@ public sealed class PlayerManager : SingleTonGeneric<PlayerManager>
 
         EventBus.Publish<IPlayerStateReadOnly>(EventNames.PlayerStatsChanged, state);
 
-        //ex) »ç¿ë ¿¡½Ã : PlayerManager.Instance.ApplyReward(new MiniGameReward { type = RewardType.StressDown, amount = 10 });
+        //ex) ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ : PlayerManager.Instance.ApplyReward(new MiniGameReward { type = RewardType.StressDown, amount = 10 });
     }
 
     /// <summary>
-    /// »óÅÂ º¯°æ ÇïÆÛ(¸Å´ÏÀú¸¦ ÅëÇØ¼­¸¸ »óÅÂ¸¦ ¹Ù²Ùµµ·Ï À¯µµ).
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½Ù²Ùµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½).
     /// </summary>
     public void DamageActive(int amount)
     {
         if (Active is PlayerState s) s.Damage(amount);
+    }
+
+    /// <summary>
+    /// í˜„ì¬ í™œì„± í”Œë ˆì´ì–´ì˜ ìŠ¤íŠ¸ë ˆìŠ¤ë¥¼ ì¦ê°€ì‹œí‚µë‹ˆë‹¤ (float ê°’ ì§€ì›)
+    /// </summary>
+    public void AddStress(float stressAmount)
+    {
+        if (Active is not PlayerState state)
+        {
+            Debug.LogWarning("[PlayerManager] ìŠ¤íŠ¸ë ˆìŠ¤ë¥¼ ì¶”ê°€í•  ìˆ˜ ìˆëŠ” í™œì„± í”Œë ˆì´ì–´ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        // floatë¥¼ intë¡œ ë°˜ì˜¬ë¦¼í•˜ì—¬ ì ìš©
+        int stressToAdd = Mathf.RoundToInt(stressAmount);
+        if (stressToAdd == 0) return;
+
+        state.SetStress(state.Stress + stressToAdd);
+        
+        // ìŠ¤íƒ¯ ë³€ê²½ ì´ë²¤íŠ¸ ë°œí–‰
+        EventBus.Publish<IPlayerStateReadOnly>(EventNames.PlayerStatsChanged, state);
+    }
+
+    /// <summary>
+    /// í˜„ì¬ í™œì„± í”Œë ˆì´ì–´ì˜ ì§‘ì¤‘ë ¥ì„ ì¦ê°€ì‹œí‚µë‹ˆë‹¤ (float ê°’ ì§€ì›)
+    /// </summary>
+    public void AddConcentration(float concentrationAmount)
+    {
+        if (Active is not PlayerState state)
+        {
+            Debug.LogWarning("[PlayerManager] ì§‘ì¤‘ë ¥ì„ ì¶”ê°€í•  ìˆ˜ ìˆëŠ” í™œì„± í”Œë ˆì´ì–´ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        int concentrationToAdd = Mathf.RoundToInt(concentrationAmount);
+        if (concentrationToAdd == 0) return;
+
+        state.SetConcentration(state.Concentration + concentrationToAdd);
+        
+        // ìŠ¤íƒ¯ ë³€ê²½ ì´ë²¤íŠ¸ ë°œí–‰
+        EventBus.Publish<IPlayerStateReadOnly>(EventNames.PlayerStatsChanged, state);
     }
 }
 

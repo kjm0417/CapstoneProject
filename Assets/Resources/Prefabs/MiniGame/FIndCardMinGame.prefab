@@ -5946,9 +5946,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: literature_daily
-  _duration: 30
+  _duration: 60
   _successReward: []
   _failReward: []
+  _perfectClearReward: []
   cardContainer: {fileID: 8605403717355989260}
   columns: 6
   normalColor: {r: 1, g: 1, b: 1, a: 1}

@@ -11,26 +11,20 @@ using UnityEngine.UI;
 /// </summary>
 public class FindCardMiniGame : MiniGameBase
 {
-    // ────────────────────────────────────────────────────────────────
     // 카드 배치 관련 설정
-    // ────────────────────────────────────────────────────────────────
     [Header("Card Layout")]
     [SerializeField] private GridLayoutGroup cardContainer;
     [Tooltip("가로로 이동할 때 사용할 열 수. 0이면 GridLayoutGroup 설정을 기반으로 추정")]
     [SerializeField] private int columns = 4;
 
-    // ────────────────────────────────────────────────────────────────
     // 시각적 설정
-    // ────────────────────────────────────────────────────────────────
     [Header("Visuals")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color highlightColor = new Color(0.2f, 0.55f, 1f, 1f);
     [SerializeField] private Color matchedColor = new Color(0.65f, 0.65f, 0.65f, 1f);
     [SerializeField] private float mismatchHideDelay = 0.75f; // 틀린 카드 숨기기 딜레이
 
-    // ────────────────────────────────────────────────────────────────
     // 내부 상태
-    // ────────────────────────────────────────────────────────────────
     private readonly List<FindCardCard> cards = new List<FindCardCard>();
     private FindCardCard firstRevealed;      // 첫 번째 뒤집힌 카드
     private Coroutine mismatchRoutine;       // 틀린 카드 숨기기 코루틴
@@ -290,6 +284,8 @@ public class FindCardMiniGame : MiniGameBase
                 StopCoroutine(mismatchRoutine);
             }
             mismatchRoutine = StartCoroutine(HideMismatchDelayed(firstRevealed, current));
+            PlayerManager.Instance.AddConcentration(-1f);
+            PlayerManager.Instance.AddConcentration(-2f);
         }
     }
 

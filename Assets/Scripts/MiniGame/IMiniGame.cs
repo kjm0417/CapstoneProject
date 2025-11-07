@@ -3,83 +3,86 @@ using UnityEngine;
 
 #region Result/Reward Models
 /// <summary>
-/// º¸»ó Å¸ÀÔ(ÇÊ¿ä ½Ã ÀÚÀ¯ È®Àå)
+/// ë³´ìƒ íƒ€ì… (í•„ìš” ì‹œ ì¶”ê°€ í™•ì¥)
 /// </summary>
 public enum RewardType
 {
     StressDown,
     StressUp,
     ConcentrationUp,
-    cuncentrationDown,
+    ConcentrationDown,
+    Item, // ì•„ì´í…œ ë³´ìƒ ì¶”ê°€
 }
 
 /// <summary>
-/// ¹Ì´Ï°ÔÀÓ º¸»ó ±¸Á¶Ã¼
-/// - amount: ¼öÄ¡(Á¤¼ö), param: Ãß°¡ ÆÄ¶ó¹ÌÅÍ(¾ÆÀÌÅÛID µî)
+/// ë¯¸ë‹ˆê²Œì„ ë³´ìƒ êµ¬ì¡°ì²´
+/// - amount: ìˆ˜ì¹˜(ì •ìˆ˜), param: ì¶”ê°€ íŒŒë¼ë¯¸í„°(ì•„ì´í…œID ë“±)
 /// </summary>
 [Serializable]
 public struct MiniGameReward
 {
-    public RewardType type; //º¸»ó Å¸ÀÔ
-    public int amount; //°ª
+    public RewardType type; // ë³´ìƒ íƒ€ì…
+    public int amount; // ì–‘
+    public string itemId; // ì•„ì´í…œ ID (Item íƒ€ì…ì¼ ë•Œ ì‚¬ìš©)
 }
 
 /// <summary>
-/// ¿Ï·á½Ã Äİ¹é ÀÎÀÚ(¼º°ø/¼Ò¿ä/³²Àº/ÄÚµå)
+/// ì™„ë£Œ ì‹œ ì½œë°± ì¸ì (ì„±ê³µ/ì†Œìš”/ë‚¨ì€/ìë™)
 /// </summary>
 [Serializable]
 public struct MiniGameCompleteArgs
 {
-    public bool success; //¼º°ø¿©ºÎ
-    public float usedTime; //¼Ò¿ä½Ã°£
-    public float remainingTime; //³²Àº½Ã°£ or ¿À¹öÇÑ ½Ã°£
+    public bool success; // ì„±ê³µì—¬ë¶€
+    public float usedTime; // ì†Œìš”ì‹œê°„
+    public float remainingTime; // ë‚¨ì€ì‹œê°„ or ì´ˆê³¼í•œ ì‹œê°„
+    public bool isPerfectClear; // ì™„ë²½í•œ í´ë¦¬ì–´(â—‡) ë‹¬ì„± ì—¬ë¶€
 }
 #endregion
 
 /// <summary>
-/// ¸ğµç ¹Ì´Ï°ÔÀÓÀÌ µû¶ó¾ß ÇÏ´Â ÃÖ¼Ò °øÅë ÀÎÅÍÆäÀÌ½º
-/// - °øÅë ¼Ó¼º: Id/Duration/RemainingTime/IsRunning
-/// - °øÅë ÀÌº¥Æ®: ½ÃÀÛ/Æ½/¿Ï·á/Áß´Ü
-/// - °øÅë ¼ö¸íÁÖ±â ¸Ş¼­µå
+/// ëª¨ë“  ë¯¸ë‹ˆê²Œì„ì´ êµ¬í˜„í•´ì•¼ í•˜ëŠ” ìµœì†Œ ê¸°ëŠ¥ ì¸í„°í˜ì´ìŠ¤
+/// - ê¸°ë³¸ ì†ì„±: Id/Duration/RemainingTime/IsRunning
+/// - ê¸°ë³¸ ì´ë²¤íŠ¸: ì‹œì‘/í‹±/ì™„ë£Œ/ì¤‘ë‹¨
+/// - ê¸°ë³¸ ë¼ì´í”„ì‚¬ì´í´ ë©”ì„œë“œ
 /// </summary>
 public interface IMiniGame
 {
-    // °íÀ¯ ½Äº°ÀÚ(ÇÁ¸®ÆÕ/ÄÄÆ÷³ÍÆ® ´ÜÀ§·Î ºÎ¿©)
+    // ê²Œì„ ì‹ë³„ì (ë§¤ë‹ˆì €/ì»´í¬ë„ŒíŠ¸ ê²€ìƒ‰ì— ì‚¬ìš©)
     string Id { get; }
 
-    // Á¦ÇÑ ½Ã°£(ÃÊ)
+    // ì œí•œ ì‹œê°„ (ì´ˆ)
     float Duration { get; }
 
-    // ³²Àº ½Ã°£(ÃÊ)
+    // ë‚¨ì€ ì‹œê°„ (ì´ˆ)
     float RemainingTime { get; }
 
-    // ÁøÇà Áß ¿©ºÎ
+    // ì‹¤í–‰ ì¤‘ ì—¬ë¶€
     bool IsRunning { get; }
 
-    // ÀÌº¥Æ® ÈÅ
+    // ì´ë²¤íŠ¸ ë“¤
     event Action<IMiniGame> OnStarted;
     event Action<IMiniGame, float> OnTick;
     event Action<IMiniGame, MiniGameCompleteArgs> OnCompleted;
     event Action<IMiniGame, string> OnAborted;
 
-    /// <summary>¿ÜºÎ ÀÇÁ¸¼º ÁØºñ(ÇÊ¿ä ½Ã È£Ãâ, ¼±ÅÃ)</summary>
+    /// <summary>ì™¸ë¶€ ë§¤ë‹ˆì € ì¤€ë¹„ (í•„ìš” ì‹œ í˜¸ì¶œ, ì„ íƒ)</summary>
     void Init();
 
-    /// <summary>°ÔÀÓ ½ÃÀÛ(Å¸ÀÌ¸Ó °¡µ¿)</summary>
+    /// <summary>ê²Œì„ ì‹œì‘ (íƒ€ì´ë¨¸ ì‹œì‘)</summary>
     void StartGame();
 
-    /// <summary>ÇÁ·¹ÀÓ/Fixed °»½Å</summary>
+    /// <summary>ì—…ë°ì´íŠ¸/Fixed ë£¨í”„</summary>
     void UpdateGame(float deltaTime);
 
-    /// <summary>¼º°ø/½ÇÆĞ È®Á¤</summary>
+    /// <summary>ì„±ê³µ/ì‹¤íŒ¨ í™•ì •</summary>
     void Complete(bool isSuccess);
 
-    /// <summary>»ç¿ëÀÚ/½Ã½ºÅÛ Áß´Ü</summary>
+    /// <summary>ìœ ì €/ì‹œìŠ¤í…œ ì¤‘ë‹¨</summary>
     void Abort(string reason = "USER_ABORT");
 
-    /// <summary>¼º°ø ½Ã Áö±Ş º¸»ó Á¶È¸</summary>
+    /// <summary>ì„±ê³µ ì‹œ ë°›ì„ ë³´ìƒ ì¡°íšŒ</summary>
     MiniGameReward[] GetRewards();
 
-    /// <summary>Á¤¸®</summary>
+    /// <summary>ì •ë¦¬</summary>
     void Cleanup();
 }

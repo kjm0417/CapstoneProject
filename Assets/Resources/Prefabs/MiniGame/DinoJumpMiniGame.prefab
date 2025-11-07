@@ -414,6 +414,7 @@ MonoBehaviour:
   _duration: 30
   _successReward: []
   _failReward: []
+  _perfectClearReward: []
   gameRoot: {fileID: 454341542537414524}
   groundCollider2D: {fileID: 6199947139349923499}
   groundVisual: {fileID: 9079152081935701492}
@@ -437,6 +438,7 @@ MonoBehaviour:
   tileRecycleWidthPx: 0
   difficultyAccel: 12
   scoreText: {fileID: 0}
+  targetObstacleCount: 15
 --- !u!1 &4007218239572643094
 GameObject:
   m_ObjectHideFlags: 0

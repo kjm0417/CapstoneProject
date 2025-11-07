@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -19,12 +20,18 @@ public class PushOutMiniGame : MiniGameBase
     [Header("Arena")]
     [Tooltip("아레나 중심")]
     [SerializeField] private Transform arenaCenter;
-    [Tooltip("실패 판정 반경(미터)")]
-    [SerializeField] private float failRadius = 4f;
+    [Tooltip("원 밖 판정 반경(미터) - 이 밖으로 나가면 스트레스 감소")]
+    [SerializeField] private float outsideRadius;
     [Tooltip("경고 UI 반경(미터)")]
-    [SerializeField] private float warningRadius = 2.8f;
+    [SerializeField] private float warningRadius;
     [Tooltip("플레이어가 경고 영역에 가까워질 때 채워지는 UI (선택)")]
     [SerializeField] private Image warningFill;
+
+    [Header("스트레스 증가")]
+    [Tooltip("원 밖에 있을 때 0.2초당 스트레스 증가량")]
+    [SerializeField] private float stressIncreasePerInterval = 1f;
+    [Tooltip("스트레스 증가 간격(초)")]
+    [SerializeField] private float stressIncreaseInterval = 0.2f;
 
     [Header("Player")]
     [Tooltip("미니게임 플레이어")]
@@ -48,6 +55,8 @@ public class PushOutMiniGame : MiniGameBase
     private float _elapsed;
     private float _globalSpawnTimer;
     private int _currentLaneIndex = -1;
+    private float _stressIncreaseTimer = 0f;
+    private bool _hasEverLeftArena = false; // 한 번이라도 원 밖으로 나갔는지
 
     [System.Serializable]
     private class PusherLane
@@ -78,8 +87,6 @@ public class PushOutMiniGame : MiniGameBase
         [HideInInspector] public bool hasSpawned;
     }
 
-    // ================= MiniGameBase Hooks =================
-
     protected override void OnStartHook()
     {
         if (!gameRoot) gameRoot = (RectTransform)transform;
@@ -94,6 +101,8 @@ public class PushOutMiniGame : MiniGameBase
         }
 
         _elapsed = 0f;
+        _stressIncreaseTimer = 0f;
+        _hasEverLeftArena = false;
         ClearPushers();
 
         Vector2 centerPos = GetArenaCenter();
@@ -116,6 +125,7 @@ public class PushOutMiniGame : MiniGameBase
             }
         }
 
+
         UpdateWarningUI(0f);
     }
 
@@ -124,12 +134,16 @@ public class PushOutMiniGame : MiniGameBase
         _elapsed += deltaTime;
         player?.HandleInput(deltaTime);
         UpdateWarningUI(deltaTime);
-        CheckFailCondition();
+        CheckOutsideArena(deltaTime);
         PruneDestroyedPushers();
-
     }
 
-    protected override bool CheckClearOnTimeout() => true;
+    /// <summary>시간 종료 시 게임 끝 (성공)</summary>
+    protected override void OnTimeOut()
+    {
+        // 한 번도 밖으로 안 나갔으면 완벽한 클리어 유지
+        Complete(true);
+    }
 
     protected override void OnCleanupHook()
     {
@@ -138,6 +152,8 @@ public class PushOutMiniGame : MiniGameBase
         UpdateWarningUI(0f);
         _currentLaneIndex = -1;
         _globalSpawnTimer = 0f;
+        _stressIncreaseTimer = 0f;
+        _hasEverLeftArena = false;
     }
 
     private void FixedUpdate()
@@ -279,18 +295,51 @@ public class PushOutMiniGame : MiniGameBase
         }
     }
 
-    // ================= Fail & UI =================
+    // ================= Outside Arena & Stress =================
 
-    private void CheckFailCondition()
+    /// <summary>원 밖에 있는지 체크하고 스트레스 감소</summary>
+    private void CheckOutsideArena(float deltaTime)
     {
         if (!player) return;
 
         Vector2 center = GetArenaCenter();
         float dist = Vector2.Distance(player.Position, center);
 
-        if (dist >= failRadius)
+        // 원 밖에 있는지 확인
+        bool isOutside = dist >= outsideRadius;
+
+        if (isOutside)
         {
-            Complete(false);
+            // 한 번이라도 밖으로 나갔으면 완벽한 클리어 실패
+            if (!_hasEverLeftArena)
+            {
+                _hasEverLeftArena = true;
+                FailPerfectClear();
+                Debug.Log("[PushOutMiniGame] 원 밖으로 나감! 완벽한 클리어(◇) 실패");
+            }
+
+            // 스트레스 증가 타이머
+            _stressIncreaseTimer += deltaTime;
+
+            if (_stressIncreaseTimer >= stressIncreaseInterval)
+            {
+                _stressIncreaseTimer = 0f;
+
+                var playerManager = PlayerManager.Instance;
+                if (playerManager != null && playerManager.Active is PlayerState state)
+                {
+                    // 스트레스 증가 (원 밖에 있으면 패널티)
+                    int currentStress = state.Stress;
+                    int increaseAmount = Mathf.RoundToInt(stressIncreasePerInterval);
+                    state.SetStress(currentStress + increaseAmount);
+                    Debug.Log($"[PushOutMiniGame] 원 밖 - 스트레스 {currentStress} → {state.Stress} (+{increaseAmount})");
+                }
+            }
+        }
+        else
+        {
+            // 원 안으로 돌아오면 타이머 리셋
+            _stressIncreaseTimer = 0f;
         }
     }
 
@@ -299,9 +348,9 @@ public class PushOutMiniGame : MiniGameBase
         if (!warningFill || !player) return;
 
         float warnRadius = Mathf.Max(0.01f, warningRadius);
-        float fail = Mathf.Max(warnRadius, failRadius);
+        float outside = Mathf.Max(warnRadius, outsideRadius);
         float dist = Vector2.Distance(player.Position, GetArenaCenter());
-        float normalized = Mathf.InverseLerp(warnRadius, fail, dist);
+        float normalized = Mathf.InverseLerp(warnRadius, outside, dist);
         warningFill.fillAmount = Mathf.Clamp01(normalized);
     }
 
@@ -309,4 +358,6 @@ public class PushOutMiniGame : MiniGameBase
     {
         return arenaCenter ? (Vector2)arenaCenter.position : (Vector2)transform.position;
     }
+
+    
 }

@@ -13,17 +13,15 @@ using UnityEngine.UI;
 /// </summary>
 public class PathTracingMiniGame : MiniGameBase
 {
-    // ─────────────────────────────────────────────────────────────────────────────
     // UI / 시각화 설정
-    // ─────────────────────────────────────────────────────────────────────────────
 
     [Header("UI / Grid")]
     [Tooltip("이 오브젝트의 자식(혹은 하위)에 GridLayoutGroup가 있어야 합니다. 비워두면 자동 탐색합니다.")]
     [SerializeField] private GridLayoutGroup gridLayoutGroup;
 
     [Tooltip("격자의 가로/세로 칸 수. GridLayoutGroup 하위 자식 수가 width×height와 같아야 합니다.")]
-    [SerializeField] private int width = 7;
-    [SerializeField] private int height = 5;
+    [SerializeField] private int width;
+    [SerializeField] private int height;
 
     [Header("Cell Colors")]
     [SerializeField] private Color unknownColor = new Color(0.15f, 0.15f, 0.15f, 1f);
@@ -33,9 +31,7 @@ public class PathTracingMiniGame : MiniGameBase
     [SerializeField] private Color wrongFlashColor = new Color(1f, 0.25f, 0.25f, 1f);
     [SerializeField] private float wrongFlashSeconds = 0.08f;
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // 규칙 / 입력 설정
-    // ─────────────────────────────────────────────────────────────────────────────
 
     [Header("Rules / Input")]
     [Tooltip("시작 좌표(내부 격자 기준). 이 좌표가 화면의 어떤 셀인지 자동 매핑됩니다.")]
@@ -44,14 +40,12 @@ public class PathTracingMiniGame : MiniGameBase
     [Tooltip("true면 목표는 x=width-1의 랜덤 y, false면 아래 고정 좌표 사용")]
     [SerializeField] private bool randomizeGoal = true;
 
-    [SerializeField] private Vector2Int fixedGoalCoordinate = new Vector2Int(6, 4);
+    [SerializeField] private Vector2Int fixedGoalCoordinate = new Vector2Int(7, 7);
 
     [Tooltip("키 입력 최소 간격(초)")]
     [SerializeField] private float inputCooldownSeconds = 0.1f;
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // 내부 상태
-    // ─────────────────────────────────────────────────────────────────────────────
 
     /// <summary>네 방향(상우하좌)</summary>
     private static readonly Vector2Int[] Cardinal = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
@@ -80,9 +74,7 @@ public class PathTracingMiniGame : MiniGameBase
     /// <summary>난수(경로 셔플)</summary>
     private System.Random _rng;
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // MiniGameBase 훅
-    // ─────────────────────────────────────────────────────────────────────────────
 
     /// <summary>
     /// 시작 시: GridLayoutGroup 찾기 → 셀 캐시(레이아웃 설정 반영) → 검증 → 격자/경로 생성 → 시각 리셋 → 진행 리셋
@@ -160,9 +152,7 @@ public class PathTracingMiniGame : MiniGameBase
         _gridStates = null;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // 레이아웃 인식형 셀 캐시
-    // ─────────────────────────────────────────────────────────────────────────────
 
     /// <summary>
     /// GridLayoutGroup 하위 자식들의 '하이어라키 인덱스'를 '격자 (x,y)'로 변환해 Image[,]에 저장.
@@ -248,9 +238,7 @@ public class PathTracingMiniGame : MiniGameBase
         return (Mathf.Clamp(col, 0, width - 1), Mathf.Clamp(row, 0, height - 1));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // 시각화 유틸
-    // ─────────────────────────────────────────────────────────────────────────────
 
     /// <summary>
     /// 전체 셀을 unknown으로 칠하고, 시작/목표만 강조.
@@ -274,9 +262,7 @@ public class PathTracingMiniGame : MiniGameBase
         _cells[c.x, c.y].color = color;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // 격자/경로 생성
-    // ─────────────────────────────────────────────────────────────────────────────
 
     /// <summary>격자 상태를 Unknown으로 초기화</summary>
     private void AllocateGrid()
@@ -368,9 +354,7 @@ public class PathTracingMiniGame : MiniGameBase
         return a;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // 진행/입력
-    // ─────────────────────────────────────────────────────────────────────────────
 
     /// <summary>
     /// 진행 상태를 초기화(플레이어를 시작칸으로, 드러난 셀 초기화)하고 시작/목표 강조 유지.
@@ -445,9 +429,7 @@ public class PathTracingMiniGame : MiniGameBase
     /// <summary>좌표 범위 체크</summary>
     private bool IsInside(Vector2Int c) => c.x >= 0 && c.x < width && c.y >= 0 && c.y < height;
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // 피드백(잘못 칸 번쩍 + 리셋)
-    // ─────────────────────────────────────────────────────────────────────────────
 
     /// <summary>
     /// 잘못 입력 시 잠깐 번쩍 후 전체 리셋. target 주면 해당 칸만 번쩍.
