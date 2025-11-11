@@ -353,7 +353,7 @@ public class DailySelectButtonManager : MonoBehaviour
         {
             CreateButton(choices[i], i);
         }
-            
+
     }
     // Room 패턴 전용: 버튼 1 개만 생성
     private void RebuildRoomChoices(List<ChoiceData> choices)
