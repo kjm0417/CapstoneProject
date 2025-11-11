@@ -45,6 +45,16 @@ public class PathTracingMiniGame : MiniGameBase
     [Tooltip("키 입력 최소 간격(초)")]
     [SerializeField] private float inputCooldownSeconds = 0.1f;
 
+    [Header("힌트 설정")]
+    [Tooltip("게임 시작 시 정답 경로를 한 칸씩 보여줄지 여부")]
+    [SerializeField] private bool showHintAtStart = true;
+
+    [Tooltip("힌트로 각 칸을 보여주는 간격(초)")]
+    [SerializeField] private float hintStepInterval = 0.3f;
+
+    [Tooltip("힌트 표시 색상")]
+    [SerializeField] private Color hintColor = new Color(0.5f, 0.9f, 0.5f, 1f);
+
     // 내부 상태
 
     /// <summary>네 방향(상우하좌)</summary>
@@ -73,6 +83,9 @@ public class PathTracingMiniGame : MiniGameBase
 
     /// <summary>난수(경로 셔플)</summary>
     private System.Random _rng;
+
+    /// <summary>힌트 표시 중인지 여부</summary>
+    private bool _isShowingHint = false;
 
     // MiniGameBase 훅
 
@@ -121,6 +134,12 @@ public class PathTracingMiniGame : MiniGameBase
 
         ResetVisualAll();
         ResetProgress(initializing: true);
+
+        // 힌트 표시
+        if (showHintAtStart)
+        {
+            StartCoroutine(ShowPathHint());
+        }
     }
 
     /// <summary>
@@ -130,6 +149,9 @@ public class PathTracingMiniGame : MiniGameBase
     {
         base.OnUpdateHook(deltaTime);
         if (!IsRunning) return;
+
+        // 힌트 표시 중에는 입력 무시
+        if (_isShowingHint) return;
 
         if (_cooldown > 0f) _cooldown -= deltaTime;
 
@@ -384,6 +406,7 @@ public class PathTracingMiniGame : MiniGameBase
 
         if (!IsInside(target))
         {
+            ReduceRemainingTime(5f);
             StartCoroutine(FlashWrongThenReset());
             return;
         }
@@ -391,6 +414,7 @@ public class PathTracingMiniGame : MiniGameBase
         int nextIndex = _progressIndex + 1;
         if (nextIndex >= _solutionPath.Count)
         {
+            ReduceRemainingTime(5f);
             StartCoroutine(FlashWrongThenReset());
             return;
         }
@@ -398,6 +422,7 @@ public class PathTracingMiniGame : MiniGameBase
         if (_solutionPath[nextIndex] != target ||
             _gridStates[target.x, target.y] != CellState.SolutionPath)
         {
+            ReduceRemainingTime(5f);
             StartCoroutine(FlashWrongThenReset(target));
             return;
         }
@@ -428,6 +453,58 @@ public class PathTracingMiniGame : MiniGameBase
 
     /// <summary>좌표 범위 체크</summary>
     private bool IsInside(Vector2Int c) => c.x >= 0 && c.x < width && c.y >= 0 && c.y < height;
+
+    /// <summary>
+    /// 남은 시간을 줄입니다 (틀렸을 때 패널티)
+    /// </summary>
+    private void ReduceRemainingTime(float seconds)
+    {
+        ReduceTime(seconds);
+    }
+
+    // 힌트 표시
+
+    /// <summary>
+    /// 게임 시작 시 정답 경로를 한 칸씩 보여주는 힌트
+    /// </summary>
+    private IEnumerator ShowPathHint()
+    {
+        _isShowingHint = true;
+
+        // 시작과 목표는 이미 표시되어 있으므로 중간 경로만 표시
+        for (int i = 0; i < _solutionPath.Count; i++)
+        {
+            var cell = _solutionPath[i];
+            
+            // 시작과 목표는 원래 색상 유지
+            if (cell == startCoordinate)
+            {
+                SetCellVisual(cell, startColor);
+            }
+            else if (cell == _goal)
+            {
+                SetCellVisual(cell, goalColor);
+            }
+            else
+            {
+                SetCellVisual(cell, hintColor);
+            }
+
+            yield return new WaitForSeconds(hintStepInterval);
+        }
+
+        // 힌트 표시 완료 후 다시 숨기기
+        yield return new WaitForSeconds(0.5f);
+
+        // 시작과 목표를 제외한 모든 칸을 다시 숨김
+        for (int i = 1; i < _solutionPath.Count - 1; i++)
+        {
+            var cell = _solutionPath[i];
+            SetCellVisual(cell, unknownColor);
+        }
+
+        _isShowingHint = false;
+    }
 
     // 피드백(잘못 칸 번쩍 + 리셋)
 

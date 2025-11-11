@@ -7,7 +7,7 @@ public static class EventBus
     private static Dictionary<string, Delegate> eventDelegateDictionary = new Dictionary<string, Delegate>();
     private static Dictionary<string, Action> eventActionDictionary = new Dictionary<string, Action>();
 
-    // ÆÄ¶ó¹ÌÅÍ ¾ø´Â ±¸µ¶
+    // íŒŒë¼ë¯¸í„° ì—†ëŠ” ë²„ì „
     public static void Subscribe(string eventName, Action listener)
     {
         if (eventActionDictionary.ContainsKey(eventName))
@@ -31,10 +31,10 @@ public static class EventBus
         if (eventActionDictionary.ContainsKey(eventName))
             eventActionDictionary[eventName]?.Invoke();
         else
-            Debug.Log($"ÇØ´ç {eventName} ÀÌº¥Æ®´Â Á¸ÀçÇÏÁö ¾Ê´Â´Ù.");
+            Debug.Log($"í•´ë‹¹ {eventName} ì´ë²¤íŠ¸ê°€ êµ¬ë…ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
     }
 
-    // ÆÄ¶ó¹ÌÅÍ 1°³ ÀÖ´Â ±¸µ¶
+    // íŒŒë¼ë¯¸í„° 1ê°œ ìˆëŠ” ë²„ì „
     public static void Subscribe<T>(string eventName, Action<T> listener)
     {
         if (eventDelegateDictionary.ContainsKey(eventName))
@@ -59,12 +59,13 @@ public static class EventBus
             (eventDelegateDictionary[eventName] as Action<T>)?.Invoke(param);
         else
         {
-            Debug.LogError($"[EventBus] {eventName} ÀÌº¥Æ® Å¸ÀÔ ºÒÀÏÄ¡! " +
-                           $"¹ßÇà Å¸ÀÔ: {typeof(T)}, ±¸µ¶ Å¸ÀÔ: {param.GetType().GenericTypeArguments[0]}");
+            string actualType = param != null ? param.GetType().Name : "null";
+            Debug.LogWarning($"[EventBus] {eventName} ì´ë²¤íŠ¸ê°€ êµ¬ë…ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. " +
+                           $"ì˜ˆìƒ íƒ€ì…: {typeof(T).Name}, ì‹¤ì œ íƒ€ì…: {actualType}");
         }
     }
 
-    // ÆÄ¶ó¹ÌÅÍ 2°³ ÀÖ´Â ±¸µ¶
+    // íŒŒë¼ë¯¸í„° 2ê°œ ìˆëŠ” ë²„ì „
     public static void Subscribe<T1,T2>(string eventName, Action<T1,T2> listener)
     {
         if (eventDelegateDictionary.ContainsKey(eventName))
@@ -88,10 +89,10 @@ public static class EventBus
         if (eventDelegateDictionary.ContainsKey(eventName))
             (eventDelegateDictionary[eventName] as Action<T1,T2>)?.Invoke(param1,parm2);
         else
-            Debug.Log($"ÇØ´ç {eventName} ÀÌº¥Æ®´Â Á¸ÀçÇÏÁö ¾Ê´Â´Ù.");
+            Debug.Log($"í•´ë‹¹ {eventName} ì´ë²¤íŠ¸ê°€ êµ¬ë…ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
     }
 
-    // ÆÄ¶ó¹ÌÅÍ 3°³ ÀÖ´Â ±¸µ¶
+    // íŒŒë¼ë¯¸í„° 3ê°œ ìˆëŠ” ë²„ì „
     public static void Subscribe<T1, T2, T3>(string eventName, Action<T1, T2,T3> listener)
     {
         if (eventDelegateDictionary.ContainsKey(eventName))
@@ -115,6 +116,6 @@ public static class EventBus
         if (eventDelegateDictionary.ContainsKey(eventName))
             (eventDelegateDictionary[eventName] as Action<T1, T2,T3>)?.Invoke(param1, parm2,parm3);
         else
-            Debug.Log($"ÇØ´ç {eventName} ÀÌº¥Æ®´Â Á¸ÀçÇÏÁö ¾Ê´Â´Ù.");
+            Debug.Log($"í•´ë‹¹ {eventName} ì´ë²¤íŠ¸ê°€ êµ¬ë…ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
     }
 }

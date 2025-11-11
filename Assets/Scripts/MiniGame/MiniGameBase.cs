@@ -118,9 +118,9 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
         OnCompleteHook(isSuccess, args);
         Cleanup();
 
-        //EventBus.Publish(RestUIManager.OnStudyRestTimeculated);
+        EventBus.Publish(RestUIManager.OnStudyRestTimeculated);
 
-        //EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
+        EventBus.Publish(DailyRoutineManager.OnCurrentDailyDialouge);
     }
 
     /// <summary>
@@ -227,6 +227,19 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
             IsPerfectClear = false;
             Debug.Log("[MiniGameBase] 완벽한 클리어(◇) 조건 실패");
         }
+    }
+
+    /// <summary>
+    /// 남은 시간을 강제로 줄입니다 (패널티용)
+    /// </summary>
+    protected void ReduceTime(float seconds)
+    {
+        if (seconds <= 0f) return;
+        
+        elapsedTime += seconds;
+        RemainingTime = Mathf.Max(0f, Duration - elapsedTime);
+        
+        Debug.Log($"[MiniGameBase] 시간 패널티 -{seconds}초 (남은 시간: {RemainingTime:F1}초)");
     }
     // ====== 확장 훅 ======
 

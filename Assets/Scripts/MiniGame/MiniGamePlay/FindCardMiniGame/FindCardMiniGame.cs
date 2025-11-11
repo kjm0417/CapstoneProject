@@ -285,7 +285,7 @@ public class FindCardMiniGame : MiniGameBase
             }
             mismatchRoutine = StartCoroutine(HideMismatchDelayed(firstRevealed, current));
             PlayerManager.Instance.AddConcentration(-1f);
-            PlayerManager.Instance.AddConcentration(-2f);
+            PlayerManager.Instance.AddStress(-2f);
         }
     }
 
