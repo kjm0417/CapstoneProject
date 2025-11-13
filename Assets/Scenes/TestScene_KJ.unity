@@ -3295,7 +3295,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &612603753
 Transform:
   m_ObjectHideFlags: 0
@@ -3633,11 +3633,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1780
+      value: 1280
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1000
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3686,10 +3686,6 @@ PrefabInstance:
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5984141650410136944, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
-      propertyPath: m_SortingOrder
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9031,8 +9027,8 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
-    height: 1
+    width: 1280
+    height: 720
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -11255,6 +11251,14 @@ PrefabInstance:
     - target: {fileID: 1210893507983972065, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2703388901908465942, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
+      propertyPath: HideBtn
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2703388901908465942, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
+      propertyPath: MoveBtn
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2859649534903344161, guid: 4b5c0e6c88577174a9ce68250b65dfaf, type: 3}
       propertyPath: m_Name
