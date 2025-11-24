@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering.VirtualTexturing;
 using static UnityEngine.Rendering.DebugUI.Table;
 
-public class StoryManager : MonoBehaviour
+public class StoryManager : SingleTonGeneric<StoryManager>
 {
     [SerializeField]
     DailyDialougeExcel DailyDialougeDB;
@@ -18,16 +18,12 @@ public class StoryManager : MonoBehaviour
     {
         BuildStoryCache();
 
-        EventBus.Subscribe<GameDate>(TimeManager.OnDayStarted, OnDayStarted); //하루 시작 이벤트
-
-        EventBus.Subscribe<DailyRoutine>(StoryTriggerManager.OnStoryRequested, StoryDialougeDataLoad); //1. 스토리 트리거 이벤트 구독 = 스토리 진행 대사 출력
+        EventBus.Subscribe<GameDate>(TimeManager.OnDayStarted, OnDayStarted); //하루 시작 이벤트      
     }
 
     private void OnDisable()
     {
-        EventBus.UnSubscribe<GameDate>(TimeManager.OnDayStarted, OnDayStarted);
-
-        EventBus.UnSubscribe<DailyRoutine>(StoryTriggerManager.OnStoryRequested, StoryDialougeDataLoad); //2.  스토리 트리거 이벤트 구독 해제
+        EventBus.UnSubscribe<GameDate>(TimeManager.OnDayStarted, OnDayStarted);      
     }
 
     [SerializeField]
@@ -35,9 +31,7 @@ public class StoryManager : MonoBehaviour
 
     private void OnDayStarted(GameDate date)
     {
-        currentDay = date.Day;
-
-        StoryDialougeDataLoad(DailyRoutine.Room); //하루 시작은 방으로 고정 
+        currentDay = date.Day;   
     }
     private void StoryDialougeDataLoad(DailyRoutine routineState)
     {
@@ -49,12 +43,13 @@ public class StoryManager : MonoBehaviour
             !dayCache.TryGetValue(patternKey, out var dialogDatas))
         {
             Debug.LogWarning($"{currentDay}의 패턴({patternKey}) 대사가 없음");
-            dialougeSystem.InitSelectDialouge(Array.Empty<DialogData>(), true);
+            dialougeSystem.InitSelectDialouge(Array.Empty<DialogData>(), true,DialougeType.Stroy);
             return;
         }
 
-        dialougeSystem.InitSelectDialouge(dialogDatas.ToArray(), true);
+        dialougeSystem.InitSelectDialouge(dialogDatas.ToArray(), true, DialougeType.Stroy);
     }
+
     private void BuildStoryCache()
     {
         if (isStoryCacheBuilt || DailyDialougeDB == null)
@@ -67,6 +62,7 @@ public class StoryManager : MonoBehaviour
         for (int i = 0; i < DailyDialougeDB.Story.Count; i++)
         {
             var row = DailyDialougeDB.Story[i];
+
             if (!storyCache.TryGetValue(row.Day, out var dayCache))
             {
                 dayCache = new Dictionary<string, List<DialogData>>();
@@ -100,7 +96,6 @@ public class StoryManager : MonoBehaviour
 
         isStoryCacheBuilt = true;
     }
-
     #region 매번 전체 탐색 - 주석 처리 
     //private void StoryDialougeDataLoad(DailyRoutine routineState)
     //{

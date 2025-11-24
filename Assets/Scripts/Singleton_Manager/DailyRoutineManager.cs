@@ -29,6 +29,8 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     DailyDialougeExcel DailyDialougeDB;
 
     private readonly Dictionary<int, Dictionary<string, List<DialogData>>> DailyCache = new Dictionary<int, Dictionary<string, List<DialogData>>>();
+    
+
     private bool isStoryCacheBuilt;
 
     [SerializeField]
@@ -82,6 +84,8 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         currentDay = date.Day;
         DailyRoutine = DailyRoutine.Room;
 
+        EventBus.Publish(TileMapSaveLoad.OnTileMapChange, currentDay, DailyRoutine);
+
         EventBus.Publish(UIManager.OnInGameUI, false);
     }
  
@@ -89,6 +93,9 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
     {
         switch (NextPattern)
         {
+            case "Room":
+                DailyRoutine = DailyRoutine.Room; //방 패턴으로 변경  
+                break;
             case "GotoSchool":
                 DailyRoutine = DailyRoutine.GotoSchool; //등교 패턴으로 변경  
                 break;
@@ -111,6 +118,8 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
                 DailyRoutine = DailyRoutine.AfterSchool; //학원 패턴으로 변경
                 break;
         }
+
+        EventBus.Publish(TileMapSaveLoad.OnTileMapChange, currentDay, DailyRoutine);
 
         //EventBus.Publish(RestUIManager.OnStudyRestTimeculated);
 
@@ -149,11 +158,11 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
              !dayCache.TryGetValue(patternKey, out var dialogDatas))
         {
             Debug.LogWarning($"{currentDay}의 패턴({patternKey}) 대사가 없음");
-            dialougeSystem.InitSelectDialouge(Array.Empty<DialogData>(), true);
+            dialougeSystem.InitSelectDialouge(Array.Empty<DialogData>(), true, DialougeType.DailyRoutine);
             return;
         }
 
-        dialougeSystem.InitSelectDialouge(dialogDatas.ToArray(), true);
+        dialougeSystem.InitSelectDialouge(dialogDatas.ToArray(), true, DialougeType.DailyRoutine);
     }
 
     private void BuildDailyPattenrCache()

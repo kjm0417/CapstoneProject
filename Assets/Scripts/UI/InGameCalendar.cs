@@ -27,16 +27,16 @@ public class InGameCalendar : UIAnimatedPanel //실제 UI 업데이트 및 출력
     {
         base.Awake();
 
-        MoveBtn.onClick.RemoveAllListeners();
-        MoveBtn.onClick.AddListener(() =>
-        {
-            PlayShowAnimation();
-        });
-        HideBtn.onClick.RemoveAllListeners();
-        HideBtn.onClick.AddListener(() =>
-        {
-            PlayHideAnimation();
-        });
+        //MoveBtn.onClick.RemoveAllListeners();
+        //MoveBtn.onClick.AddListener(() =>
+        //{
+        //    PlayShowAnimation();
+        //});
+        //HideBtn.onClick.RemoveAllListeners();
+        //HideBtn.onClick.AddListener(() =>
+        //{
+        //    PlayHideAnimation();
+        //});
     }
 
     [SerializeField]
