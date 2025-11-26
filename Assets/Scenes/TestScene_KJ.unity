@@ -7851,6 +7851,8 @@ MonoBehaviour:
     prefab: {fileID: 2511919101824494788, guid: bc4d852f1448b9545ba3522181f6cce2, type: 3}
   - id: connectLine
     prefab: {fileID: 5432079849595450861, guid: e897eb8153cfe9446ae8659b1f92f3e4, type: 3}
+  - id: SlidingPuzzleMiniGame
+    prefab: {fileID: 8762672632214055903, guid: c42045ed31546eb459e0f87c4fb93a71, type: 3}
   miniGameParent: {fileID: 334098143}
   runner: {fileID: 555440983}
   useUnscaledTime: 1

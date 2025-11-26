@@ -5,6 +5,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
 {
     [Header("miniGame ID 및 플레이타임")]
     [SerializeField] private string _id;
+    [SerializeField] private GameEncounterType _encounterType = GameEncounterType.MiniGame;
     [SerializeField] private float _duration;
 
     [Header("성공 실패 보상 관련")]
@@ -14,6 +15,7 @@ public class MiniGameBase : MonoBehaviour, IMiniGame
 
 
     public string Id => _id;
+    public GameEncounterType EncounterType => _encounterType;
 
     public float Duration => _duration;
     public float RemainingTime { get; protected set; }

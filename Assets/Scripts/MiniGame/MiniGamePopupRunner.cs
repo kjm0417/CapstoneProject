@@ -2,37 +2,40 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// PopupSlideWorld¿Í IMiniGameÀ» ¿¬°áÇÏ´Â ½ÇÇà±â(¿ÀÄÉ½ºÆ®·¹ÀÌÅÍ)
-/// - Show() ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³­ ÈÄ Init() -> StartGame() È£Ãâ
-/// - ½ÇÇà Áß¿¡´Â ¸Å ÇÁ·¹ÀÓ UpdateGame(deltaTime) È£Ãâ
-/// - ¿Ï·á/Áß´Ü ½Ã Hide() È£Ãâ ¹× Á¤¸®
-/// - SetMiniGame(...)À¸·Î ·±Å¸ÀÓ¿¡ ¹Ì´Ï°ÔÀÓ ±³Ã¼ °¡´É
+/// PopupSlideWorldï¿½ï¿½ IMiniGameï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½É½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+/// - Show() ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Init() -> StartGame() È£ï¿½ï¿½
+/// - ï¿½ï¿½ï¿½ï¿½ ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UpdateGame(deltaTime) È£ï¿½ï¿½
+/// - ï¿½Ï·ï¿½/ï¿½ß´ï¿½ ï¿½ï¿½ Hide() È£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+/// - SetMiniGame(...)ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ó¿ï¿½ ï¿½Ì´Ï°ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
 /// </summary>
 [DisallowMultipleComponent]
 public class MiniGamePopupRunner : MonoBehaviour
 {
     [Header("Popup / Animation")]
-    [Tooltip("¾Æ·¡->À§ ½½¶óÀÌµå ¾Ö´Ï¸ŞÀÌ¼Ç ÄÁÆ®·Ñ·¯")]
-    public PopupSlideWorld slide;
+    [Tooltip("ë¯¸ë‹ˆê²Œì„ìš©: ì•„ë˜->ìœ„ ìŠ¬ë¼ì´ë“œ ì• ë‹ˆë©”ì´ì…˜ ì»¨íŠ¸ë¡¤ëŸ¬")]
+    public PopupSlideWorld slidePopup;
 
-    [Tooltip("Show ¿Ï·á ÈÄ Ãß°¡ ´ë±â(¿¬Ãâ ¿©À¯)")]
+    [Tooltip("ë³´ìŠ¤ì „ìš©: í˜ì´ë“œ ì¸/ì•„ì›ƒ ì• ë‹ˆë©”ì´ì…˜ ì»¨íŠ¸ë¡¤ëŸ¬")]
+    public PopupFadeWorld fadePopup;
+
+    [Tooltip("Show ì™„ë£Œ í›„ ì¶”ê°€ ëŒ€ê¸°(ì„ íƒ ì‚¬í•­)")]
     public float extraWaitAfterShow = 0.05f;
 
-    [Tooltip("¾Ö´Ï¸ŞÀÌ¼Ç/¹Ì´Ï°ÔÀÓÀ» unscaledTime ±âÁØÀ¸·Î µ¹¸±Áö")]
+    [Tooltip("ì• ë‹ˆë©”ì´ì…˜/ë¯¸ë‹ˆê²Œì„ì´ unscaledTime ê¸°ì¤€ìœ¼ë¡œ ë™ì‘í• ì§€")]
     public bool useUnscaledTime = true;
 
-    // ³»ºÎ »óÅÂ
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private IMiniGame _game;
-    private MonoBehaviour _gameBehaviour; // ÄÄÆ÷³ÍÆ® ÂüÁ¶ À¯Áö
+    private MonoBehaviour _gameBehaviour; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private bool _isRunning;
     private bool _tickEnabled;
 
     /// <summary>
-    /// Runner°¡ Á¦¾îÇÒ ¹Ì´Ï°ÔÀÓÀ» ·±Å¸ÀÓ¿¡ ÁÖÀÔÇÑ´Ù.
+    /// Runnerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì´Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ó¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
     /// </summary>
     public void SetMiniGame(MonoBehaviour miniGameBehaviour)
     {
-        // ÀÌÀü ±¸µ¶ ÇØÁ¦
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (_game != null)
         {
             _game.OnCompleted -= HandleCompleted;
@@ -49,28 +52,55 @@ public class MiniGamePopupRunner : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[MiniGamePopupRunner] SetMiniGame: IMiniGame ±¸ÇöÀÌ ¾Æ´Õ´Ï´Ù.");
+            Debug.LogError("[MiniGamePopupRunner] SetMiniGame: IMiniGame ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½.");
         }
     }
 
     /// <summary>
-    /// ¿ÜºÎ È£Ãâ: ÆË¾÷À» ¶ç¿ì°í, ¾Ö´Ï¸ŞÀÌ¼Ç Á¾·á ÈÄ ¹Ì´Ï°ÔÀÓ ½ÃÀÛ
+    /// ì™¸ë¶€ í˜¸ì¶œ: íŒì—…ì„ í‘œì‹œ, ì• ë‹ˆë©”ì´ì…˜ ì™„ë£Œ í›„ ë¯¸ë‹ˆê²Œì„ ì‹œì‘
     /// </summary>
     public void ShowAndStart()
     {
         if (_isRunning) return;
-        if (slide == null) { Debug.LogError("[MiniGamePopupRunner] slide ÂüÁ¶ ¾øÀ½"); return; }
-        if (_game == null) { Debug.LogError("[MiniGamePopupRunner] ¹Ì´Ï°ÔÀÓÀÌ ¼¼ÆÃµÇÁö ¾ÊÀ½"); return; }
+        if (_game == null)
+        {
+            Debug.LogError("[MiniGamePopupRunner] ë¯¸ë‹ˆê²Œì„ì´ ì„¤ì •ë˜ì§€ ì•ŠìŒ");
+            return;
+        }
+
+        // ê²Œì„ìœ¼ë¡œë¶€í„° ì¡°ìš° íƒ€ì… ìë™ ê°ì§€
+        GameEncounterType encounterType = _game.EncounterType;
+
+        // ì¡°ìš° íƒ€ì…ì— ë”°ë¼ íŒì—… ê²€ì¦
+        if (encounterType == GameEncounterType.MiniGame && slidePopup == null)
+        {
+            Debug.LogError("[MiniGamePopupRunner] MiniGame íƒ€ì…ì¸ë° slidePopupì´ ì—†ìŒ");
+            return;
+        }
+        if (encounterType == GameEncounterType.BossFight && fadePopup == null)
+        {
+            Debug.LogError("[MiniGamePopupRunner] BossFight íƒ€ì…ì¸ë° fadePopupì´ ì—†ìŒ");
+            return;
+        }
 
         _isRunning = true;
         _tickEnabled = false;
 
-        slide.Show();
+        // íƒ€ì…ì— ë”°ë¼ ë‹¤ë¥¸ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
+        if (encounterType == GameEncounterType.MiniGame)
+        {
+            slidePopup.Show();
+        }
+        else // BossFight
+        {
+            fadePopup.Show();
+        }
+
         StartCoroutine(Co_StartAfterShow());
     }
 
     /// <summary>
-    /// ¿ÜºÎ È£Ãâ: ¹Ì´Ï°ÔÀÓ °­Á¦ Áß´Ü(ÆË¾÷ ´İ±â±îÁö ¼öÇà)
+    /// ì™¸ë¶€ í˜¸ì¶œ: ë¯¸ë‹ˆê²Œì„ ê°•ì œ ì¤‘ë‹¨(íŒì—… ë‹«ê¸°ê¹Œì§€ ì²˜ë¦¬)
     /// </summary>
     public void Abort(string reason = "USER_ABORT")
     {
@@ -80,18 +110,33 @@ public class MiniGamePopupRunner : MonoBehaviour
         }
         else
         {
-            slide?.Hide();
+            HidePopup();
             _isRunning = false;
             _tickEnabled = false;
         }
     }
 
     /// <summary>
-    /// Show ¾Ö´Ï¸ŞÀÌ¼Ç ½Ã°£ + ¿©À¯¸¸Å­ ±â´Ù¸° µÚ Init/StartGame È£Ãâ
+    /// Show ì• ë‹ˆë©”ì´ì…˜ ì‹œê°„ + ëŒ€ê¸°ë§Œí¼ ê¸°ë‹¤ë¦° í›„ Init/StartGame í˜¸ì¶œ
     /// </summary>
     private IEnumerator Co_StartAfterShow()
     {
-        float wait = (slide != null ? slide.duration : 0f) + Mathf.Max(0f, extraWaitAfterShow);
+        float animDuration = 0f;
+
+        // ê²Œì„ìœ¼ë¡œë¶€í„° íƒ€ì… ê°€ì ¸ì˜¤ê¸°
+        GameEncounterType encounterType = _game.EncounterType;
+
+        // íƒ€ì…ì— ë”°ë¼ ì• ë‹ˆë©”ì´ì…˜ ì‹œê°„ ê°€ì ¸ì˜¤ê¸°
+        if (encounterType == GameEncounterType.MiniGame && slidePopup != null)
+        {
+            animDuration = slidePopup.duration;
+        }
+        else if (encounterType == GameEncounterType.BossFight && fadePopup != null)
+        {
+            animDuration = fadePopup.duration;
+        }
+
+        float wait = animDuration + Mathf.Max(0f, extraWaitAfterShow);
         if (useUnscaledTime) yield return UnscaledWait(wait);
         else yield return new WaitForSeconds(wait);
 
@@ -101,7 +146,7 @@ public class MiniGamePopupRunner : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸Å ÇÁ·¹ÀÓ IMiniGame.UpdateGame(deltaTime) È£Ãâ
+    /// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ IMiniGame.UpdateGame(deltaTime) È£ï¿½ï¿½
     /// </summary>
     private void Update()
     {
@@ -111,27 +156,46 @@ public class MiniGamePopupRunner : MonoBehaviour
     }
 
     /// <summary>
-    /// ¹Ì´Ï°ÔÀÓ ¿Ï·á ½Ã ÆË¾÷ ´İ±â ¹× »óÅÂ ¸®¼Â
+    /// ë¯¸ë‹ˆê²Œì„ ì™„ë£Œ ì‹œ íŒì—… ë‹«ê¸° ë° ìƒíƒœ ì •ë¦¬
     /// </summary>
     private void HandleCompleted(IMiniGame game, MiniGameCompleteArgs args)
     {
         _tickEnabled = false;
         _isRunning = false;
-        slide?.Hide();
+        HidePopup();
     }
 
     /// <summary>
-    /// ¹Ì´Ï°ÔÀÓ Áß´Ü ½Ã ÆË¾÷ ´İ±â ¹× »óÅÂ ¸®¼Â
+    /// ë¯¸ë‹ˆê²Œì„ ì¤‘ë‹¨ ì‹œ íŒì—… ë‹«ê¸° ë° ìƒíƒœ ì •ë¦¬
     /// </summary>
     private void HandleAborted(IMiniGame game, string reason)
     {
         _tickEnabled = false;
         _isRunning = false;
-        slide?.Hide();
+        HidePopup();
     }
 
     /// <summary>
-    /// unscaledTime ±âÁØ ´ë±â À¯Æ¿
+    /// íƒ€ì…ì— ë”°ë¼ ì ì ˆí•œ íŒì—… ìˆ¨ê¹€ ì²˜ë¦¬
+    /// </summary>
+    private void HidePopup()
+    {
+        if (_game == null) return;
+
+        GameEncounterType encounterType = _game.EncounterType;
+
+        if (encounterType == GameEncounterType.MiniGame)
+        {
+            slidePopup?.Hide();
+        }
+        else // BossFight
+        {
+            fadePopup?.Hide();
+        }
+    }
+
+    /// <summary>
+    /// unscaledTime ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¿
     /// </summary>
     private static IEnumerator UnscaledWait(float seconds)
     {

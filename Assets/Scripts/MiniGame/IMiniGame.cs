@@ -50,6 +50,9 @@ public interface IMiniGame
     // 게임 식별자 (매니저/컴포넌트 검색에 사용)
     string Id { get; }
 
+    // 게임 조우 타입 (미니게임 or 보스전)
+    GameEncounterType EncounterType { get; }
+
     // 제한 시간 (초)
     float Duration { get; }
 
