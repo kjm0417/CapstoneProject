@@ -26,7 +26,6 @@ public class PauseManager : SingleTonGeneric<PauseManager>
         if (pausable != null && !_pausableObjects.Contains(pausable))
         {
             _pausableObjects.Add(pausable);
-            Debug.Log($"Pausable 오브젝트 등록: {pausable.GetType().Name}");
         }
     }
 
@@ -38,7 +37,6 @@ public class PauseManager : SingleTonGeneric<PauseManager>
         if (pausable != null && _pausableObjects.Contains(pausable))
         {
             _pausableObjects.Remove(pausable);
-            Debug.Log($"Pausable 오브젝트 등록 해제: {pausable.GetType().Name}");
         }
     }
 
@@ -51,7 +49,6 @@ public class PauseManager : SingleTonGeneric<PauseManager>
         {
             _isMiniGameActive = true;
             PauseAllObjects();
-            Debug.Log("미니게임 시작 - 모든 오브젝트 일시정지");
         }
     }
 
@@ -64,7 +61,6 @@ public class PauseManager : SingleTonGeneric<PauseManager>
         {
             _isMiniGameActive = false;
             ResumeAllObjects();
-            Debug.Log("미니게임 종료 - 모든 오브젝트 재개");
         }
     }
 
@@ -77,7 +73,6 @@ public class PauseManager : SingleTonGeneric<PauseManager>
         {
             _isGamePaused = true;
             PauseAllObjects();
-            Debug.Log("게임 일시정지");
         }
     }
 
@@ -94,7 +89,6 @@ public class PauseManager : SingleTonGeneric<PauseManager>
             {
                 ResumeAllObjects();
             }
-            Debug.Log("게임 재개");
         }
     }
 

@@ -176,7 +176,6 @@ public class MiniGamePopupRunner : MonoBehaviour
         {
             if (miniGameArea != null) miniGameArea.SetActive(true);
             if (bossArea != null) bossArea.SetActive(false);
-            Debug.Log("[MiniGamePopupRunner] 미니게임 영역 활성화");
         }
         else // BossFight
         {
@@ -193,7 +192,6 @@ public class MiniGamePopupRunner : MonoBehaviour
     {
         if (miniGameArea != null) miniGameArea.SetActive(false);
         if (bossArea != null) bossArea.SetActive(false);
-        Debug.Log("[MiniGamePopupRunner] 모든 영역 비활성화");
     }
 
     /// <summary>

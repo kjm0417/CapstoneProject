@@ -78,9 +78,18 @@ public class PlayerController : MonoBehaviour, IPausable
 
         // 초기엔 PlayerState가 없을 수 있으므로 PlayerData 먼저 적용 시도
         ApplyData(initialData);
-        
+    }
+
+    /// <summary>
+    /// Start에서 PauseManager에 등록 (Awake 실행 순서 문제 해결)
+    /// </summary>
+    private void Start()
+    {
         // PauseManager에 등록하여 일시정지 관리 받기
-        //PauseManager.Instance.RegisterPausable(this);  
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.RegisterPausable(this);
+        }
     }
 
     /// <summary>
@@ -364,8 +373,6 @@ public class PlayerController : MonoBehaviour, IPausable
                 if (HasParam(animator, IsMovingHash)) animator.SetBool(IsMovingHash, false);
                 animator.speed = 0f;
             }
-            
-            Debug.Log($"[PlayerController] {gameObject.name} 일시정지 완료");
         }
     }
 
@@ -393,8 +400,6 @@ public class PlayerController : MonoBehaviour, IPausable
             {
                 animator.speed = 1f;
             }
-            
-            Debug.Log($"[PlayerController] {gameObject.name} 재개");
         }
     }
     
