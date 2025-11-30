@@ -115,6 +115,12 @@ public class PlayerController : MonoBehaviour, IPausable
     /// </summary>
     private void Update()
     {
+        // 일시정지 상태면 입력 처리 차단
+        if (_isPaused)
+        {
+            return;
+        }
+
         _processedInput = ProcessInput(moveInput, _blockDiagonal);
         _isMoving = _processedInput.sqrMagnitude > 0f;
 
@@ -160,6 +166,13 @@ public class PlayerController : MonoBehaviour, IPausable
     /// </summary>
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        // 일시정지 상태면 입력 무시
+        if (_isPaused)
+        {
+            moveInput = Vector2.zero;
+            return;
+        }
+
         if (ctx.performed) moveInput = ctx.ReadValue<Vector2>();
         else if (ctx.canceled) moveInput = Vector2.zero;
     }
@@ -323,25 +336,26 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             _isPaused = true;
             
-            // 애니메이션 일시정지 (이동 애니메이션 정지)
-            if (animator != null)
-            {
-                animator.speed = 0f;
-                Debug.Log($"[PlayerController] 애니메이터 속도를 0으로 설정");
-            }
+            // 입력 초기화
+            moveInput = Vector2.zero;
+            _processedInput = Vector2.zero;
+            _isMoving = false;
             
-            // Rigidbody2D 속도 정지
+            // Rigidbody2D 속도 정지 및 물리 비활성화
             if (_playerRb != null)
             {
                 _playerRb.linearVelocity = Vector2.zero;
-                Debug.Log($"[PlayerController] Rigidbody2D 속도를 0으로 설정");
+                _playerRb.simulated = false;
             }
             
-            Debug.Log($"[PlayerController] {gameObject.name} 일시정지 완료! _isPaused = {_isPaused}");
-        }
-        else
-        {
-            Debug.Log($"[PlayerController] {gameObject.name} 이미 일시정지 상태입니다.");
+            // 애니메이션을 Idle 상태로 고정
+            if (animator != null)
+            {
+                if (HasParam(animator, IsMovingHash)) animator.SetBool(IsMovingHash, false);
+                animator.speed = 0f;
+            }
+            
+            Debug.Log($"[PlayerController] {gameObject.name} 일시정지 완료");
         }
     }
 
@@ -354,7 +368,17 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             _isPaused = false;
             
-            // 애니메이션 재개 (이동 애니메이션 재시작)
+            // 입력 초기화 (재개 시 깨끗한 상태로 시작)
+            moveInput = Vector2.zero;
+            _processedInput = Vector2.zero;
+            
+            // Rigidbody2D 물리 재활성화
+            if (_playerRb != null)
+            {
+                _playerRb.simulated = true;
+            }
+            
+            // 애니메이션 재개
             if (animator != null)
             {
                 animator.speed = 1f;

@@ -12,12 +12,17 @@ using UnityEngine;
 public class MiniGamePopupRunner : MonoBehaviour
 {
     [Header("Popup / Animation")]
-    [Tooltip("미니게임용: 아래->위 슬라이드 애니메이션 컨트롤러")]
-    public PopupSlideWorld slidePopup;
-
-    [Tooltip("보스전용: 페이드 인/아웃 애니메이션 컨트롤러")]
+    [Tooltip("페이드 인/아웃 애니메이션 컨트롤러 (모든 미니게임 공통)")]
     public PopupFadeWorld fadePopup;
 
+    [Header("Game Areas")]
+    [Tooltip("일반 미니게임 영역 (MiniGame 타입일 때 활성화)")]
+    public GameObject miniGameArea;
+
+    [Tooltip("보스전 영역 (BossFight 타입일 때 활성화)")]
+    public GameObject bossArea;
+
+    [Header("Settings")]
     [Tooltip("Show 완료 후 추가 대기(선택 사항)")]
     public float extraWaitAfterShow = 0.05f;
 
@@ -68,33 +73,22 @@ public class MiniGamePopupRunner : MonoBehaviour
             return;
         }
 
-        // 게임으로부터 조우 타입 자동 감지
-        GameEncounterType encounterType = _game.EncounterType;
-
-        // 조우 타입에 따라 팝업 검증
-        if (encounterType == GameEncounterType.MiniGame && slidePopup == null)
+        // 페이드 팝업 검증
+        if (fadePopup == null)
         {
-            Debug.LogError("[MiniGamePopupRunner] MiniGame 타입인데 slidePopup이 없음");
-            return;
-        }
-        if (encounterType == GameEncounterType.BossFight && fadePopup == null)
-        {
-            Debug.LogError("[MiniGamePopupRunner] BossFight 타입인데 fadePopup이 없음");
+            Debug.LogError("[MiniGamePopupRunner] fadePopup이 없음");
             return;
         }
 
         _isRunning = true;
         _tickEnabled = false;
 
-        // 타입에 따라 다른 애니메이션 실행
-        if (encounterType == GameEncounterType.MiniGame)
-        {
-            slidePopup.Show();
-        }
-        else // BossFight
-        {
-            fadePopup.Show();
-        }
+        // 게임 타입에 따라 적절한 영역 활성화
+        GameEncounterType encounterType = _game.EncounterType;
+        ActivateGameArea(encounterType);
+
+        // 페이드 애니메이션 실행
+        fadePopup.Show();
 
         StartCoroutine(Co_StartAfterShow());
     }
@@ -121,22 +115,9 @@ public class MiniGamePopupRunner : MonoBehaviour
     /// </summary>
     private IEnumerator Co_StartAfterShow()
     {
-        float animDuration = 0f;
-
-        // 게임으로부터 타입 가져오기
-        GameEncounterType encounterType = _game.EncounterType;
-
-        // 타입에 따라 애니메이션 시간 가져오기
-        if (encounterType == GameEncounterType.MiniGame && slidePopup != null)
-        {
-            animDuration = slidePopup.duration;
-        }
-        else if (encounterType == GameEncounterType.BossFight && fadePopup != null)
-        {
-            animDuration = fadePopup.duration;
-        }
-
+        float animDuration = fadePopup != null ? fadePopup.duration : 0f;
         float wait = animDuration + Mathf.Max(0f, extraWaitAfterShow);
+        
         if (useUnscaledTime) yield return UnscaledWait(wait);
         else yield return new WaitForSeconds(wait);
 
@@ -176,22 +157,43 @@ public class MiniGamePopupRunner : MonoBehaviour
     }
 
     /// <summary>
-    /// 타입에 따라 적절한 팝업 숨김 처리
+    /// 팝업 숨김 처리
     /// </summary>
     private void HidePopup()
     {
-        if (_game == null) return;
+        fadePopup?.Hide();
+        
+        // 모든 영역 비활성화
+        DeactivateAllAreas();
+    }
 
-        GameEncounterType encounterType = _game.EncounterType;
-
+    /// <summary>
+    /// 게임 타입에 따라 적절한 영역 활성화
+    /// </summary>
+    private void ActivateGameArea(GameEncounterType encounterType)
+    {
         if (encounterType == GameEncounterType.MiniGame)
         {
-            slidePopup?.Hide();
+            if (miniGameArea != null) miniGameArea.SetActive(true);
+            if (bossArea != null) bossArea.SetActive(false);
+            Debug.Log("[MiniGamePopupRunner] 미니게임 영역 활성화");
         }
         else // BossFight
         {
-            fadePopup?.Hide();
+            if (miniGameArea != null) miniGameArea.SetActive(false);
+            if (bossArea != null) bossArea.SetActive(true);
+            Debug.Log("[MiniGamePopupRunner] 보스전 영역 활성화");
         }
+    }
+
+    /// <summary>
+    /// 모든 게임 영역 비활성화
+    /// </summary>
+    private void DeactivateAllAreas()
+    {
+        if (miniGameArea != null) miniGameArea.SetActive(false);
+        if (bossArea != null) bossArea.SetActive(false);
+        Debug.Log("[MiniGamePopupRunner] 모든 영역 비활성화");
     }
 
     /// <summary>

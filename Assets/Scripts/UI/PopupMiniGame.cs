@@ -3,50 +3,50 @@ using DG.Tweening;
 using UnityEngine.UI;
 
 /// <summary>
-/// World Space(¶Ç´Â Screen Space) Äµ¹ö½º¿¡¼­ UI ÆĞ³ÎÀ» ¾Æ·¡->À§·Î ½½¶óÀÌµå ÀÎ/¾Æ¿ôÇÏ´Â ÄÁÆ®·Ñ·¯.
-/// - World Space: localPosition.y¸¦ ±âÁØÀ¸·Î ÀÌµ¿(DOLocalMove)
-/// - Screen Space: anchoredPosition.y¸¦ ±âÁØÀ¸·Î ÀÌµ¿(DOAnchorPos)
-/// - durationÀº DOTween SetUpdate(true)·Î unscaledTime »ç¿ë(Àü¿ª timeScale=0ÀÌ¾îµµ µ¿ÀÛ)
-/// - ÆĞ³Î ³ôÀÌ + margin¸¸Å­ '¾Æ·¡(off-screen)' À§Ä¡¸¦ ÀÚµ¿ °è»ê
+/// World Space(ï¿½Ç´ï¿½ Screen Space) Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UI ï¿½Ğ³ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½->ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½/ï¿½Æ¿ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½.
+/// - World Space: localPosition.yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½(DOLocalMove)
+/// - Screen Space: anchoredPosition.yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½(DOAnchorPos)
+/// - durationï¿½ï¿½ DOTween SetUpdate(true)ï¿½ï¿½ unscaledTime ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ timeScale=0ï¿½Ì¾îµµ ï¿½ï¿½ï¿½ï¿½)
+/// - ï¿½Ğ³ï¿½ ï¿½ï¿½ï¿½ï¿½ + marginï¿½ï¿½Å­ 'ï¿½Æ·ï¿½(off-screen)' ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½
 /// </summary>
 [DisallowMultipleComponent]
 public class PopupSlideWorld : MonoBehaviour
 {
     [Header("Target")]
-    [Tooltip("½½¶óÀÌµå ½ÃÅ³ ÆĞ³Î RectTransform(ÁöÁ¤ ¾øÀ¸¸é ÀÚ±â ÀÚ½Å)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½Å³ ï¿½Ğ³ï¿½ RectTransform(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú±ï¿½ ï¿½Ú½ï¿½)")]
     public RectTransform target;
 
     [Header("Animation")]
-    [Tooltip("¾Ö´Ï¸ŞÀÌ¼Ç ½Ã°£(ÃÊ)")]
+    [Tooltip("ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float duration = 0.35f;
-    [Tooltip("ÀÌÂ¡ ÇÔ¼ö")]
+    [Tooltip("ï¿½ï¿½Â¡ ï¿½Ô¼ï¿½")]
     public Ease easeIn = Ease.OutCubic;
-    [Tooltip("¼û±æ ¶§ ÀÌÂ¡ ÇÔ¼ö")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Â¡ ï¿½Ô¼ï¿½")]
     public Ease easeOut = Ease.InCubic;
-    [Tooltip("timeScale=0¿¡¼­µµ Æ®À© À¯Áö")]
+    [Tooltip("timeScale=0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public bool useUnscaledTime = true;
-    [Tooltip("Ã³À½¿¡ ÀÚµ¿À¸·Î ¼û±ä »óÅÂ¿¡¼­ ½ÃÀÛ")]
+    [Tooltip("Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public bool startHidden = true;
 
     [Header("Offsets")]
-    [Tooltip("ÆĞ³Î ³ôÀÌ + margin ¸¸Å­ ¾Æ·¡·Î ³»¸²(ÀÚµ¿ °è»ê)")]
+    [Tooltip("ï¿½Ğ³ï¿½ ï¿½ï¿½ï¿½ï¿½ + margin ï¿½ï¿½Å­ ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Úµï¿½ ï¿½ï¿½ï¿½)")]
     public bool autoComputeOffscreen = true;
-    [Tooltip("ÀÚµ¿ °è»ê½Ã Ãß°¡ ¸¶Áø(·ÎÄÃ ´ÜÀ§)")]
+    [Tooltip("ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")]
     public float extraMargin = 50f;
-    [Tooltip("¼öµ¿ ¸ğµåÀÏ ¶§ ½ÃÀÛ ¿ÀÇÁ¼Â(¾Æ·¡·Î À½¼ö)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")]
     public float manualStartYOffset = -800f;
 
-    // ³»ºÎ »óÅÂ
-    private Vector3 _onLocalPos; // º¸ÀÌ´Â À§Ä¡(local)
-    private Vector3 _offLocalPos; // ¾Æ·¡ ¼û±ä À§Ä¡(local)
-    private Vector2 _onAnchored; // ½ºÅ©¸° ½ºÆäÀÌ½º¿ë
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    private Vector3 _onLocalPos; // ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ä¡(local)
+    private Vector3 _offLocalPos; // ï¿½Æ·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡(local)
+    private Vector2 _onAnchored; // ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½
     private Vector2 _offAnchored;
     private Tween _tween;
     private Canvas _canvas;
     private bool _isWorldSpace;
 
     /// <summary>
-    /// ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­ ¹× À§Ä¡ °è»ê.
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­ ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½.
     /// </summary>
     private void Awake()
     {
@@ -56,12 +56,12 @@ public class PopupSlideWorld : MonoBehaviour
 
         if (_isWorldSpace)
         {
-            // ±âÁØ(º¸ÀÌ´Â) À§Ä¡
+            // ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Ì´ï¿½) ï¿½ï¿½Ä¡
             _onLocalPos = target.localPosition;
 
-            // ÆĞ³Î ³ôÀÌ(·ÎÄÃ ´ÜÀ§) + ¸¶Áø¸¸Å­ ¾Æ·¡·Î
+            // ï¿½Ğ³ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½Æ·ï¿½ï¿½ï¿½
             float h = target.rect.height;
-            float offset = autoComputeOffscreen ? (h + extraMargin) : -manualStartYOffset; // manualÀº À½¼ö ±â´ë
+            float offset = autoComputeOffscreen ? (h + extraMargin) : -manualStartYOffset; // manualï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             _offLocalPos = _onLocalPos + new Vector3(0f, -offset, 0f);
 
             if (startHidden)
@@ -69,7 +69,7 @@ public class PopupSlideWorld : MonoBehaviour
         }
         else
         {
-            // ½ºÅ©¸° ½ºÆäÀÌ½º ´ëÀÀ(È¤½Ã ÀüÈ¯µÉ ¼ö ÀÖÀ¸´Ï)
+            // ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½(È¤ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
             _onAnchored = target.anchoredPosition;
             float h = target.rect.height;
             float offset = autoComputeOffscreen ? (h + extraMargin) : -manualStartYOffset;
@@ -81,7 +81,35 @@ public class PopupSlideWorld : MonoBehaviour
     }
 
     /// <summary>
-    /// ¾Æ·¡¿¡¼­ À§·Î ½½¶óÀÌµå ÀÎ(Ç¥½Ã).
+    /// Startì—ì„œ ê°•ì œë¡œ ìˆ¨ê¹€ ì²˜ë¦¬ (Awakeì—ì„œ ì•ˆë  ê²½ìš° ëŒ€ë¹„)
+    /// </summary>
+    private void Start()
+    {
+        if (startHidden)
+        {
+            HideImmediate();
+        }
+    }
+
+    /// <summary>
+    /// ì¦‰ì‹œ ìˆ¨ê¹€ (ì• ë‹ˆë©”ì´ì…˜ ì—†ì´)
+    /// </summary>
+    public void HideImmediate()
+    {
+        KillTween();
+        
+        if (_isWorldSpace)
+        {
+            target.localPosition = _offLocalPos;
+        }
+        else
+        {
+            target.anchoredPosition = _offAnchored;
+        }
+    }
+
+    /// <summary>
+    /// ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½(Ç¥ï¿½ï¿½).
     /// </summary>
     public void Show()
     {
@@ -102,7 +130,7 @@ public class PopupSlideWorld : MonoBehaviour
     }
 
     /// <summary>
-    /// ´Ù½Ã ¾Æ·¡·Î ½½¶óÀÌµå ¾Æ¿ô(¼û±è).
+    /// ï¿½Ù½ï¿½ ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Æ¿ï¿½(ï¿½ï¿½ï¿½ï¿½).
     /// </summary>
     public void Hide()
     {
@@ -123,7 +151,7 @@ public class PopupSlideWorld : MonoBehaviour
     }
 
     /// <summary>
-    /// ÁøÇà Áß Æ®À© ¾ÈÀü Á¾·á.
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
     /// </summary>
     private void KillTween()
     {
@@ -135,8 +163,8 @@ public class PopupSlideWorld : MonoBehaviour
     }
 
     /// <summary>
-    /// (¼±ÅÃ) ÇöÀç À§Ä¡¸¦ 'º¸ÀÌ´Â À§Ä¡'·Î Àç±âÁØ ¼³Á¤ÇÏ°í ¿ÀÇÁ½ºÅ©¸°À» ´Ù½Ã °è»ê.
-    /// ·¹ÀÌ¾Æ¿ôÀÌ ¹Ù²ï µÚ È£ÃâÇÏ¸é À¯¿ë.
+    /// (ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ 'ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ä¡'ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½.
+    /// ï¿½ï¿½ï¿½Ì¾Æ¿ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½.
     /// </summary>
     public void RecomputeFromCurrent()
     {

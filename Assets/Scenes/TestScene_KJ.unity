@@ -3687,13 +3687,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8888307324678776887, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
-      propertyPath: cellPrefab
+    - target: {fileID: 5671291449268217674, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
+      propertyPath: bossArea
       value: 
-      objectReference: {fileID: 7212243241126190524, guid: 828ade76506f8514c862dbdec4873fa0, type: 3}
-    - target: {fileID: 8888307324678776887, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
-      propertyPath: playerVisual
+      objectReference: {fileID: 2140607984}
+    - target: {fileID: 5671291449268217674, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
+      propertyPath: miniGameArea
       value: 
+      objectReference: {fileID: 729589253}
+    - target: {fileID: 7619955990170229882, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3890,6 +3894,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &729589253 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6224133323392749989, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
+  m_PrefabInstance: {fileID: 704720212}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &732173689
 GameObject:
   m_ObjectHideFlags: 0
@@ -11160,6 +11169,11 @@ Transform:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7607660600388463796, guid: 80b5db1c78a08ea42bf4ab3ba49395fa, type: 3}
   m_PrefabInstance: {fileID: 4425748059033704592}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2140607984 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7619955990170229882, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
+  m_PrefabInstance: {fileID: 704720212}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &677250661630074260
 Transform:
