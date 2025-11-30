@@ -117,6 +117,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadePopup: {fileID: 1158512559399372429}
+  miniGameArea: {fileID: 6224133323392749989}
+  bossArea: {fileID: 7619955990170229882}
   extraWaitAfterShow: 0.05
   useUnscaledTime: 1
 --- !u!114 &1158512559399372429
@@ -136,6 +138,7 @@ MonoBehaviour:
   easeIn: 6
   easeOut: 5
   useUnscaledTime: 1
+  startHidden: 1
 --- !u!1 &2774720490810086819
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,7 +283,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1838324405059422915
 RectTransform:
   m_ObjectHideFlags: 0
