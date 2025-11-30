@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour, IPausable
         ApplyData(initialData);
         
         // PauseManager에 등록하여 일시정지 관리 받기
-        PauseManager.Instance.RegisterPausable(this);
+        //PauseManager.Instance.RegisterPausable(this);  
     }
 
     /// <summary>
@@ -320,8 +320,18 @@ public class PlayerController : MonoBehaviour, IPausable
     /// </summary>
     public void SetMovementEnabled(bool enabled) => _canMove = enabled;
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Door_Interact"))
+        {
+            InteractObject objectInfo = collision.GetComponent<InteractObject>();
+
+            EventBus.Publish(StoryTriggerManager.OnPlayerCollided, objectInfo);
+        }
+    }
+
     #region IPausable Implementation
-    
+
     /// <summary>
     /// IPausable: 일시정지 상태를 확인합니다.
     /// </summary>

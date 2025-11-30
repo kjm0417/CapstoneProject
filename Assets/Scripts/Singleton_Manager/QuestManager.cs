@@ -90,7 +90,7 @@ public class QuestManager : SingleTonGeneric<QuestManager>
     /// </summary>
     private void OnDayStartQuest(GameDate gameDate)
     {
-        CurrentDay = -gameDate.RemaineDay + 32; //-31 + 32 = 1일차, -30 + 32 = 2일차 ... -1 + 32 = 31일차
+        CurrentDay = gameDate.Day; 
 
         Debug.Log($"QuestManager / 하루 ( {CurrentDay} 일차 )에 대한 처리 - 퀘스트 할당 및 페이지 범위 변경");
 

@@ -23,4 +23,10 @@ public class DailyDialougeData
 
     public string NextPattern;
 
+
+    public string ObjectId;
+    public string ObjectName;
+    public string InteractDialouge;
+    public string InteractSelectDialouge;
+
 }

@@ -27,6 +27,9 @@ public class DailySelectButtonManager : MonoBehaviour
     private string currentPlayerId;
 
     [SerializeField]
+    DialougeType dialogueType;
+
+    [SerializeField]
     protected KeyCode lastArrowKey = KeyCode.None; // 마지막으로 누른 방향키
 
     private UIMode lastMode = UIMode.None;
@@ -35,6 +38,7 @@ public class DailySelectButtonManager : MonoBehaviour
     [SerializeField]
     protected UIMode uiMode;
     public enum UIMode { None, Rest, Study, FixedStudy }
+
 
     public UIMode Mode
     {
@@ -97,7 +101,7 @@ public class DailySelectButtonManager : MonoBehaviour
     {
         EventBus.Subscribe<IPlayerStateReadOnly>(EventNames.ActiveCharacterChanged, OnPlayerChanged);
 
-        EventBus.Subscribe<List<ChoiceData>>(OnCreateButtonSelected, CreateChoiceButtons);
+        EventBus.Subscribe<List<ChoiceData>, DialougeType>(OnCreateButtonSelected, CreateChoiceButtons);
 
         EventBus.Subscribe(OnReturnButtonSelected, ReturnChoiceButtons); //선택 버튼 클릭 이벤트 구독
 
@@ -107,7 +111,7 @@ public class DailySelectButtonManager : MonoBehaviour
     {
         EventBus.UnSubscribe<IPlayerStateReadOnly>(EventNames.ActiveCharacterChanged, OnPlayerChanged);
 
-        EventBus.UnSubscribe<List<ChoiceData>>(OnCreateButtonSelected, CreateChoiceButtons);
+        EventBus.UnSubscribe<List<ChoiceData>, DialougeType>(OnCreateButtonSelected, CreateChoiceButtons);
 
         EventBus.UnSubscribe(OnReturnButtonSelected, ReturnChoiceButtons); //선택 버튼 클릭 이벤트 구독 해제
 
@@ -338,25 +342,28 @@ public class DailySelectButtonManager : MonoBehaviour
     /// 버튼 생성의 진입점이며, DialougeSystem이 마지막 대사의 버튼 생성 이벤트 발행을 해줌
     /// </summary>
     /// <param name="choices"></param>
-    private void CreateChoiceButtons(List<ChoiceData> choices)
+    private void CreateChoiceButtons(List<ChoiceData> choices, DialougeType _dialogueType)
     {
         ReturnChoiceButtons();
 
+         this.dialogueType = _dialogueType; //현재 전달받은 다이얼로그의 타입
+
         var routine = DailyRoutineManager.Instance.DailyRoutine;
 
-        if (routine == DailyRoutine.Room)
+        if (routine == DailyRoutine.Room && dialogueType == DialougeType.DailyRoutine)
         {
-            RebuildRoomChoices(choices);    // Room패턴은 특수 상황임 -> 버튼 1개만 생성
+            RebuildRoomChoices(choices, dialogueType);    // Room패턴은 특수 상황임 -> 버튼 1개만 생성
             return;
         }
         for (int i = 0; i < choices.Count; i++)
         {
-            CreateButton(choices[i], i);
+            CreateButton(choices[i], i, dialogueType);
         }
 
     }
+
     // Room 패턴 전용: 버튼 1 개만 생성
-    private void RebuildRoomChoices(List<ChoiceData> choices)
+    private void RebuildRoomChoices(List<ChoiceData> choices, DialougeType dialogueType)
     {
        // ReturnChoiceButtons();
 
@@ -368,7 +375,7 @@ public class DailySelectButtonManager : MonoBehaviour
         {
             if (choices[i].EffectId == needed)
             {
-                CreateButton(choices[i], 0); //실제, 여기서 1개만 버튼이 생성됨
+                CreateButton(choices[i], 0, dialogueType); //실제, 여기서 1개만 버튼이 생성됨
                 break; 
             }
         }
@@ -387,7 +394,7 @@ public class DailySelectButtonManager : MonoBehaviour
     /// <summary>
     /// 버튼 생성 공통 메서드
     /// </summary>
-    private void CreateButton(ChoiceData choice, int index)
+    private void CreateButton(ChoiceData choice, int index,DialougeType dialougeType)
     {
         DailyChangeSelect choiceBtn = choiceBtnItemPool.Get();
         choiceBtn.InitButtonText(choice);
@@ -408,7 +415,11 @@ public class DailySelectButtonManager : MonoBehaviour
             // 첫 번째 버튼만 선택 활성화
             currentIndex = 0;
 
-            SetUI();
+            if(dialougeType == DialougeType.DailyRoutine)
+            {
+                SetUI();
+
+            }
 
             CurrentButtonImageColorActive(true);
         }
@@ -447,6 +458,10 @@ public class DailySelectButtonManager : MonoBehaviour
             EventBus.Publish(UIManager.OnInGameUI, true);
 
         }
+        else if(choiceData.ChoiceId.Equals("Stroy"))
+        {
+            Mode = UIMode.None;
+        }
         else
         {
             Mode = UIMode.None;
@@ -461,7 +476,8 @@ public class DailySelectButtonManager : MonoBehaviour
     /// </summary>
     private void CurrentButtonImageColorActive(bool acitve)
     {
-        if(choiceBtnItemList.Count > 0)
+
+        if (choiceBtnItemList.Count > 0)
         {
             choiceBtnItemList[currentIndex].SetHighlight(acitve);
         }

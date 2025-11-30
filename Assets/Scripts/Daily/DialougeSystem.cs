@@ -15,6 +15,7 @@ public class ChoiceData
     public string Text;     //¹öÆ°¿¡ º¸¿©ÁÙ ÅØ½ºÆ®
     public string EffectId; //¹öÆ°¿¡ ¸Â´Â ¿¬Ãâ ID
     public string NextPattern; //´ÙÀ½ ÀÏ»ó ÆÐÅÏ ÀúÀå
+
 }
 [System.Serializable]
 public struct Speaker //È­ÀÚÀÇ Á¤º¸¸¦ ÀúÀåÇÏ´Â Speaker ±¸Á¶Ã¼ Á¤ÀÇ
@@ -37,6 +38,13 @@ public struct DialogData //È­ÀÚ ÀÌ¸§°ú ´ë»ç Á¤º¸¸¦ ÀúÀåÇÏ´Â DialogData ±¸Á¶Ã¼ Á¤
     public List<ChoiceData> choices; // ÀÚ½Ä Å×ÀÌºí¿¡¼­ °¡Á®¿Â ¼±ÅÃÁöµé
     public int speakerImagePos; //ÇÃ·¹ÀÌ¾î ÀÌ¹ÌÁö UI À§Ä¡ : 0 - ¿ÞÂÊ , 1 - Áß°£ , 2 - ¿À¸¥ÂÊ
 
+}
+
+public enum DialougeType
+{
+    Stroy, //½ºÅä¸® ÁøÇàÀ» À§ÇÑ ´ë»ç , ÁÖÃ¼: º»ÀÎ
+    StroyTrigger, //Æ®¸®°Å ÀÌº¥Æ® °ü·Ã ´ë»ç
+    DailyRoutine,//ÀÏ»ó ´ÙÀ½À¸·Î °¥ ÆÐÅÏ ´ë»ç
 }
 
 public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶Ç´Â ½ºÅä¸®°¡ ÁøÇàµÇ´Â ½Ã½ºÅÛ
@@ -72,6 +80,9 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
 
     private WaitForSeconds typingYield; //Ãß°¡
 
+    private DialougeType dialougeType;
+
+
     private void Awake()
     {
         RefreshTypingYield(); //Ãß°¡
@@ -100,11 +111,12 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
     /// <summary>
     /// ¼±ÅÃ ´ë»çÀÇ ¾×¼¿ µ¥ÀÌÅÍµéÀ» ¹Þ¾Æ¿Í¼­ ÇØ´ç ¼±ÅÃ ´ë»ç¿¡ ¸Â´Â ´ëÈ­¸¦ ÁøÇàÇÒ ¼ö ÀÖ°Ô µ¥ÀÌÅÍ °ªÀ» ÀúÀå
     /// </summary>
-    public void InitSelectDialouge(DialogData[] dialogs , bool isAuto )
+    public void InitSelectDialouge(DialogData[] dialogs , bool isAuto, DialougeType dialougeType)
     {
        
          Dialogs = dialogs;
         isAutoStart = isAuto;
+        this.dialougeType = dialougeType;
 
         currentDialogIndex = -1;
         currentSpeakerIndex = 0;
@@ -120,7 +132,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
         if(isAutoStart && Dialogs.Length > 0)
         {
             StartCoroutine(DialogueFlow());
-        }
+        }    
     }
 
     IEnumerator DialogueFlow()
@@ -130,7 +142,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
         {
             yield return null;
         }
-        Debug.Log("´ëÈ­ Á¾·áµÊ");
+      
     }
 
     /// <summary>
@@ -273,7 +285,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //ÀÏ»óÀûÀÎ ´ëÈ­ ¶
             {
                 isSelectDialougeLast = true; //´ëÈ­ Á¾·á ¹æÁö            
 
-                EventBus.Publish(DailySelectButtonManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices);
+                EventBus.Publish(DailySelectButtonManager.OnCreateButtonSelected, Dialogs[currentDialogIndex].choices,dialougeType);
             }
         }
 

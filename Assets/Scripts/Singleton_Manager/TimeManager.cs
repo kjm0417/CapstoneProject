@@ -30,7 +30,6 @@ public class TimeManager : SingleTonGeneric<TimeManager>
     {
         base.Awake();
     }
-
     void Start()
     {
         InitDate(10, 1,31,0); //10월 1일부터 시작 , 0 ~ 6 = 월요일~일요일
@@ -94,6 +93,7 @@ public class TimeManager : SingleTonGeneric<TimeManager>
 
     void GetCurrentDate()
     {
+        currentGameDate.Day = -currentGameDate.RemaineDay + 32;
         EventBus.Publish(OnDayStarted, currentGameDate); //InGameCalendar.cs에서 실제 UI 표시
     }
 
