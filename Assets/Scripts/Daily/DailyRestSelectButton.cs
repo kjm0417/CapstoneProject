@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DailyRestSelectButton : DailySelectButtonManager
+public class DailyRestSelectButton : DailySelectButtonManager , IChoiceHandler
 {
     public static string OnRestPressed = "OnRestPressEvent";
 
@@ -44,6 +44,19 @@ public class DailyRestSelectButton : DailySelectButtonManager
         EventBus.UnSubscribe(OnRestTimeAfterEnded, OnRestSelectRestTimeEnd);
 
     }
+    public bool CanHandle(string choiceId)
+    {
+        return choiceId == "Rest";
+    }
+
+    public void Handle(DailySelectButtonManager manager)
+    {
+        manager.Mode = UIMode.Rest;
+
+        EventBus.Publish(UIManager.OnInGameUI, false);
+        EventBus.Publish(UIManager.OnRestQuestions, true);
+    }
+ 
 
 
     private bool isSyncingMode = false;

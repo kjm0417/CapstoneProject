@@ -13,5 +13,10 @@ MonoBehaviour:
   m_Name: BasicTileData
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: 09e53b0b07e80e34eb3056c4015c2936, type: 2}
-  - {fileID: 11400000, guid: 7849f2ffa2c337c41b942ef1d0ff121e, type: 2}
+  - {fileID: 11400000, guid: 9e21873537f1ac946957000943d56334, type: 2}
+  - {fileID: 11400000, guid: a38bf58f0f8f0874aa4235259ddf3a7a, type: 2}
+  - {fileID: 11400000, guid: 704df77d8ad616044966088e4f9bbcd3, type: 2}
+  - {fileID: 11400000, guid: 043bae8edaeda6845b2e05d9f2f0aefd, type: 2}
+  - {fileID: 11400000, guid: 1269dfe170eeb2042b62ac8d058b4ebb, type: 2}
+  - {fileID: 11400000, guid: e638bfe8f1f9eef48bc92ff0d9e22eee, type: 2}
+  - {fileID: 11400000, guid: 365d3e728129cba4faaaa1ba7f597b39, type: 2}

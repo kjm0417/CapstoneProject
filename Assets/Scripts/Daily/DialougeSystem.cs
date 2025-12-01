@@ -346,7 +346,7 @@ public class DialougeSystem : SingleTonGeneric<DialougeSystem> //일상적인 대화 �
         // 커서 표시 (대화 완료 상태처럼)
         Speakers[lastSpeakerIndex].objectArrow.SetActive(true);
 
-        EventBus.Publish(DailySelectButtonManager.OnCreateButtonSelected, Dialogs[lastSpeakerIndex].choices);
+        EventBus.Publish(DailySelectButtonManager.OnCreateButtonSelected, Dialogs[lastSpeakerIndex].choices, dialougeType);
     }
 
 

@@ -230,7 +230,7 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: Study
+    ChoiceId: FixedStudy
     MasterId: 1_Goto_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uC2B5\uD55C\uB2E4."
@@ -262,7 +262,7 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: Study
+    ChoiceId: FixedStudy
     MasterId: 1_Brakfast_0_0
     ChoiceIndex: 0
     ChoiceText: "\uC790\uC2B5\uD55C\uB2E4."
@@ -408,12 +408,12 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: Story
+    ChoiceId: StoryYes
     MasterId: 0_Door_Room
     ChoiceIndex: 
     ChoiceText: 
-    EffectId: 
-    NextPattern: 
+    EffectId: Door_Yes
+    NextPattern: GotoSchool
     ObjectId: 
     ObjectName: Door
     InteractDialouge: 
@@ -424,11 +424,11 @@ MonoBehaviour:
     PlayerImagePos: 0
     PlayerName: 
     PlayerDialogue: 
-    ChoiceId: Story
+    ChoiceId: StoryNo
     MasterId: 0_Door_Room
     ChoiceIndex: 
     ChoiceText: 
-    EffectId: 
+    EffectId: Door_No
     NextPattern: 
     ObjectId: 
     ObjectName: Door

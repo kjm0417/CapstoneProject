@@ -37,8 +37,9 @@ public class DailySelectButtonManager : MonoBehaviour
 
     [SerializeField]
     protected UIMode uiMode;
-    public enum UIMode { None, Rest, Study, FixedStudy }
+    public enum UIMode { None, Rest, Study, FixedStudy, Story }
 
+    private List<IChoiceHandler> handlers;
 
     public UIMode Mode
     {
@@ -94,7 +95,14 @@ public class DailySelectButtonManager : MonoBehaviour
         {
             choiceBtnItemPool = new ObjectPool<DailyChangeSelect>(choiceButtonPrefab, 3, choiceButtonParent);
         }
-      
+
+        handlers = new List<IChoiceHandler>()
+    {
+        new DailyStorySelectButton(),
+        new DailyRestSelectButton(),
+        new DailyStudySelectButton(),
+        new DailyFixedStudySelectButton()
+    };
 
     }
     protected virtual void OnEnable()
@@ -352,18 +360,18 @@ public class DailySelectButtonManager : MonoBehaviour
 
         if (routine == DailyRoutine.Room && dialogueType == DialougeType.DailyRoutine)
         {
-            RebuildRoomChoices(choices, dialogueType);    // Room패턴은 특수 상황임 -> 버튼 1개만 생성
+            RebuildRoomChoices(choices);    // Room패턴은 특수 상황임 -> 버튼 1개만 생성
             return;
         }
         for (int i = 0; i < choices.Count; i++)
         {
-            CreateButton(choices[i], i, dialogueType);
+            CreateButton(choices[i], i);
         }
 
     }
 
     // Room 패턴 전용: 버튼 1 개만 생성
-    private void RebuildRoomChoices(List<ChoiceData> choices, DialougeType dialogueType)
+    private void RebuildRoomChoices(List<ChoiceData> choices)
     {
        // ReturnChoiceButtons();
 
@@ -375,7 +383,7 @@ public class DailySelectButtonManager : MonoBehaviour
         {
             if (choices[i].EffectId == needed)
             {
-                CreateButton(choices[i], 0, dialogueType); //실제, 여기서 1개만 버튼이 생성됨
+                CreateButton(choices[i], 0); //실제, 여기서 1개만 버튼이 생성됨
                 break; 
             }
         }
@@ -394,7 +402,7 @@ public class DailySelectButtonManager : MonoBehaviour
     /// <summary>
     /// 버튼 생성 공통 메서드
     /// </summary>
-    private void CreateButton(ChoiceData choice, int index,DialougeType dialougeType)
+    private void CreateButton(ChoiceData choice, int index)
     {
         DailyChangeSelect choiceBtn = choiceBtnItemPool.Get();
         choiceBtn.InitButtonText(choice);
@@ -415,60 +423,23 @@ public class DailySelectButtonManager : MonoBehaviour
             // 첫 번째 버튼만 선택 활성화
             currentIndex = 0;
 
-            if(dialougeType == DialougeType.DailyRoutine)
-            {
-                SetUI();
-
-            }
+            SetUI();
 
             CurrentButtonImageColorActive(true);
         }
     }
 
     void SetUI()
-    {      
+    {
+        string choiceId = choiceBtnItemList[currentIndex].GetChoiceData().ChoiceId;
 
-        ChoiceData choiceData = choiceBtnItemList[currentIndex].GetChoiceData();
-
-        Debug.Log(choiceData.ChoiceId);
-
-
-        if (choiceData.ChoiceId.Equals("Rest")) //ChoiceId가 Rest이면 - 액셀 참고
+        foreach (var handler in handlers)
         {
-            Mode = UIMode.Rest;
-
-            EventBus.Publish(UIManager.OnInGameUI, false);
-
-            EventBus.Publish(UIManager.OnRestQuestions, true);      
-        }
-        else if (choiceData.ChoiceId.Equals("Study"))
-        {
-            Mode = UIMode.FixedStudy;
-
-            EventBus.Publish(UIManager.OnRestQuestions, false);
-
-            DailyRoutine currentDailyRoutine = DailyRoutineManager.Instance.DailyRoutine;
-
-            if (currentDailyRoutine == DailyRoutine.Room) { return; }
-            if (currentDailyRoutine == DailyRoutine.GotoSchool) { return; }
-            if (currentDailyRoutine == DailyRoutine.ArriveSchool_Breakfast) { return; }
-
-            Mode = UIMode.Study;
-
-            EventBus.Publish(UIManager.OnInGameUI, true);
-
-        }
-        else if(choiceData.ChoiceId.Equals("Stroy"))
-        {
-            Mode = UIMode.None;
-        }
-        else
-        {
-            Mode = UIMode.None;
-
-            EventBus.Publish(UIManager.OnInGameUI, false);
-
-            EventBus.Publish(UIManager.OnRestQuestions, false);
+            if (handler.CanHandle(choiceId))
+            {
+                handler.Handle(this);
+                break;
+            }
         }
     }
     /// <summary>
