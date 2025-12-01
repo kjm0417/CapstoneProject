@@ -84,7 +84,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
         currentDay = date.Day;
         DailyRoutine = DailyRoutine.Room;
 
-        EventBus.Publish(TileMapSaveLoad.OnTileMapChange, currentDay, DailyRoutine);
+        EventBus.Publish(CameraMapLoader.OnTileMapChange, currentDay, DailyRoutine);
 
         EventBus.Publish(UIManager.OnInGameUI, false);
     }
@@ -119,7 +119,7 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
                 break;
         }
 
-        EventBus.Publish(TileMapSaveLoad.OnTileMapChange, currentDay, DailyRoutine);
+        EventBus.Publish(CameraMapLoader.OnTileMapChange, currentDay, DailyRoutine);
 
         //EventBus.Publish(RestUIManager.OnStudyRestTimeculated);
 

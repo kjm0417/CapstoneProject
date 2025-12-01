@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour, IPausable
         if (_playerRb == null) _playerRb = GetComponent<Rigidbody2D>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
+       
         // 초기엔 PlayerState가 없을 수 있으므로 PlayerData 먼저 적용 시도
         ApplyData(initialData);
         
@@ -89,6 +89,7 @@ public class PlayerController : MonoBehaviour, IPausable
     private void OnEnable()
     {
         EventBus.Subscribe<IPlayerStateReadOnly>(EventNames.ActiveCharacterChanged, HandleStateChanged);
+        EventBus.Subscribe<bool>(EventNames.OnPlayerNotInput, SetMovementEnabled);
     }
 
     /// <summary>
@@ -97,6 +98,7 @@ public class PlayerController : MonoBehaviour, IPausable
     private void OnDisable()
     {
         EventBus.UnSubscribe<IPlayerStateReadOnly>(EventNames.ActiveCharacterChanged, HandleStateChanged);
+        EventBus.UnSubscribe<bool>(EventNames.OnPlayerNotInput, SetMovementEnabled);
     }
 
     /// <summary>
@@ -307,11 +309,14 @@ public class PlayerController : MonoBehaviour, IPausable
     /// </summary>
     public void SetMovementEnabled(bool enabled) => _canMove = enabled;
 
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Door_Interact"))
         {
-            InteractObject objectInfo = collision.GetComponent<InteractObject>();
+            SetMovementEnabled(false);
+
+             InteractObject objectInfo = collision.GetComponent<InteractObject>();
 
             EventBus.Publish(StoryTriggerManager.OnPlayerCollided, objectInfo);
         }

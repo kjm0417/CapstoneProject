@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DailyStudySelectButton : DailySelectButtonManager
+public class DailyStudySelectButton : DailySelectButtonManager , IChoiceHandler
 {
     protected override void OnEnable()
     {
@@ -17,6 +17,19 @@ public class DailyStudySelectButton : DailySelectButtonManager
         EventBus.UnSubscribe<UIMode>(OnUIModeChanged, HandleUIModeChanged);
         EventBus.UnSubscribe<bool>(UIManager.OnInGameUI, OnInGameUIActive);
     }
+
+    public bool CanHandle(string choiceId)
+    {
+        return choiceId == "Study";
+    }
+
+    public void Handle(DailySelectButtonManager manager)
+    {
+        manager.Mode = UIMode.Study;
+
+        EventBus.Publish(UIManager.OnRestQuestions, true);
+    }
+
 
     private bool isSyncingMode = false;
     [SerializeField]

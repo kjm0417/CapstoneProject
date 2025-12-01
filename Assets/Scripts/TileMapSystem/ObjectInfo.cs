@@ -3,11 +3,11 @@ using UnityEngine;
 [SerializeField]
 public class ObjectInfo
 {
-    public int x;
-    public int y;
+    public float x;
+    public float y;
     public int id;
 
-    public ObjectInfo(int x, int y, int id)
+    public ObjectInfo(float x, float y, int id)
     {
         this.x = x;
         this.y = y;

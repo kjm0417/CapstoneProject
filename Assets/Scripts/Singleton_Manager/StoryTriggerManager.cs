@@ -97,7 +97,9 @@ public class StoryTriggerManager : SingleTonGeneric<StoryTriggerManager> //Ω∫≈‰∏
                     choices.Add(new ChoiceData
                     {
                         Text = selectDialogue.InteractSelectDialouge,
-                        ChoiceId = selectDialogue.ChoiceId
+                        ChoiceId = selectDialogue.ChoiceId,
+                        EffectId = selectDialogue.EffectId,
+                        NextPattern = selectDialogue.NextPattern
                     });
                 }
             }
