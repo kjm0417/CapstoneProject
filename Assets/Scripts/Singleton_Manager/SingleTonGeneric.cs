@@ -24,8 +24,6 @@ public class SingleTonGeneric<T> : MonoBehaviour where T : Component // ex) publ
 
     public static void Init()
     {
-        Debug.Log((typeof(T).Name) + "초기화 완료");
-
         if (instance == null)
         {
             instance = FindFirstObjectByType<T>();

@@ -109,10 +109,7 @@ public class EffectManager : MonoBehaviour //연출 매니저.
         {
             FadeInOutManager.Instance.FadeOutAndLoad(() => //암전
             {
-
                 EventBus.Publish(DailyRoutineManager.OnDailyChanged, choiceData.NextPattern);
-
-                EventBus.Publish(EventNames.OnPlayerNotInput, true); //플레이어 이동 제한 해제
 
                 FadeInOutManager.Instance.FadeInLoad(); //암전 해제
             });

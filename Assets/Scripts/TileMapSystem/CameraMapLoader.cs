@@ -5,18 +5,22 @@ public class CameraMapLoader : MonoBehaviour
 {
     public static string OnTileMapChange = "OnTileMapChange";
 
+    private bool isInfiniteMapMode = false;
+
     [Header("Camera")]
     [SerializeField] private Transform cameraTransform; //카메라
-
-
+    [SerializeField] private Transform playerCameraPos; //카메라 위치 설정
     [Header("Chunk Settings")]
-    [SerializeField] private float chunkWidth = 50f;   // 청크 가로 크기
-    [SerializeField] private float chunkHeight = 50f;  // 청크 세로 크기
-    [SerializeField] private int maxChunksX = 8;  // 가로 최대 개수
+    [SerializeField] private float chunkWidth = 26f;   // 청크 가로 크기
+    [SerializeField] private float chunkHeight = 18f;  // 청크 세로 크기
+    [SerializeField] private int maxChunksX = 11;  // 가로 최대 개수
     [SerializeField] private int maxChunksY = 3;  // 세로 최대 개수
-    private int maxChunks => maxChunksX * maxChunksY; // 총 24개
+
     [Header("References")]
     [SerializeField] private TileMapSaveLoad tileMapSaveLoad;
+
+    [Header("Start Settings")]
+    [SerializeField] private int startChunkIndex = 0; //시작 청크 선택 (0~23)
 
     private Vector2Int currentChunk;     // 현재 청크 좌표
 
@@ -25,14 +29,15 @@ public class CameraMapLoader : MonoBehaviour
 
     private Vector2Int previousChunk; // 이전 청크 좌표
 
-    // 로드된 청크 추적 (로드 순서 유지)
-    private Queue<Vector2Int> loadedChunksQueue = new Queue<Vector2Int>();
+    [SerializeField]
     private HashSet<Vector2Int> loadedChunksSet = new HashSet<Vector2Int>();
 
-    // 각 줄(y좌표)별 로드된 청크 개수 추적
-    private Dictionary<int, int> chunksPerRow = new Dictionary<int, int>();
 
-    private Dictionary<int, int> rowStartX = new Dictionary<int, int>();
+    [Header("Load Settings")]
+    [SerializeField] private float loadDistance = 40f;  // 로드 거리 조절 변수
+
+    [SerializeField]
+    bool isCameraInit = true; //청크 로드할 때 최초 1회 카메라 설정 bool 변수
 
     private void OnEnable()
     {
@@ -44,127 +49,172 @@ public class CameraMapLoader : MonoBehaviour
         EventBus.UnSubscribe<int, DailyRoutine>(OnTileMapChange, SetDayRoutine);
     }
 
-    private bool isInfiniteMapMode = false;
     public void SetDayRoutine(int day, DailyRoutine routine)
     {
         currentDay = day;
         currentRoutine = routine;
 
-        if (currentRoutine == DailyRoutine.ArriveSchool_Breakfast)
+        if (currentRoutine == DailyRoutine.ArriveSchool_Breakfast || currentRoutine == DailyRoutine.ArriveSchool_Morning)
         {
+            if (isCameraInit)
+            {
+                cameraTransform.transform.position = playerCameraPos.transform.position;
+
+                isCameraInit = false;
+            }
+
             isInfiniteMapMode = true;
-
-            //청크 정보만 초기화 (맵은 그대로)
-            loadedChunksQueue.Clear();
             loadedChunksSet.Clear();
-            chunksPerRow.Clear(); // 줄별 카운트 초기화
-            rowStartX.Clear(); // 
 
-            UpdateCurrentChunk(); //이 메서드에서 currentChunk 계산
+            tileMapSaveLoad.LoadToColliderStair(currentDay, currentRoutine); //복도 로드
 
-            previousChunk = currentChunk; //이전 청크에 currentChunk 저장
+            Vector2Int startChunkCoord = GetChunkCoordFromIndex(startChunkIndex);
 
-            LoadChunk(currentChunk); //여기에서 실제 맵 로드 진행하는 코드 있음
+            currentChunk = startChunkCoord;
+            previousChunk = currentChunk;
+
+            LoadChunk(currentChunk);
         }
         else
         {
 
             isInfiniteMapMode = false;
 
-            //청크 정보만 초기화 (맵은 그대로)
-            loadedChunksQueue.Clear();
             loadedChunksSet.Clear();
-            chunksPerRow.Clear();
-            rowStartX.Clear();
 
-            tileMapSaveLoad.Load(currentDay, currentRoutine,Vector2.zero );
+            tileMapSaveLoad.Load(currentDay, currentRoutine);
         }
     }
 
     private void Update()
     {
-        if(isInfiniteMapMode)
+        if (isInfiniteMapMode && !isCameraInit)
         {
-            Vector2Int newChunk = GetCurrentChunk(); //카메라 위치 확인하여 newChunk 계산
+            Vector2Int newChunk = GetCurrentChunk();
 
-            // 청크가 변경되었으면 맵 로드
             if (newChunk != previousChunk)
             {
-                LoadChunk(newChunk);
-
-                previousChunk = newChunk;
                 currentChunk = newChunk;
+                previousChunk = currentChunk;
+            }
+
+            Vector2Int[] neighbors = new Vector2Int[]
+            {
+            currentChunk,
+            currentChunk + Vector2Int.up,
+            currentChunk + Vector2Int.down,
+            currentChunk + Vector2Int.left,
+            currentChunk + Vector2Int.right,
+            };
+
+            foreach (var chunk in neighbors)
+            {
+                int idx = GetChunkIndex(chunk);
+                Vector3 center = GetChunkCenter(idx);
+
+                float dist = Vector2.Distance(cameraTransform.position, center);
+
+                if (dist <= loadDistance)
+                {
+                    LoadChunk(chunk);
+                }
             }
         }
-      
-    }
-    private void UpdateCurrentChunk()
-    {
-        currentChunk = GetCurrentChunk();
 
-        Debug.Log($"현재 청크: {currentChunk}");
     }
 
     private Vector2Int GetCurrentChunk()
     {
-        int chunkX = Mathf.FloorToInt(cameraTransform.position.x / chunkWidth);
-        int chunkY = Mathf.FloorToInt(cameraTransform.position.y / chunkHeight);
+       
+        Vector2 cameraPos = new Vector2(cameraTransform.position.x, cameraTransform.position.y);
 
-        return new Vector2Int(chunkX, chunkY);
+        // ? 모든 청크를 순회하며 가장 가까운 청크 찾기
+        int closestChunkX = 0;
+        int closestChunkY = 0;
+        float minDistance = float.MaxValue;
+
+        for (int y = 0; y < maxChunksY; y++)
+        {
+            for (int x = 0; x < maxChunksX; x++)
+            {
+                Vector2Int chunkCoord = new Vector2Int(x, y);
+                int chunkIndex = GetChunkIndex(chunkCoord);
+
+                // 청크 중심 좌표 가져오기 (캐시 또는 JSON에서)
+                Vector3 chunkCenter = GetChunkCenter(chunkIndex);
+
+                float distance = Vector2.Distance(cameraPos, chunkCenter);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestChunkX = x;
+                    closestChunkY = y;
+                }
+            }
+        }
+
+        Vector2Int result = new Vector2Int(closestChunkX, closestChunkY);
+
+        return result;
     }
+
+
+    private Vector3 GetChunkCenter(int chunkIndex)
+    {
+        Vector2Int coord = GetChunkCoordFromIndex(chunkIndex);
+
+        float cx = coord.x * chunkWidth + chunkWidth * 0.5f;
+        float cy = coord.y * chunkHeight + chunkHeight * 0.5f;
+
+        return new Vector3(cx, cy, -10);
+    }
+
+
     private void LoadChunk(Vector2Int chunk)
     {
-        //int chunkIndex = Mathf.Abs(chunk.x) % maxChunks;
 
         int chunkIndex = GetChunkIndex(chunk);
+        // 청크 좌표가 범위 밖이면 바로 리턴
+        if (chunk.x < 0 || chunk.x >= maxChunksX ||
+            chunk.y < 0 || chunk.y >= maxChunksY)
+        {        
+            return;
+        }
 
+        // 이미 로드된 청크면 스킵
         if (loadedChunksSet.Contains(chunk))
         {
-            Debug.Log($"청크 {chunk}는 이미 로드됨 (스킵)");
             return;
         }
-        // 해당 줄(y)의 로드된 청크 개수 확인
-        int rowY = chunk.y;
-        if (!chunksPerRow.ContainsKey(rowY))
-        {
-            chunksPerRow[rowY] = 0;
-            rowStartX[rowY] = chunk.x;
-        }
 
-        // 해당 줄이 최대 개수 도달했는지 확인
-        if (chunksPerRow[rowY] >= maxChunksX)
-        {
-            Debug.Log($"줄 y={rowY}의 최대 청크 개수 도달 ({maxChunksX}개) - 추가 로드 중단");
-            return;
-        }
-        Debug.Log($"청크 {chunk} 로드 (현재 {loadedChunksQueue.Count}/{maxChunks})");
+        tileMapSaveLoad.LoadToChunk(currentDay, currentRoutine, chunkIndex);
 
-        //해당 줄의 시작점으로 부터 상대 위치 계싼
-        int relativeX = chunk.x - rowStartX[rowY];
-
-        Vector2 chunkOffset = new Vector2(
-            relativeX * chunkWidth,
-            chunk.y * chunkHeight
-        );
-
-        // 로드된 청크로 등록
-        loadedChunksQueue.Enqueue(chunk);
         loadedChunksSet.Add(chunk);
-        chunksPerRow[rowY]++;
 
-        //청크에 맵 로드 (이전 것 유지, 계속 누적)
-        tileMapSaveLoad.LoadToChunk(currentDay, currentRoutine, chunkOffset, chunkIndex);
+        Debug.Log($"청크 {chunk} (Chunk{chunkIndex}.json) 로드 완료");
+    }
+    // 청크 인덱스 -> 청크 좌표 변환
+    private Vector2Int GetChunkCoordFromIndex(int index)
+    {
+        int x = index % maxChunksX;       // X 증가 -> 오른쪽
+        int y = index / maxChunksX;       // Y 증가 -> 위쪽
+
+        return new Vector2Int(x, y);
     }
     private int GetChunkIndex(Vector2Int chunk)
     {
-        // x, y 좌표를 0~maxChunks 범위로 변환
-        int normalizedX = ((chunk.x % maxChunksX) + maxChunksX) % maxChunksX; // 0~7
-        int normalizedY = ((chunk.y % maxChunksY) + maxChunksY) % maxChunksY; // 0~2
-
-        // 2D → 1D 인덱스 변환
-        int index = normalizedY * maxChunksX + normalizedX;
-
-        return index;
+        return chunk.y * maxChunksX + chunk.x;
     }
+    //private int GetChunkIndex(Vector2Int chunk)
+    //{
+    //    int normalizedX = ((chunk.x % maxChunksX) + maxChunksX) % maxChunksX;
+    //    int normalizedY = ((chunk.y % maxChunksY) + maxChunksY) % maxChunksY;
+
+    //    int index = normalizedY * maxChunksX + normalizedX;
+
+    //    return index;
+    //}
+
 
 }

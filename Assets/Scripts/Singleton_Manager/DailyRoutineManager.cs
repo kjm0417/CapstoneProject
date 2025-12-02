@@ -121,8 +121,6 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
 
         EventBus.Publish(CameraMapLoader.OnTileMapChange, currentDay, DailyRoutine);
 
-        //EventBus.Publish(RestUIManager.OnStudyRestTimeculated);
-
         DailyPatternDialougeDataLoad(dailyRoutine);
     }
 
@@ -161,6 +159,9 @@ public class DailyRoutineManager : SingleTonGeneric<DailyRoutineManager> //일상 
             dialougeSystem.InitSelectDialouge(Array.Empty<DialogData>(), true, DialougeType.DailyRoutine);
             return;
         }
+
+
+        EventBus.Publish(EventNames.OnPlayerNotInput, false); //플레이어 행동 제한 이벤트 발행
 
         dialougeSystem.InitSelectDialouge(dialogDatas.ToArray(), true, DialougeType.DailyRoutine);
     }

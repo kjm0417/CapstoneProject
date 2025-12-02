@@ -329,7 +329,11 @@ public class PlayerController : MonoBehaviour, IPausable
     /// <summary>
     /// 외부에서 이동 가능/불가능을 설정합니다(컷신/대화 등).
     /// </summary>
-    public void SetMovementEnabled(bool enabled) => _canMove = enabled;
+    public void SetMovementEnabled(bool enabled)
+    {
+         _canMove = enabled;  //이동 제한
+        _isPaused = !enabled; //입력 제한
+    }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -340,7 +344,7 @@ public class PlayerController : MonoBehaviour, IPausable
 
              InteractObject objectInfo = collision.GetComponent<InteractObject>();
 
-            EventBus.Publish(StoryTriggerManager.OnPlayerCollided, objectInfo);
+             EventBus.Publish(StoryTriggerManager.OnPlayerCollided, objectInfo);
         }
     }
 

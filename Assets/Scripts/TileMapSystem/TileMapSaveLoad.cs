@@ -11,17 +11,16 @@ using static TileMapSaveLoad;
 
 public class TileMapSaveLoad : MonoBehaviour
 {
-   // public static string OnTileMapChange = "OnTileMapChange";
+    // public static string OnTileMapChange = "OnTileMapChange";
 
     [Header("Tile")]
     [SerializeField] private List<Tilemap> tilemaps;
-    [SerializeField] private TileDataBase database; 
+    [SerializeField] private TileDataBase database;
     [SerializeField] private string SaveFileName = "TilePattern_01";
     [Tooltip("SD")]
-    [SerializeField] private string LoadFileName  = "TilePattern_01";
+    [SerializeField] private string LoadFileName = "TilePattern_01";
 
     [Header("Objects")]
-    //[SerializeField] private Transform objectRoot;   // 여기 자식 오브젝트들을 저장
     [SerializeField] private ObjectDataBase objectDatabase;
     [SerializeField] private List<PatternRootMapping> patternMappings;
 
@@ -42,17 +41,6 @@ public class TileMapSaveLoad : MonoBehaviour
         }
     }
 
-    //private void OnEnable()
-    //{
-    //   EventBus.Subscribe<int,DailyRoutine>(OnTileMapChange, Load);
-    //}
-
-    //private void OnDisable()
-    //{
-    //   EventBus.UnSubscribe<int,DailyRoutine>(OnTileMapChange, Load);
-    //}
-
-
     public void Save()
     {
         TilePattern pattern = new TilePattern();
@@ -62,7 +50,17 @@ public class TileMapSaveLoad : MonoBehaviour
         string nameWithoutChunk = SaveFileName;
         int chunkIndex = -1;
 
-        if(SaveFileName.Contains("_Chunk"))
+        if (SaveFileName.Contains("_CorriderStair"))
+        {
+            int hallwayPos = SaveFileName.LastIndexOf("_CorriderStair");
+            nameWithoutChunk = SaveFileName.Substring(0, hallwayPos);
+
+            string hallwayPart = SaveFileName.Substring(hallwayPos + 13); // _CorriderStair -> 13글자 자르기
+            int.TryParse(hallwayPart, out chunkIndex);
+
+            Debug.Log($"복도 파일 감지 - Hallway Index: {chunkIndex}");
+        }
+        if (SaveFileName.Contains("_Chunk"))
         {
             int chunkPos = SaveFileName.LastIndexOf("_Chunk");
             nameWithoutChunk = SaveFileName.Substring(0, chunkPos);
@@ -70,7 +68,7 @@ public class TileMapSaveLoad : MonoBehaviour
             string chunkPart = SaveFileName.Substring(chunkPos + 6);
             int.TryParse(chunkPart, out chunkIndex);
         }
-        
+
         string[] parts = nameWithoutChunk.Split(new char[] { '_' }, 2);
 
 
@@ -110,10 +108,10 @@ public class TileMapSaveLoad : MonoBehaviour
     }
 
     //일반 로드 
-    public void Load(int Day, DailyRoutine routine, Vector2 offset)
+    public void Load(int Day, DailyRoutine routine)
     {
         string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
-        
+
         string filePath = Path.Combine(folderPath, $"{Day}_{routine}.json");
 
         if (!File.Exists(filePath))
@@ -127,17 +125,25 @@ public class TileMapSaveLoad : MonoBehaviour
 
         var patternMapping = new PatternRootMapping(Day, routine);
 
-        ClearTile(previousRoutine);
+        bool schoolRoutine = routine.ToString().Contains("ArriveSchool");
 
-        LoadTile(pattern, patternMapping, offset);
-        LoadObject(pattern, patternMapping, offset);
+        if (!schoolRoutine)
+        {
+            foreach (var map in tilemaps)
+            {
+                map.ClearAllTiles();
+            }
+        }
+
+        LoadTile(pattern, patternMapping);
+        LoadObject(pattern, patternMapping);
 
         previousDay = Day;
         previousRoutine = routine;
 
     }
     //청크 로드 
-    public void LoadToChunk(int Day, DailyRoutine routine, Vector2 offset, int chunkIndex)
+    public void LoadToChunk(int Day, DailyRoutine routine, int chunkIndex)
     {
         string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
         string fileName = $"{Day}_{routine}_Chunk{chunkIndex}.json";
@@ -145,7 +151,7 @@ public class TileMapSaveLoad : MonoBehaviour
 
         if (!File.Exists(filePath))
         {
-            Debug.LogError($"청크 파일을 찾을 수 없습니다: {filePath}");
+            Debug.LogWarning($"청크 파일을 찾을 수 없습니다: {filePath}");
             return;
         }
 
@@ -154,15 +160,46 @@ public class TileMapSaveLoad : MonoBehaviour
 
         var patternMapping = new PatternRootMapping(Day, routine);
 
-        ClearTile(patternMapping.routine);
-
         // 일반 Load 메서드 호출 (추적 없음)
-        LoadTile(pattern, patternMapping, offset);
-        LoadObject(pattern, patternMapping, offset);
 
-        Debug.Log($"청크 {chunkIndex}에 해당하는 맵 로드 완료");
+        foreach (var map in tilemaps)
+        {
+            if (map.name.Contains("ArriveSchool"))
+            {
+                break;
+            }
+            map.ClearAllTiles();
+        }
+
+        LoadTile(pattern, patternMapping);
+        LoadObject(pattern, patternMapping);
+
+
+        Debug.LogWarning($"청크 {chunkIndex} 로드 완료");
+
     }
 
+    //특수한 로드 - 복도와 계단 (교실 패턴 한정, 청크 X)
+    public void LoadToColliderStair(int Day, DailyRoutine routine)
+    {
+        string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
+        string fileName = $"{Day}_{routine}_CorriderStair.json";
+        string filePath = Path.Combine(folderPath, fileName);
+
+        if (!File.Exists(filePath))
+        {
+            Debug.LogWarning($"복도 파일을 찾을 수 없습니다: {filePath}");
+            return;
+        }
+
+        string json = File.ReadAllText(filePath);
+        TilePattern pattern = JsonConvert.DeserializeObject<TilePattern>(json);
+
+        var patternMapping = new PatternRootMapping(Day, routine);
+
+        LoadTile(pattern, patternMapping);
+
+    }
 
     private void SaveTile(TilePattern pattern)
     {
@@ -175,15 +212,21 @@ public class TileMapSaveLoad : MonoBehaviour
             int chunkPos = pattern.patternName.LastIndexOf("_Chunk");
             nameWithoutChunk = pattern.patternName.Substring(0, chunkPos);
         }
+        if (pattern.patternName.Contains("_CorriderStair"))
+        {
+            int chunkPos = pattern.patternName.LastIndexOf("_CorriderStair");
+            nameWithoutChunk = pattern.patternName.Substring(0, chunkPos);
+        }
 
         for (int i = 0; i < tilemaps.Count; i++)
         {
             Tilemap map = tilemaps[i];
 
-            //map.name = 1_ArriveSchool_Breakfast 
-            //pattern.patternName = 1_ArriveSchool_Breakfast_Chunk0
             if (map.name.Contains(nameWithoutChunk))
             {
+
+                Vector3 tilemapWorldPos = map.transform.position;
+
                 BoundsInt bounds = map.cellBounds;
                 TileBase[] allTiles = map.GetTilesBlock(bounds);
 
@@ -203,22 +246,21 @@ public class TileMapSaveLoad : MonoBehaviour
 
                         int id = database.GetTileId(tile);
 
-                        mapData.tiles.Add(new TileInfo(
-                            bounds.x + x,
-                            bounds.y + y,
-                            id
-                        ));
+                        int worldX = bounds.x + x + Mathf.RoundToInt(tilemapWorldPos.x);
+                        int worldY = bounds.y + y + Mathf.RoundToInt(tilemapWorldPos.y);
+
+                        mapData.tiles.Add(new TileInfo(worldX, worldY, id));
 
                     }
                 }
 
                 pattern.tileMapDatas.Add(mapData); // MapData 단위로 추가
             }
-     
+
         }
     }
 
-    private void SaveObject(TilePattern pattern,int day ,DailyRoutine routine)
+    private void SaveObject(TilePattern pattern, int day, DailyRoutine routine)
     {
         pattern.objects.Clear();
 
@@ -244,13 +286,11 @@ public class TileMapSaveLoad : MonoBehaviour
             pattern.objects.Add(new ObjectInfo(child.position.x, child.position.y, id));
         }
 
-        Debug.Log($"세이브 완료: {pattern.objects.Count}개");
+        Debug.Log($"오브젝트 세이브 완료: {pattern.objects.Count}개");
     }
 
-    private void LoadTile(TilePattern pattern, PatternRootMapping patternRootMapping,Vector2 offset)
+    private void LoadTile(TilePattern pattern, PatternRootMapping patternRootMapping)
     {
-             
-
         for (int i = 0; i < tilemaps.Count; i++)
         {
             Tilemap map = tilemaps[i];
@@ -259,7 +299,7 @@ public class TileMapSaveLoad : MonoBehaviour
             {
                 if (map.name == mapData.mapName)
                 {
-                    
+
                     foreach (var tileInfo in mapData.tiles)
                     {
                         TileBase tile = database.GetTile(tileInfo.id);
@@ -267,15 +307,18 @@ public class TileMapSaveLoad : MonoBehaviour
                         if (tile != null)
                         {
                             // 오프셋 적용
-                            int newX = tileInfo.x + Mathf.RoundToInt(offset.x);
-                            int newY = tileInfo.y + Mathf.RoundToInt(offset.y);
+                            int newX = tileInfo.x;
+                            int newY = tileInfo.y;
 
                             Vector3Int tilePos = new Vector3Int(newX, newY, 0);
                             map.SetTile(tilePos, tile);
 
+                            //오프셋 적용 X
+                            //Vector3Int tilePos = new Vector3Int(tileInfo.x, tileInfo.y, 0);
+                            //map.SetTile(tilePos, tile);
                         }
 
-                       
+
                     }
 
                     break; // 매칭되는 mapData 적용 후 종료
@@ -285,7 +328,7 @@ public class TileMapSaveLoad : MonoBehaviour
     }
 
 
-    private void LoadObject(TilePattern pattern, PatternRootMapping patternRootMapping,Vector2 offset)
+    private void LoadObject(TilePattern pattern, PatternRootMapping patternRootMapping)
     {
         //1. 매핑에서 해당하는 이전 매핑 찾고 모두 삭제
 
@@ -305,8 +348,6 @@ public class TileMapSaveLoad : MonoBehaviour
             return;
         }
 
-        Debug.Log($"로드 대상: {targetRoot.name} (Day {patternRootMapping.day}, Routine {patternRootMapping.routine})");
-
         //3. 실제 로드는 여기에서 
         foreach (var o in pattern.objects)
         {
@@ -314,27 +355,16 @@ public class TileMapSaveLoad : MonoBehaviour
 
             if (prefab != null)
             {
-                Vector3 pos = new Vector3(o.x + offset.x, o.y + offset.y, 0);
+                //오프셋 적용 
+                // Vector3 pos = new Vector3(o.x + offset.x, o.y + offset.y, 0);
+
+                //오프셋 적용 X
+                Vector3 pos = new Vector3(o.x, o.y, 0);
                 Instantiate(prefab, pos, Quaternion.identity, targetRoot);
             }
             else
             {
                 Debug.LogWarning($"Prefab ID {o.id}를 찾을 수 없음");
-            }
-        }
-    }
-
-    /// <summary>
-    /// 다음 패턴 로드 전에 이전 패턴의 타일들 전부 삭제
-    /// </summary>
-    /// <param name="previousRoutine"></param>
-    private void ClearTile(DailyRoutine previousRoutine)
-    {
-        if (previousRoutine != DailyRoutine.ArriveSchool_Breakfast)
-        {
-            foreach (var map in tilemaps)
-            {
-                map.ClearAllTiles();
             }
         }
     }
@@ -351,15 +381,4 @@ public class TileMapSaveLoad : MonoBehaviour
         return null;
     }
 
-    private PatternRootMapping GetPatternMapping(int day, DailyRoutine routine)
-    {
-        foreach (var mapping in patternMappings)
-        {
-            if (mapping.day == day && mapping.routine == routine)
-            {
-                return mapping;
-            }
-        }
-        return null;
-    }
 }

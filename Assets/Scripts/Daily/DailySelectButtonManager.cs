@@ -431,15 +431,46 @@ public class DailySelectButtonManager : MonoBehaviour
 
     void SetUI()
     {
-        string choiceId = choiceBtnItemList[currentIndex].GetChoiceData().ChoiceId;
+        ChoiceData choiceData = choiceBtnItemList[currentIndex].GetChoiceData();
 
-        foreach (var handler in handlers)
+        Debug.Log(choiceData.ChoiceId);
+
+
+        if (choiceData.ChoiceId.Equals("Rest")) 
         {
-            if (handler.CanHandle(choiceId))
-            {
-                handler.Handle(this);
-                break;
-            }
+            Mode = UIMode.Rest;
+
+            EventBus.Publish(UIManager.OnInGameUI, false);
+
+            EventBus.Publish(UIManager.OnRestQuestions, true);
+        }
+        else if (choiceData.ChoiceId.Contains("Study"))
+        {
+            Mode = UIMode.FixedStudy;
+
+            EventBus.Publish(UIManager.OnRestQuestions, false);
+
+            DailyRoutine currentDailyRoutine = DailyRoutineManager.Instance.DailyRoutine;
+
+            if (currentDailyRoutine == DailyRoutine.Room) { return; }
+            if (currentDailyRoutine == DailyRoutine.GotoSchool) { return; }
+            if (currentDailyRoutine == DailyRoutine.ArriveSchool_Breakfast) { return; }
+
+            Mode = UIMode.Study;
+
+            EventBus.Publish(UIManager.OnInGameUI, true);
+        }
+        else if (choiceData.ChoiceId.Equals("Stroy"))
+        {
+            Mode = UIMode.None;
+        }
+        else 
+        {
+            Mode = UIMode.None;
+
+            EventBus.Publish(UIManager.OnInGameUI, false);
+
+            EventBus.Publish(UIManager.OnRestQuestions, false);
         }
     }
     /// <summary>
