@@ -75,6 +75,12 @@ public class EffectManager : MonoBehaviour //연출 매니저.
 
     private IEnumerator StartEffect(ChoiceData choiceData,bool isNext) //연출 진행 -> 연출 끝 -> 암전
     {
+        if(choiceData.ChoiceId == "StoryNo")
+        {
+            Debug.Log("대사를 통해 스토리를 진행 하지 않음 / 플레이어 자유");
+            EventBus.Publish(EventNames.OnPlayerNotInput, true); //플레이어 이동 제한 해제
+            yield break;
+        }
         Debug.Log($"{choiceData.EffectId}에 맞는 연출 진행 중");
         yield return new WaitForSeconds(3.0f);
         Debug.Log($"{choiceData.EffectId}에 맞는 연출 끝");
@@ -98,6 +104,15 @@ public class EffectManager : MonoBehaviour //연출 매니저.
         else if (choiceData.ChoiceId.Equals("Study"))
         {
            
+        }
+        else if(choiceData.ChoiceId.Equals("StoryYes"))
+        {
+            FadeInOutManager.Instance.FadeOutAndLoad(() => //암전
+            {
+                EventBus.Publish(DailyRoutineManager.OnDailyChanged, choiceData.NextPattern);
+
+                FadeInOutManager.Instance.FadeInLoad(); //암전 해제
+            });
         }
         else
         {
