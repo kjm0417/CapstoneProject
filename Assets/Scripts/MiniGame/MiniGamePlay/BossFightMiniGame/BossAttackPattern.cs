@@ -56,8 +56,12 @@ public class BossAttackPattern
     [Tooltip("일직선 이동 방향 (0=오른쪽, 90=위, 180=왼쪽, 270=아래)")]
     public float lineAngle = 0f;
 
-    [Tooltip("화면 가장자리에서 시작")]
+    [Tooltip("화면 가장자리에서 시작 (false면 보스 위치에서 시작)")]
     public bool startFromEdge = true;
+
+    [Header("Spawn Position")]
+    [Tooltip("보스 위치에서 생성 (Projectile, StraightLine 등에 적용)")]
+    public bool spawnFromBoss = false;
 
     [Header("Circular/Spiral Settings")]
     [Tooltip("원형/나선 패턴 발사 개수")]

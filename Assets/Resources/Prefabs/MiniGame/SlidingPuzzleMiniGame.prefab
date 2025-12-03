@@ -166,27 +166,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: SlidingPuzzleMiniGame
+  _encounterType: 0
   _duration: 120
   _successReward: []
   _failReward: []
   _perfectClearReward: []
   puzzleGrid: {fileID: 6507910520884426421}
   tileSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 6219594780823573204, guid: 367df83779aa58548b7635155fcbb107, type: 3}
+  - {fileID: -4134334866213031614, guid: 2c747108ec8efe743a5bc3e0beb5ca28, type: 3}
+  - {fileID: -4226450719187702446, guid: 2c3310287e1d5854aa794b9c5b71acc8, type: 3}
+  - {fileID: 2843521521827358787, guid: ef060281bffd7624ea473c8d47455cff, type: 3}
+  - {fileID: -5234156130297284441, guid: 13ddc49521ad0f8438ab12773f217086, type: 3}
+  - {fileID: 2662887234931697556, guid: db823279ba85d74468d2058f4aff7f50, type: 3}
+  - {fileID: 6332306924214809383, guid: 030cdae46e7242a4cbb4bbcf78e46b46, type: 3}
+  - {fileID: -4762377746034286129, guid: 36527377443448e4597bf445a91b6aae, type: 3}
+  - {fileID: -3262059810637913344, guid: 2032a2bf8022a124c9e9fae229752eda, type: 3}
+  - {fileID: 588371479278415938, guid: 9f0d8b5154437164d95e1dda404b099f, type: 3}
+  - {fileID: -8339826075587446086, guid: cb4161915c7515d40be469583e9d4470, type: 3}
+  - {fileID: 5504561572341040377, guid: 4e4f67ee9d8c1fc49bf9c2984f2486d6, type: 3}
+  - {fileID: -4205213401559110527, guid: a5c135744590fdd4693653a42546c054, type: 3}
+  - {fileID: 235935341117192294, guid: 749b0b6c978ffb849baf1c00b2ce2c84, type: 3}
+  - {fileID: 5645079726641591640, guid: 56ead595b51cf0040965364b70644dec, type: 3}
   gridSize: 4
   shuffleMoves: 50
-  emptyTileColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.3}
+  useNumberMode: 0
+  emptyTileColor: {r: 0.2216981, g: 0.8867924, b: 0.7351616, a: 0.3}
+  tileColor: {r: 1, g: 1, b: 1, a: 1}
+  fontSize: 24

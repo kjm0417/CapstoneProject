@@ -140,11 +140,8 @@ public class BossAttackObject : MonoBehaviour
         // 플레이어와 충돌 체크
         if (collision.CompareTag("Player"))
         {
-            if (bossGame != null)
-            {
-                bossGame.OnPlayerHit(timePenalty, failsPerfectClear);
-            }
-            Destroy(gameObject);
+            // TODO: 충돌 시 처리 로직 추가 예정
+            // 예: 이펙트, 사운드, 애니메이션 등
         }
     }
 

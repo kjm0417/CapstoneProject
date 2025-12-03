@@ -4,54 +4,57 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ¹Ì´Ï°ÔÀÓµéÀ» ID·Î µî·Ï/°ü¸®ÇÏ°í, EventBus¸¦ ÅëÇØ ½ÇÇà/Áß´ÜÀ» ÁöÈÖÇÏ´Â ¸Å´ÏÀú
-/// - µî·ÏµÈ ID·Î ÇÁ¸®ÆÕÀ» Ã£¾Æ ÀÎ½ºÅÏ½ºÈ­ ¡æ Runner¿¡ ÁÖÀÔ ¡æ Popup ¾Ö´Ï¸ŞÀÌ¼Ç ¿Ï·á ÈÄ ½ÃÀÛ
-/// - ¿Ï·á/Áß´Ü ½Ã ÀÎ½ºÅÏ½º Á¤¸®
-/// - ÀÌº¥Æ®:
-///   * ½ÃÀÛ: EventBus.Publish<string>("MiniGame.StartById", gameId)
-///   * Áß´Ü: EventBus.Publish("MiniGame.Abort")
+/// ï¿½Ì´Ï°ï¿½ï¿½Óµï¿½ï¿½ï¿½ IDï¿½ï¿½ ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, EventBusï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½ß´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Å´ï¿½ï¿½ï¿½
+/// - ï¿½ï¿½Ïµï¿½ IDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½È­ ï¿½ï¿½ Runnerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Popup ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+/// - ï¿½Ï·ï¿½/ï¿½ß´ï¿½ ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
+/// - ï¿½Ìºï¿½Æ®:
+///   * ï¿½ï¿½ï¿½ï¿½: EventBus.Publish<string>("MiniGame.StartById", gameId)
+///   * ï¿½ß´ï¿½: EventBus.Publish("MiniGame.Abort")
 /// </summary>
 public class MiniGameManager : SingleTonGeneric<MiniGameManager>
 {
     [Serializable]
     public class MiniGameEntry
     {
-        [Tooltip("IMiniGame.Id ¿Í µ¿ÀÏÇØ¾ß ÇÔ")]
+        [Tooltip("IMiniGame.Id ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½ï¿½")]
         public string id;
 
 
-        [Tooltip("ÇØ´ç ¹Ì´Ï°ÔÀÓ ÇÁ¸®ÆÕ(·çÆ®¿¡ IMiniGame ±¸Çö ÄÄÆ÷³ÍÆ®°¡ ÀÖ¾î¾ß ÇÔ)")]
+        [Tooltip("ï¿½Ø´ï¿½ ï¿½Ì´Ï°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Æ®ï¿½ï¿½ IMiniGame ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½)")]
         public GameObject prefab;
     }
 
 
     [Header("Registry")]
-    [Tooltip("ÇÁ·ÎÁ§Æ® ³» ¹Ì´Ï°ÔÀÓ ÇÁ¸®ÆÕ µî·Ï Å×ÀÌºí")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ì´Ï°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½")]
     public List<MiniGameEntry> games = new List<MiniGameEntry>();
 
     [Header("Runtime Parents")]
-    [Tooltip("¹Ì´Ï°ÔÀÓÀ» ´ãÀ» ºÎ¸ğ(°ËÀº ÆĞ³Î RectMask2D ¾Æ·¡ÀÇ gameRoot µî)")]
+    [Tooltip("ì¼ë°˜ ë¯¸ë‹ˆê²Œì„ìš© ë¶€ëª¨ (MiniGame íƒ€ì…)")]
     public RectTransform miniGameParent;
 
+    [Tooltip("ë³´ìŠ¤ì „ìš© ë¶€ëª¨ (BossFight íƒ€ì…)")]
+    public RectTransform bossGameParent;
+
     [Header("Runner / Popup")]
-    [Tooltip("ÆË¾÷ ¾Ö´Ï¸ŞÀÌÅÍ¿Í UpdateGame Æ½À» ´ã´çÇÏ´Â ½ÇÇà±â")]
+    [Tooltip("ï¿½Ë¾ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ UpdateGame Æ½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public MiniGamePopupRunner runner;
 
-    [Tooltip("±âº» unscaledTime »ç¿ë ¿©ºÎ(·¯³Ê¿¡µµ ¹İ¿µ)")]
+    [Tooltip("ï¿½âº» unscaledTime ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½İ¿ï¿½)")]
     public bool useUnscaledTime = true;
 
-    // ³»ºÎ »óÅÂ
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private readonly Dictionary<string, GameObject> _prefabById = new Dictionary<string, GameObject>();
     private GameObject _currentInstance;
     private IMiniGame _currentGame;
 
     /// <summary>
-    /// ·¹Áö½ºÆ®¸® ¸Ê ±¸¼º ¹× EventBus ±¸µ¶
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ EventBus ï¿½ï¿½ï¿½ï¿½
     /// </summary>
-    //Todo : Awake -> Start º¯°æ °í·Á, EventBus ±¸µ¶ 
+    //Todo : Awake -> Start ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, EventBus ï¿½ï¿½ï¿½ï¿½ 
     private void Awake()
     {
-        // Å×ÀÌºí -> ¸Ê
+        // ï¿½ï¿½ï¿½Ìºï¿½ -> ï¿½ï¿½
         _prefabById.Clear();
         foreach (var e in games)
         {
@@ -62,13 +65,13 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
         if (runner == null) runner = GetComponentInChildren<MiniGamePopupRunner>();
         if (runner != null) runner.useUnscaledTime = useUnscaledTime;
 
-        // EventBus ±¸µ¶
+        // EventBus ï¿½ï¿½ï¿½ï¿½
         EventBus.Subscribe<string>("MiniGame.StartById", HandleStartById);
         EventBus.Subscribe("MiniGame.Abort", HandleAbort);
     }
 
     /// <summary>
-    /// ÆÄ±« ½Ã EventBus ±¸µ¶ ÇØÁ¦
+    /// ï¿½Ä±ï¿½ ï¿½ï¿½ EventBus ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private void OnDestroy()
     {
@@ -77,60 +80,86 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
     }
 
     /// <summary>
-    /// EventBus: Æ¯Á¤ IDÀÇ ¹Ì´Ï°ÔÀÓÀ» ½ÇÇà ¿äÃ» ¹Ş¾ÒÀ» ¶§ Ã³¸®
-    /// - ±âÁ¸ ÀÎ½ºÅÏ½º Á¤¸®
-    /// - ÇÁ¸®ÆÕ ½ºÆù ¹× IMiniGame È®ÀÎ
-    /// - Runner¿¡ ¿¬°á ÈÄ ShowAndStart()
+    /// EventBus: Æ¯ï¿½ï¿½ IDï¿½ï¿½ ï¿½Ì´Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½Ş¾ï¿½ï¿½ï¿½ ï¿½ï¿½ Ã³ï¿½ï¿½
+    /// - ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    /// - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ IMiniGame È®ï¿½ï¿½
+    /// - Runnerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ShowAndStart()
     /// </summary>
     private void HandleStartById(string gameId)
     {
         if (string.IsNullOrWhiteSpace(gameId))
         {
-            Debug.LogWarning("[MiniGameManager] ºó gameId ¿äÃ»");
+            Debug.LogWarning("[MiniGameManager] ï¿½ï¿½ gameId ï¿½ï¿½Ã»");
             return;
         }
 
         if (!_prefabById.TryGetValue(gameId, out var prefab) || prefab == null)
         {
-            Debug.LogWarning($"[MiniGameManager] µî·ÏµÇÁö ¾ÊÀº gameId: {gameId}");
+            Debug.LogWarning($"[MiniGameManager] ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ gameId: {gameId}");
             return;
         }
 
-        // ±âÁ¸ Á¤¸®
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         CleanupCurrent();
 
-        // »õ ÀÎ½ºÅÏ½º ½ºÆù
-       // var parent = miniGameParent != null ? miniGameParent : (runner != null ? (RectTransform)runner.transform : (RectTransform)transform);
-        _currentInstance = Instantiate(prefab, miniGameParent);
+        // í”„ë¦¬íŒ¹ì—ì„œ IMiniGame ì»´í¬ë„ŒíŠ¸ë¥¼ ë¨¼ì € ì°¾ì•„ì„œ íƒ€ì… í™•ì¸
+        var tempMb = prefab.GetComponent<MonoBehaviour>();
+        var tempGame = tempMb as IMiniGame;
+        if (tempGame == null)
+        {
+            tempGame = prefab.GetComponentInChildren<IMiniGame>(true);
+        }
+
+        if (tempGame == null)
+        {
+            Debug.LogError($"[MiniGameManager] í”„ë¦¬íŒ¹ '{gameId}' ì— IMiniGame ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        // ê²Œì„ íƒ€ì…ì— ë”°ë¼ ì ì ˆí•œ ë¶€ëª¨ ì„ íƒ
+        RectTransform targetParent = tempGame.EncounterType == GameEncounterType.BossFight 
+            ? bossGameParent 
+            : miniGameParent;
+
+        if (targetParent == null)
+        {
+            Debug.LogError($"[MiniGameManager] {tempGame.EncounterType} íƒ€ì…ì˜ ë¶€ëª¨ê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        // ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        _currentInstance = Instantiate(prefab, targetParent);
         var mb = _currentInstance.GetComponent<MonoBehaviour>();
         var game = mb as IMiniGame;
         if (game == null)
         {
-            // ·çÆ®¿¡ ¾øÀ¸¸é ÀÚ½Äµé Áß¿¡¼­ Ã£±â
+            // ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½Äµï¿½ ï¿½ß¿ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
             game = _currentInstance.GetComponentInChildren<IMiniGame>(true);
             mb = game as MonoBehaviour;
         }
 
         if (game == null)
         {
-            Debug.LogError($"[MiniGameManager] ÇÁ¸®ÆÕ '{gameId}' ¿¡ IMiniGame ±¸ÇöÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogError($"[MiniGameManager] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ '{gameId}' ï¿½ï¿½ IMiniGame ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             Destroy(_currentInstance);
             _currentInstance = null;
             return;
         }
 
-        // ID ¸ÅÄª °ËÁõ(¼±ÅÃ)
+        Debug.Log($"[MiniGameManager] '{gameId}' ({game.EncounterType}) ìƒì„± ì™„ë£Œ - ë¶€ëª¨: {targetParent.name}");
+
+        // ID ï¿½ï¿½Äª ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
         if (!string.IsNullOrEmpty(game.Id) && !string.Equals(game.Id, gameId, StringComparison.Ordinal))
         {
-            Debug.LogWarning($"[MiniGameManager] ¿äÃ» ID({gameId})¿Í ÄÄÆ÷³ÍÆ® Id({game.Id})°¡ ´Ù¸¨´Ï´Ù.");
+            Debug.LogWarning($"[MiniGameManager] ï¿½ï¿½Ã» ID({gameId})ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Id({game.Id})ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½Ï´ï¿½.");
         }
 
         _currentGame = game;
 
-        // Runner¿¡ ÁÖÀÔÇÏ°í Show -> Start
+        // Runnerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ Show -> Start
         if (runner == null)
         {
-            Debug.LogError("[MiniGameManager] runner ÂüÁ¶ ¾øÀ½");
+            Debug.LogError("[MiniGameManager] runner ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
@@ -139,16 +168,16 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
     }
 
     /// <summary>
-    /// EventBus: ¹Ì´Ï°ÔÀÓ °­Á¦ Áß´Ü Ã³¸®
+    /// EventBus: ï¿½Ì´Ï°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ Ã³ï¿½ï¿½
     /// </summary>
     private void HandleAbort()
     {
         if (runner != null) runner.Abort("EVENT_ABORT");
-        // ÀÎ½ºÅÏ½º´Â runner/°ÔÀÓ¿¡¼­ Á¤¸® ÈÅÀ» Å¸°Ô µÎ°í, ¿©±â¼± Áï½Ã ÆÄ±«ÇÏÁø ¾ÊÀ½.
+        // ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ runner/ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½Î°ï¿½, ï¿½ï¿½ï¿½â¼± ï¿½ï¿½ï¿½ ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
     }
 
     /// <summary>
-    /// ÇöÀç ÀÎ½ºÅÏ½º/ÂüÁ¶ Á¤¸®
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private void CleanupCurrent()
     {
@@ -161,8 +190,8 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
     }
 
     /// <summary>
-    /// ID ÇÏ³ª¿¡ ´ëÇÑ Duration Á¶È¸ (µî·ÏµÈ ÇÁ¸®ÆÕÀÇ ÄÄÆ÷³ÍÆ®¿¡¼­ ¹Ù·Î ÀĞÀ½).
-    /// - ¼º°ø ½Ã true/½ÇÆĞ ½Ã false
+    /// ID ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Duration ï¿½ï¿½È¸ (ï¿½ï¿½Ïµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½).
+    /// - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ true/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ false
     public bool TryGetDuration(string gameIdRaw, out float duration)
     {
         duration = 0f;
@@ -184,7 +213,7 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
     }
 
     /// <summary>
-    /// µî·ÏµÈ ¸ğµç ¹Ì´Ï°ÔÀÓÀÇ Duration Å×ÀÌºí(ID¡æDuration)À» ¸¸µç´Ù.
+    /// ï¿½ï¿½Ïµï¿½ ï¿½ï¿½ï¿½ ï¿½Ì´Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ Duration ï¿½ï¿½ï¿½Ìºï¿½(IDï¿½ï¿½Duration)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
     public IReadOnlyDictionary<string, float> GetAllDurations()
     {
         var map = new Dictionary<string, float>();
@@ -201,7 +230,7 @@ public class MiniGameManager : SingleTonGeneric<MiniGameManager>
             }
             else
             {
-                Debug.LogWarning($"[MiniGameManager] '{id}' ÇÁ¸®ÆÕ¿¡¼­ DurationÀ» Ã£Áö ¸øÇß½À´Ï´Ù. (IMiniGame/MiniGameBase È®ÀÎ ÇÊ¿ä)");
+                Debug.LogWarning($"[MiniGameManager] '{id}' ï¿½ï¿½ï¿½ï¿½ï¿½Õ¿ï¿½ï¿½ï¿½ Durationï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. (IMiniGame/MiniGameBase È®ï¿½ï¿½ ï¿½Ê¿ï¿½)");
             }
         }
         return map;

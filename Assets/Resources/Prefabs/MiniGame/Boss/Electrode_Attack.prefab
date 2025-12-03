@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 20083896886653745, guid: 41f08ac4ba70b5e40ae9154c24501dbb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -97,9 +97,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2713478968036415097}
   - component: {fileID: 8215239537737697794}
-  - component: {fileID: 3738088338827754898}
   - component: {fileID: 3346366029557122770}
   - component: {fileID: 5435690892839243833}
+  - component: {fileID: 3532070113740487525}
   m_Layer: 5
   m_Name: Electrode_Attack
   m_TagString: Untagged
@@ -150,23 +150,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3738088338827754898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3575032872421819993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ac22bbd37dc54249a701916e101fb94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chargeSpeed: 15
-  chargeDelay: 0.5
-  lifetime: 5
-  warningColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  chargeColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!61 &3346366029557122770
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -197,7 +180,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -225,7 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f4093e20418fe44bd295acc200b59c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patternType: 0
+  patternType: 5
   moveDirection: {x: 0, y: -1}
   moveSpeed: 5
   lifetime: 5
@@ -233,6 +216,33 @@ MonoBehaviour:
   failsPerfectClear: 1
   trackingSpeed: 3
   trackingDuration: 3
+--- !u!50 &3532070113740487525
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3575032872421819993}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &4826640422315571455
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +318,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: -214411693845368261, guid: 41a69eb8a8fccbb48b2c3d664b89e31f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

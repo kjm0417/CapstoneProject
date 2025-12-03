@@ -148,11 +148,33 @@ MonoBehaviour:
   _successReward: []
   _failReward: []
   _perfectClearReward: []
-  phases: []
+  phases:
+  - phaseName: Phase1
+    duration: 20
+    attackPatterns:
+    - patternType: 5
+      spawnInterval: 4
+      spawnCount: 1
+      attackPrefab: {fileID: 3575032872421819993, guid: b9e09b274e61c3d4c8f4f4dbe8365626, type: 3}
+      moveSpeed: 7
+      lifetime: 5
+      trackingSpeed: 0
+      trackingDuration: 0
+      lineAngle: 0
+      startFromEdge: 1
+      spawnFromBoss: 0
+      circularCount: 0
+      spiralRotationSpeed: 0
+      timePenalty: 0
+      failsPerfectClear: 0
+    phaseStartText: 
+    phaseColor: {r: 0, g: 0, b: 0, a: 0}
   attackSpawnParent: {fileID: 679722806397846459}
+  bossTransform: {fileID: 0}
   player: {fileID: 1308526803506238477}
   playerMoveSpeed: 10
   playArea: {fileID: 8301073666488207695}
+  edgeSpawnOffset: 300
   phaseText: {fileID: 0}
   backgroundImage: {fileID: 0}
 --- !u!1 &5447649982801089234
@@ -169,7 +191,7 @@ GameObject:
   - component: {fileID: 8795728335915511720}
   m_Layer: 5
   m_Name: Img_Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

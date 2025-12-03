@@ -12,11 +12,15 @@ public class BossFightMiniGame : MiniGameBase
     [Header("Boss Fight Settings")]
     [SerializeField] private BossPhase[] phases; // 페이즈 배열
     [SerializeField] private Transform attackSpawnParent; // 공격 오브젝트 부모
+    [SerializeField] private Transform bossTransform; // 보스 위치 (공격 생성 기준점)
 
     [Header("Player")]
     [SerializeField] private Transform player; // 플레이어 Transform
     [SerializeField] private float playerMoveSpeed = 10f; // 플레이어 이동 속도
     [SerializeField] private RectTransform playArea; // 플레이 영역 (이동 제한)
+
+    [Header("Spawn Settings")]
+    [SerializeField] private float edgeSpawnOffset = 300f; // 화면 가장자리 밖 생성 거리
 
     [Header("UI")]
     [SerializeField] private Text phaseText; // 페이즈 표시 텍스트
@@ -27,6 +31,7 @@ public class BossFightMiniGame : MiniGameBase
     private float phaseStartTime;
     private readonly Dictionary<BossAttackPattern, float> patternLastSpawnTime = new Dictionary<BossAttackPattern, float>();
     private readonly List<Coroutine> activeCoroutines = new List<Coroutine>();
+    private bool lastSpawnFromLeft = false; // 마지막 스폰이 왼쪽에서였는지 추적
 
     /// <summary>
     /// 게임 시작 시 초기화
@@ -232,7 +237,23 @@ public class BossFightMiniGame : MiniGameBase
         // 일반 패턴
         for (int i = 0; i < pattern.spawnCount; i++)
         {
-            Vector3 spawnPos = GetSpawnPosition(pattern.patternType, i, pattern.spawnCount);
+            Vector3 spawnPos;
+            
+            // StraightLine은 항상 화면 가장자리에서 생성 (spawnFromBoss 무시)
+            if (pattern.patternType == AttackPatternType.StraightLine)
+            {
+                spawnPos = GetSpawnPosition(pattern.patternType, i, pattern.spawnCount);
+            }
+            // 보스 위치에서 생성 옵션 (다른 패턴용)
+            else if (pattern.spawnFromBoss && bossTransform != null)
+            {
+                spawnPos = bossTransform.position;
+            }
+            else
+            {
+                spawnPos = GetSpawnPosition(pattern.patternType, i, pattern.spawnCount);
+            }
+            
             Vector2 direction = GetAttackDirection(pattern.patternType, spawnPos, pattern.lineAngle);
 
             GameObject attackObj = Instantiate(pattern.attackPrefab, spawnPos, Quaternion.identity, attackSpawnParent);
@@ -241,6 +262,17 @@ public class BossFightMiniGame : MiniGameBase
             if (attack == null)
             {
                 attack = attackObj.AddComponent<BossAttackObject>();
+            }
+
+            // StraightLine 패턴이고 왼쪽에서 생성되면 스프라이트 Flip
+            if (pattern.patternType == AttackPatternType.StraightLine && direction.x > 0)
+            {
+                // 왼쪽에서 오른쪽으로 가는 경우 (direction.x > 0)
+                SpriteRenderer[] sprites = attackObj.GetComponentsInChildren<SpriteRenderer>();
+                foreach (var sprite in sprites)
+                {
+                    sprite.flipX = true;
+                }
             }
 
             attack.Initialize(
@@ -339,49 +371,77 @@ public class BossFightMiniGame : MiniGameBase
             return Vector3.zero;
 
         Rect rect = playArea.rect;
+        Vector3 localPos = Vector3.zero;
 
         switch (patternType)
         {
             case AttackPatternType.Projectile:
                 // 위쪽에서 스폰
-                return new Vector3(Random.Range(rect.xMin, rect.xMax), rect.yMax + 50f, 0f);
+                localPos = new Vector3(Random.Range(rect.xMin, rect.xMax), rect.yMax + 50f, 0f);
+                break;
 
             case AttackPatternType.GroundAOE:
                 // 랜덤 위치
-                return new Vector3(Random.Range(rect.xMin, rect.xMax), Random.Range(rect.yMin, rect.yMax), 0f);
+                localPos = new Vector3(Random.Range(rect.xMin, rect.xMax), Random.Range(rect.yMin, rect.yMax), 0f);
+                break;
 
             case AttackPatternType.WavePattern:
                 // 좌우에서 스폰
                 bool fromLeft = Random.value > 0.5f;
                 float x = fromLeft ? rect.xMin - 50f : rect.xMax + 50f;
-                return new Vector3(x, Random.Range(rect.yMin, rect.yMax), 0f);
+                localPos = new Vector3(x, Random.Range(rect.yMin, rect.yMax), 0f);
+                break;
 
             case AttackPatternType.RandomSpawn:
                 // 완전 랜덤
-                return new Vector3(Random.Range(rect.xMin, rect.xMax), Random.Range(rect.yMin, rect.yMax), 0f);
+                localPos = new Vector3(Random.Range(rect.xMin, rect.xMax), Random.Range(rect.yMin, rect.yMax), 0f);
+                break;
 
             case AttackPatternType.TrackingHand:
                 // 화면 가장자리에서 랜덤 스폰
                 int edge = Random.Range(0, 4); // 0=위, 1=오른쪽, 2=아래, 3=왼쪽
                 switch (edge)
                 {
-                    case 0: return new Vector3(Random.Range(rect.xMin, rect.xMax), rect.yMax + 50f, 0f);
-                    case 1: return new Vector3(rect.xMax + 50f, Random.Range(rect.yMin, rect.yMax), 0f);
-                    case 2: return new Vector3(Random.Range(rect.xMin, rect.xMax), rect.yMin - 50f, 0f);
-                    case 3: return new Vector3(rect.xMin - 50f, Random.Range(rect.yMin, rect.yMax), 0f);
+                    case 0: localPos = new Vector3(Random.Range(rect.xMin, rect.xMax), rect.yMax + 50f, 0f); break;
+                    case 1: localPos = new Vector3(rect.xMax + 50f, Random.Range(rect.yMin, rect.yMax), 0f); break;
+                    case 2: localPos = new Vector3(Random.Range(rect.xMin, rect.xMax), rect.yMin - 50f, 0f); break;
+                    case 3: localPos = new Vector3(rect.xMin - 50f, Random.Range(rect.yMin, rect.yMax), 0f); break;
                 }
                 break;
 
             case AttackPatternType.StraightLine:
-                // 화면 가장자리에서 일정 간격으로 스폰
-                float spacing = rect.height / (totalCount + 1);
-                return new Vector3(rect.xMin - 50f, rect.yMin + spacing * (index + 1), 0f);
+                // 왼쪽/오른쪽 교대로 생성
+                bool spawnFromLeft = !lastSpawnFromLeft; // 이전과 반대편에서 생성
+                lastSpawnFromLeft = spawnFromLeft; // 다음을 위해 저장
+                
+                // 플레이어의 현재 Y 위치 (로컬 좌표)
+                float playerLocalY = 0f;
+                if (player != null && playArea != null)
+                {
+                    // 플레이어의 월드 좌표를 playArea 로컬 좌표로 변환
+                    Vector3 playerLocalPos = playArea.InverseTransformPoint(player.position);
+                    playerLocalY = playerLocalPos.y;
+                }
+                
+                if (spawnFromLeft)
+                {
+                    // 왼쪽에서 생성 (플레이어 Y 위치)
+                    localPos = new Vector3(rect.xMin - edgeSpawnOffset, playerLocalY, 0f);
+                }
+                else
+                {
+                    // 오른쪽에서 생성 (플레이어 Y 위치)
+                    localPos = new Vector3(rect.xMax + edgeSpawnOffset, playerLocalY, 0f);
+                }
+                break;
 
             default:
-                return Vector3.zero;
+                localPos = Vector3.zero;
+                break;
         }
 
-        return Vector3.zero;
+        // 로컬 좌표를 월드 좌표로 변환
+        return playArea.TransformPoint(localPos);
     }
 
     /// <summary>
@@ -392,7 +452,10 @@ public class BossFightMiniGame : MiniGameBase
         switch (patternType)
         {
             case AttackPatternType.Projectile:
-                return Vector2.down; // 아래로
+                // 플레이어 방향으로 (보스 무기가 플레이어를 향해 날아감)
+                if (player != null)
+                    return (player.position - spawnPos).normalized;
+                return Vector2.down;
 
             case AttackPatternType.GroundAOE:
                 return Vector2.zero; // 정지
@@ -414,9 +477,16 @@ public class BossFightMiniGame : MiniGameBase
                 return Vector2.down;
 
             case AttackPatternType.StraightLine:
-                // 지정된 각도로 이동
-                float rad = lineAngle * Mathf.Deg2Rad;
-                return new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
+                // 가로 방향으로만 이동 (왼쪽에서 생성되면 오른쪽으로, 오른쪽에서 생성되면 왼쪽으로)
+                if (playArea != null)
+                {
+                    Vector3 centerPos = playArea.position;
+                    // 스폰 위치가 중앙보다 왼쪽이면 오른쪽으로, 오른쪽이면 왼쪽으로
+                    return spawnPos.x < centerPos.x ? Vector2.right : Vector2.left;
+                }
+                
+                // 기본값: 오른쪽
+                return Vector2.right;
 
             default:
                 return Vector2.down;
