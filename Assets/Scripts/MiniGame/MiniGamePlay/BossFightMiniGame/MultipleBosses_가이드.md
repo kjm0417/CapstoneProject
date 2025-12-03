@@ -336,3 +336,228 @@ LaserBeam (Prefab)
 3. **패턴 조합**: 한 페이즈에 여러 Attack Pattern 추가 가능
 4. **점진적 난이도**: 초반 페이즈는 쉽게, 후반으로 갈수록 어렵게
 5. **테마 일관성**: 보스마다 고유한 색상과 공격 스타일 유지
+
+
+## X축 일자 돌진 패턴 (ChargeAttack)
+
+### 개요
+플레이어의 마지막 Y 위치를 기억하고, 그 높이로 화면 가장자리에서 일직선으로 돌진하는 패턴입니다.
+
+### 프리팹 만들기
+
+```
+ChargeAttack (Prefab)
+├─ RectTransform (크기: 100x50)
+├─ Image (돌진 이펙트 스프라이트)
+├─ Box Collider 2D (Is Trigger)
+│   └─ Size: 100x50
+└─ BossChargeAttack (Script)
+    ├─ Charge Speed: 15
+    ├─ Charge Delay: 0.5 (돌진 전 경고 시간)
+    ├─ Lifetime: 5
+    ├─ Warning Color: Yellow (경고 색상)
+    └─ Charge Color: Red (돌진 색상)
+```
+
+### 동작 방식
+
+1. **위치 결정**: 플레이어의 현재 Y 위치를 기억
+2. **경고 단계** (0.5초): 노란색으로 깜빡이며 경고
+3. **돌진 단계**: 빨간색으로 변하며 빠르게 돌진
+4. **충돌 판정**: 플레이어와 충돌 시 시간 감소
+
+### BossFightMiniGame에서 사용
+
+#### 방법 1: 수동 스폰 (코드 수정 필요)
+
+`BossFightMiniGame.cs`에 다음 메서드 추가:
+
+```csharp
+private void SpawnChargeAttack(bool fromLeft = true)
+{
+    if (chargeAttackPrefab == null || playArea == null) return;
+    
+    // 플레이어 Y 위치 가져오기
+    float playerY = player.anchoredPosition.y;
+    
+    // 돌진 공격 생성
+    GameObject attackObj = Instantiate(chargeAttackPrefab, playArea);
+    BossChargeAttack charge = attackObj.GetComponent<BossChargeAttack>();
+    
+    if (charge != null)
+    {
+        charge.Initialize(playerY, fromLeft);
+    }
+    
+    // 충돌 감지 설정
+    BossAttackObject attackComponent = attackObj.GetComponent<BossAttackObject>();
+    if (attackComponent != null)
+    {
+        attackComponent.timePenalty = 8f; // 맞으면 8초 감소
+    }
+}
+```
+
+#### 방법 2: 페이즈 패턴으로 사용 (간단)
+
+기존 `StraightLine` 패턴을 활용하되, 스폰 위치를 플레이어 Y로 설정:
+
+```
+Phase 설정:
+Attack Pattern:
+- Type: StraightLine
+- Line Angle: 0 (왼쪽→오른쪽) 또는 180 (오른쪽→왼쪽)
+- Spawn Count: 1
+- Spawn Interval: 3.0
+- Move Speed: 15 (빠른 속도)
+- Prefab: ChargeAttack
+- Time Penalty: 8
+```
+
+### 사용 예시
+
+#### 보스 Phase 3 - 돌진 공격
+
+```
+Phase 3 (40~60초):
+Attack Pattern 1:
+- Type: CustomBehavior (또는 StraightLine)
+- Spawn Interval: 4.0
+- Prefab: ChargeAttack
+- 설명: 3초마다 플레이어 높이로 돌진
+
+동작:
+1. 플레이어가 (100, 200) 위치에 있음
+2. 화면 왼쪽 (-500, 200)에서 ChargeAttack 스폰
+3. 0.5초 동안 노란색으로 깜빡임 (경고)
+4. 빨간색으로 변하며 오른쪽으로 빠르게 돌진
+5. 플레이어가 피하지 못하면 8초 감소
+```
+
+#### 복합 패턴 - 양쪽 돌진
+
+```
+Phase 5 (80~100초):
+Attack Pattern 1: ChargeAttack (왼쪽에서)
+- Spawn Interval: 3.0
+- From Left: true
+
+Attack Pattern 2: ChargeAttack (오른쪽에서)
+- Spawn Interval: 3.5
+- From Left: false
+
+결과: 양쪽에서 번갈아 돌진하는 패턴
+```
+
+### 난이도 조절
+
+#### 쉬움
+```
+Charge Speed: 10
+Charge Delay: 1.0 (긴 경고 시간)
+Spawn Interval: 5.0
+Time Penalty: 5
+```
+
+#### 보통
+```
+Charge Speed: 15
+Charge Delay: 0.5
+Spawn Interval: 3.0
+Time Penalty: 8
+```
+
+#### 어려움
+```
+Charge Speed: 20
+Charge Delay: 0.3 (짧은 경고)
+Spawn Interval: 2.0
+Time Penalty: 10
+```
+
+### 시각 효과 개선
+
+#### 1. Trail Renderer 추가
+```
+ChargeAttack Prefab에 추가:
+- Trail Renderer
+  - Time: 0.5
+  - Width: 1 → 0
+  - Color: Yellow → Red
+```
+
+#### 2. 파티클 효과
+```
+- Particle System (돌진 시작 시)
+  - Duration: 0.5
+  - Start Speed: 5
+  - Start Color: Red
+```
+
+#### 3. 사운드 효과
+```
+- Audio Source
+  - Clip: ChargeWarning.wav (경고음)
+  - Clip: ChargeImpact.wav (돌진음)
+```
+
+### 변형 패턴
+
+#### 1. 더블 돌진
+```csharp
+// 위아래 동시 돌진
+SpawnChargeAttack(playerY + 100, true);
+SpawnChargeAttack(playerY - 100, true);
+```
+
+#### 2. 지그재그 돌진
+```csharp
+// 0.5초 간격으로 높이를 바꿔가며 돌진
+StartCoroutine(ZigZagCharge());
+
+IEnumerator ZigZagCharge()
+{
+    for (int i = 0; i < 5; i++)
+    {
+        float y = Random.Range(-200f, 200f);
+        SpawnChargeAttack(y, i % 2 == 0);
+        yield return new WaitForSeconds(0.5f);
+    }
+}
+```
+
+#### 3. 추적 돌진
+```csharp
+// 돌진 직전에 플레이어 위치 재확인
+// BossChargeAttack.cs의 chargeDelay 동안 플레이어 추적
+```
+
+### 디버깅 팁
+
+1. **경고 시간 확인**: Charge Delay를 길게 설정해서 테스트
+2. **속도 조절**: Charge Speed를 낮춰서 패턴 확인
+3. **충돌 범위**: Collider 크기를 Scene 뷰에서 확인
+4. **로그 확인**: Debug.Log로 스폰 위치와 플레이어 위치 출력
+
+```csharp
+Debug.Log($"Charge spawned at Y: {playerY}, Player at: {player.anchoredPosition}");
+```
+
+### 완성된 보스 예시
+
+```
+물리 보스 - Phase 4 "레일건 돌진"
+
+Attack Pattern:
+- Type: ChargeAttack
+- Spawn Interval: 2.5
+- Charge Speed: 18
+- Charge Delay: 0.4
+- Prefab: LaserCharge (레이저 빔 스프라이트)
+- Time Penalty: 10
+
+연출:
+- 경고: 파란색 레이저 조준선
+- 돌진: 밝은 흰색 레이저 빔
+- 효과: 전기 파티클 + 충격파 사운드
+```
