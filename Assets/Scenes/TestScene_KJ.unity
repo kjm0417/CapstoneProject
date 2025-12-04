@@ -16453,6 +16453,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &916634271 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3071208949246089014, guid: e7161ea5655dc0248aa1dda799d87729, type: 3}
+  m_PrefabInstance: {fileID: 832961324}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &926129190
 GameObject:
   m_ObjectHideFlags: 0
@@ -17156,6 +17161,7 @@ MonoBehaviour:
   startChunkIndex: 0
   loadDistance: 40
   isCameraInit: 1
+  testPlayer: {fileID: 916634271}
 --- !u!4 &1139491623
 Transform:
   m_ObjectHideFlags: 0
@@ -21836,7 +21842,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1643798877}
   m_Layer: 0
-  m_Name: CameraPos
+  m_Name: PlayerTestSchoolPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -39,6 +39,9 @@ public class CameraMapLoader : MonoBehaviour
     [SerializeField]
     bool isCameraInit = true; //청크 로드할 때 최초 1회 카메라 설정 bool 변수
 
+    [Header("TestPlayerPos")]
+    [SerializeField]
+    GameObject testPlayer;
     private void OnEnable()
     {
         EventBus.Subscribe<int, DailyRoutine>(OnTileMapChange, SetDayRoutine);
@@ -58,7 +61,8 @@ public class CameraMapLoader : MonoBehaviour
         {
             if (isCameraInit)
             {
-                cameraTransform.transform.position = playerCameraPos.transform.position;
+                //cameraTransform.transform.position = playerCameraPos.transform.position;
+                testPlayer.transform.position = playerCameraPos.transform.position;
 
                 isCameraInit = false;
             }
