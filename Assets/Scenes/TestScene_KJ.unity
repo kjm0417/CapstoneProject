@@ -18778,6 +18778,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1320396567}
   m_CullTransparentMesh: 1
+--- !u!224 &1343045172 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1838324405059422915, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
+  m_PrefabInstance: {fileID: 704720212}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1366183542
 GameObject:
   m_ObjectHideFlags: 0
@@ -20387,7 +20392,14 @@ MonoBehaviour:
     prefab: {fileID: 7196241442617800774, guid: 2cdfa6f9cd7858842925ef39dc111235, type: 3}
   - id: nonliterature_daily
     prefab: {fileID: 2511919101824494788, guid: bc4d852f1448b9545ba3522181f6cce2, type: 3}
+  - id: connectLine
+    prefab: {fileID: 5432079849595450861, guid: e897eb8153cfe9446ae8659b1f92f3e4, type: 3}
+  - id: SlidingPuzzleMiniGame
+    prefab: {fileID: 8762672632214055903, guid: c42045ed31546eb459e0f87c4fb93a71, type: 3}
+  - id: BossFight_Chemistry
+    prefab: {fileID: 1588264878166112922, guid: 78f28859aee8b7649be613f352587b74, type: 3}
   miniGameParent: {fileID: 334098143}
+  bossGameParent: {fileID: 1343045172}
   runner: {fileID: 555440983}
   useUnscaledTime: 1
 --- !u!4 &1443504025
