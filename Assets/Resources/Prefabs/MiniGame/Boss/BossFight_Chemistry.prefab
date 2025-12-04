@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 332694ecaa31bd7478a54c1c1aab06d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: BossFight_Chemistry
+  _id: myting_chem1
   _encounterType: 1
   _duration: 120
   _successReward: []

@@ -109,7 +109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 590c549355a253643b24dc907b1a1182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: connectLine
+  _id: calc_standard
+  _encounterType: 0
   _duration: 120
   _successReward: []
   _failReward: []
@@ -122,6 +123,5 @@ MonoBehaviour:
   emptyColor1: {r: 0.9, g: 0.9, b: 0.9, a: 1}
   emptyColor2: {r: 0.8, g: 0.8, b: 0.8, a: 1}
   wallColor: {r: 1, g: 0, b: 1, a: 1}
-  playerColor: {r: 0, g: 1, b: 1, a: 1}
   playerHighlightColor: {r: 1, g: 1, b: 0, a: 1}
   statusText: {fileID: 0}

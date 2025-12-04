@@ -15531,10 +15531,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PopupMiniGame
       objectReference: {fileID: 0}
-    - target: {fileID: 1886512866343936153, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -15597,11 +15593,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1.51
+      value: -10.37
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -15614,10 +15610,6 @@ PrefabInstance:
     - target: {fileID: 5518641721961197261, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5984141650410136944, guid: 77f10d6758c5de64e95029c2ad7bbc77, type: 3}
-      propertyPath: m_SortingOrder
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20489,11 +20481,11 @@ MonoBehaviour:
     prefab: {fileID: 7196241442617800774, guid: 2cdfa6f9cd7858842925ef39dc111235, type: 3}
   - id: nonliterature_daily
     prefab: {fileID: 2511919101824494788, guid: bc4d852f1448b9545ba3522181f6cce2, type: 3}
-  - id: connectLine
+  - id: calc_standard
     prefab: {fileID: 5432079849595450861, guid: e897eb8153cfe9446ae8659b1f92f3e4, type: 3}
-  - id: SlidingPuzzleMiniGame
+  - id: calc_standard_review
     prefab: {fileID: 8762672632214055903, guid: c42045ed31546eb459e0f87c4fb93a71, type: 3}
-  - id: BossFight_Chemistry
+  - id: myting_chem1
     prefab: {fileID: 1588264878166112922, guid: 78f28859aee8b7649be613f352587b74, type: 3}
   miniGameParent: {fileID: 334098143}
   bossGameParent: {fileID: 1343045172}

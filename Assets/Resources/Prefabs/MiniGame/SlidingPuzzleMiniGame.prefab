@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89ec0cc29efce4944838795e0eb2faa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: SlidingPuzzleMiniGame
+  _id: calc_standard_review
   _encounterType: 0
   _duration: 120
   _successReward: []
