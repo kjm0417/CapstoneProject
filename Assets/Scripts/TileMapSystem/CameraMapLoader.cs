@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class CameraMapLoader : MonoBehaviour
@@ -39,9 +40,14 @@ public class CameraMapLoader : MonoBehaviour
     [SerializeField]
     bool isCameraInit = true; //청크 로드할 때 최초 1회 카메라 설정 bool 변수
 
-    [Header("TestPlayerPos")]
+    [Header("임시_기말고사 이후에 카메라 시스템으로 변경")]
     [SerializeField]
-    GameObject testPlayer;
+    GameObject testSitDownPlayer;
+    [SerializeField]
+    GameObject testOriginPlayer;
+    [SerializeField]
+    CinemachineCamera cinemachine;
+
     private void OnEnable()
     {
         EventBus.Subscribe<int, DailyRoutine>(OnTileMapChange, SetDayRoutine);
@@ -61,8 +67,13 @@ public class CameraMapLoader : MonoBehaviour
         {
             if (isCameraInit)
             {
+                //테스트
                 //cameraTransform.transform.position = playerCameraPos.transform.position;
-                testPlayer.transform.position = playerCameraPos.transform.position;
+                testOriginPlayer.gameObject.SetActive(false);
+                testSitDownPlayer.gameObject.SetActive(true);
+                testSitDownPlayer.transform.position = playerCameraPos.transform.position;
+                cinemachine.Follow = testSitDownPlayer.transform;
+                cinemachine.LookAt = testSitDownPlayer.transform;
 
                 isCameraInit = false;
             }
