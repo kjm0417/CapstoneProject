@@ -96,32 +96,25 @@ public class TileMapSaveLoad : MonoBehaviour
 
         SaveObject(pattern, day, routine);
 
-        string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
-        string filePath = Path.Combine(folderPath);
+        string folderPath = Path.Combine(Application.dataPath, "Resources/0_TilePatterns");
+       
+        Directory.CreateDirectory(folderPath);
 
-        Directory.CreateDirectory(filePath);
+        string path = Path.Combine(folderPath, SaveFileName + ".json");
 
-        string path = Path.Combine(filePath, SaveFileName + ".json");
         File.WriteAllText(path, JsonConvert.SerializeObject(pattern, Formatting.Indented));
 
-        Debug.Log($"Tilemap 저장 완료, 경로: {filePath}");
+        Debug.Log($"Tilemap 저장 완료, 경로: {folderPath}");
     }
 
     //일반 로드 
     public void Load(int Day, DailyRoutine routine)
     {
-        string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
+        string path = $"0_TilePatterns/{Day}_{routine}";
 
-        string filePath = Path.Combine(folderPath, $"{Day}_{routine}.json");
+        TextAsset jsonFile = Resources.Load<TextAsset>(path);
 
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError($"TilePattern 파일을 찾을 수 없습니다: {filePath}");
-            return;
-        }
-
-        string json = File.ReadAllText(filePath);
-        TilePattern pattern = JsonConvert.DeserializeObject<TilePattern>(json);
+        TilePattern pattern = JsonConvert.DeserializeObject<TilePattern>(jsonFile.text);
 
         var patternMapping = new PatternRootMapping(Day, routine);
 
@@ -145,18 +138,16 @@ public class TileMapSaveLoad : MonoBehaviour
     //청크 로드 
     public void LoadToChunk(int Day, DailyRoutine routine, int chunkIndex)
     {
-        string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
-        string fileName = $"{Day}_{routine}_Chunk{chunkIndex}.json";
-        string filePath = Path.Combine(folderPath, fileName);
+        string fileName = $"{Day}_{routine}_Chunk{chunkIndex}";
+        string filePath = $"0_TilePatterns/{fileName}";
 
-        if (!File.Exists(filePath))
-        {
-            Debug.LogWarning($"청크 파일을 찾을 수 없습니다: {filePath}");
-            return;
-        }
+        TextAsset jsonFile = Resources.Load<TextAsset>(filePath);
 
-        string json = File.ReadAllText(filePath);
-        TilePattern pattern = JsonConvert.DeserializeObject<TilePattern>(json);
+        //string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
+        //string fileName = $"{Day}_{routine}_Chunk{chunkIndex}.json";
+        //string filePath = Path.Combine(folderPath, fileName); 
+
+        TilePattern pattern = JsonConvert.DeserializeObject<TilePattern>(jsonFile.text);
 
         var patternMapping = new PatternRootMapping(Day, routine);
 
@@ -182,18 +173,11 @@ public class TileMapSaveLoad : MonoBehaviour
     //특수한 로드 - 복도와 계단 (교실 패턴 한정, 청크 X)
     public void LoadToColliderStair(int Day, DailyRoutine routine)
     {
-        string folderPath = Path.Combine(Application.dataPath, "0_TilePatterns");
-        string fileName = $"{Day}_{routine}_CorriderStair.json";
-        string filePath = Path.Combine(folderPath, fileName);
+        string filePath = $"0_TilePatterns/{Day}_{routine}_CorriderStair";
 
-        if (!File.Exists(filePath))
-        {
-            Debug.LogWarning($"복도 파일을 찾을 수 없습니다: {filePath}");
-            return;
-        }
+        TextAsset jsonFile = Resources.Load<TextAsset>(filePath);
 
-        string json = File.ReadAllText(filePath);
-        TilePattern pattern = JsonConvert.DeserializeObject<TilePattern>(json);
+        TilePattern pattern = JsonConvert.DeserializeObject<TilePattern>(jsonFile.text);
 
         var patternMapping = new PatternRootMapping(Day, routine);
 
